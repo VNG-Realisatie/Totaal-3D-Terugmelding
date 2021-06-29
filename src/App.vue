@@ -31,10 +31,22 @@
     <hr>
    
     <router-view/>
+
+    <div id="footer">
+      <img src="images/footer.png" alt="">
+    </div>
+
   </div>
 </template>
 
 <style>
+
+#footer{
+  margin-top:100px;
+  background: #777;
+    height:330px;
+padding: 30px;
+}
 
 #logo{
   margin-top:-10px;

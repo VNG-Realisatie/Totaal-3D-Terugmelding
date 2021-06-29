@@ -23,11 +23,16 @@
         <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode"></b-form-input>   
       </div>
 
+      <div v-if="notfound" class="formlines notfound">
+        <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
+        <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer</div>      
+      </div>
+
       <div v-if="found_address" class="formlines">
         <div>Hovevierstraat 3</div>
         <div>BAG Id: 43248572923428</div>
         <div>Bouwjaar: 1975</div>
-        </div>
+      </div>
 
     </b-col>
 
@@ -57,6 +62,11 @@ export default {
       found_address:false,
       viewer_default_image: "images/3dnetherlands_viewer.PNG",
       viewer_image: ""
+    }
+  },
+  computed:{
+    notfound: function(){
+     return this.huisnummer != "" && this.huisnummer != 3 ;
     }
   },
   watch: {
@@ -100,6 +110,15 @@ export default {
 </script>
 
 <style scoped>
+
+.bold{
+  font-weight: bold;
+}
+
+.notfound{
+  border: #f00 2px solid;
+  padding: 8px;;
+}
 
 .formlines{
     margin-top:14px;
