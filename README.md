@@ -1,4 +1,4 @@
-# t3d
+# Totaal-3D
 
 ## Project setup
 ```
