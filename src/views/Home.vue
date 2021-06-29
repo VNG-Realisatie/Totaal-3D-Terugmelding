@@ -1,0 +1,195 @@
+<template>
+
+<b-container class="bv-example-row" >
+
+<div class="header">Uitbouw plaatsen</div>
+
+  <b-row>
+
+    <b-col class="entrycontainer">
+
+    <div class="formheader">Adresgegevens</div>
+    <div class="formlines">Voer het adres in waar u de uitbouw wilt gaan plaatsen</div>
+
+      <div class="entryform">
+        <div class="formheader">Postcode</div>
+
+        <!-- <input v-model="postcode" @keypress="isNumber($event)"> -->
+        <b-form-input class="forminput" v-model="postcode" ></b-form-input>   
+      </div>
+
+      <div class="entryform">
+        <div class="formheader">Huisnummer + toevoeging</div>
+        <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode"></b-form-input>   
+      </div>
+
+      <div class="status">
+        <div v-if="notfound" class="formlines notfound">
+          <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
+          <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>      
+        </div>
+
+        <div v-if="found_address" class="foundaddress formlines">
+          <div class="foundaddress_header">Dit is het gekozen adres:</div>
+          <div>Hovevierstraat 3</div>
+          <div>{{postcode}} Amsterdam</div>
+          <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
+
+          <ul>  
+            <li>Het gebouw is een rijksmonument.</li>
+            <li>Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
+          </ul>
+
+        </div>
+      </div>
+
+    </b-col>
+
+    <b-col>     
+        <img class="unity" v-bind:src="viewer_image" alt="">
+    </b-col>
+    
+  </b-row>
+
+
+
+</b-container>
+
+</template>
+
+<script>
+// @ is an alias to /src
+import HelloWorld from '@/components/HelloWorld.vue'
+
+export default {
+  name: 'Home',
+  data: function () {
+    return {
+      postcode: "",
+      huisnummer: "",
+      invalid_postcode: true,
+      viewer_default_image: "images/3dnetherlands_viewer.PNG"
+      
+    }
+  },
+  computed:{
+    notfound: function(){
+     return this.huisnummer != "" && this.huisnummer != 3 ;
+    },
+    found_address: function(){
+        return !this.invalid_postcode &&  this.huisnummer == 3;
+    },
+    viewer_image: {
+      get(){
+        if(!this.invalid_postcode && this.found_address){
+          return "images/hovenierstraat3.png";
+        }
+        else{
+          return this.viewer_default_image;
+        }
+      },
+      set(newname){
+        //v-bind needs a setter
+      }
+      
+    }
+  },
+  watch: {
+    postcode: function (val) {
+      //TODO add regex
+      this.invalid_postcode = val.length != 6;
+    },
+      huisnummer: function (val) {
+      //TODO check building using BAG API     
+    }
+  },
+  created:function(){
+    this.viewer_image = this.viewer_default_image;
+  },
+ methods: {
+    isNumber: function(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) 
+      {
+        evt.preventDefault();
+      }
+      else 
+      {
+        return true;
+      }
+    }
+ },
+
+  components: {
+    HelloWorld
+  }
+}
+</script>
+
+<style scoped>
+
+.foundaddress_header{
+  margin-top:8px;
+  margin-top:4px;
+  font-weight: bold;
+}
+
+.foundaddress{
+  background-color:rgb(0, 70, 153);;
+  color:#fff;
+  padding: 12px;
+}
+
+.bold{
+  font-weight: bold;
+}
+
+.status{
+
+margin-top:26px;  
+  
+
+}
+
+.notfound{
+  border: #f00 2px solid;
+  padding: 8px;  
+}
+
+.formlines{
+  text-align: left;
+}
+
+.forminput{
+  width: 120px;;
+}
+
+.formheader{
+  font-weight: bold;
+  margin-top:20px;
+  margin-bottom:4px;
+  text-align: left;
+}
+
+.header{
+  text-align: left;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.entrycontainer{
+  background-color: #eee;
+  height:520px;
+
+}
+
+.unity{
+  height:520px;
+}
+
+.entryform{
+  text-align: left;;
+}
+</style>
