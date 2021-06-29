@@ -1,6 +1,6 @@
 <template>
 
-<b-container class="bv-example-row">
+<b-container class="bv-example-row" >
 
 <div class="header">Uitbouw plaatsen</div>
 
@@ -23,15 +23,24 @@
         <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode"></b-form-input>   
       </div>
 
-      <div v-if="notfound" class="formlines notfound">
-        <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
-        <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer</div>      
-      </div>
+      <div class="status">
+        <div v-if="notfound" class="formlines notfound">
+          <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
+          <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>      
+        </div>
 
-      <div v-if="found_address" class="formlines">
-        <div>Hovevierstraat 3</div>
-        <div>BAG Id: 43248572923428</div>
-        <div>Bouwjaar: 1975</div>
+        <div v-if="found_address" class="foundaddress formlines">
+          <div class="foundaddress_header">Dit is het gekozen adres:</div>
+          <div>Hovevierstraat 3</div>
+          <div>{{postcode}} Amsterdam</div>
+          <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
+
+          <ul>  
+            <li>Het gebouw is een rijksmonument.</li>
+            <li>Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
+          </ul>
+
+        </div>
       </div>
 
     </b-col>
@@ -59,14 +68,30 @@ export default {
       postcode: "",
       huisnummer: "",
       invalid_postcode: true,
-      found_address:false,
-      viewer_default_image: "images/3dnetherlands_viewer.PNG",
-      viewer_image: ""
+      viewer_default_image: "images/3dnetherlands_viewer.PNG"
+      
     }
   },
   computed:{
     notfound: function(){
      return this.huisnummer != "" && this.huisnummer != 3 ;
+    },
+    found_address: function(){
+        return !this.invalid_postcode &&  this.huisnummer == 3;
+    },
+    viewer_image: {
+      get(){
+        if(!this.invalid_postcode && this.found_address){
+          return "images/hovenierstraat3.png";
+        }
+        else{
+          return this.viewer_default_image;
+        }
+      },
+      set(newname){
+        //v-bind needs a setter
+      }
+      
     }
   },
   watch: {
@@ -74,15 +99,8 @@ export default {
       //TODO add regex
       this.invalid_postcode = val.length != 6;
     },
-    huisnummer: function (val) {
-      //TODO check building using BAG API
-      this.found_address = val == 3;
-      if(this.found_address){
-        this.viewer_image = "images/hovenierstraat3.png";
-      }
-      else{
-        this.viewer_image = this.viewer_default_image;
-      }
+      huisnummer: function (val) {
+      //TODO check building using BAG API     
     }
   },
   created:function(){
@@ -111,17 +129,35 @@ export default {
 
 <style scoped>
 
+.foundaddress_header{
+  margin-top:8px;
+  margin-top:4px;
+  font-weight: bold;
+}
+
+.foundaddress{
+  background-color:rgb(0, 70, 153);;
+  color:#fff;
+  padding: 12px;
+}
+
 .bold{
   font-weight: bold;
 }
 
+.status{
+
+margin-top:26px;  
+  
+
+}
+
 .notfound{
   border: #f00 2px solid;
-  padding: 8px;;
+  padding: 8px;  
 }
 
 .formlines{
-    margin-top:14px;
   text-align: left;
 }
 
@@ -145,10 +181,12 @@ export default {
 
 .entrycontainer{
   background-color: #eee;
+  height:520px;
+
 }
 
 .unity{
-  height:400px;
+  height:520px;
 }
 
 .entryform{
