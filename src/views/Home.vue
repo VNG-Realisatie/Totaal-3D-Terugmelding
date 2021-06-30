@@ -31,8 +31,8 @@
 
         <div v-if="found_address" class="foundaddress formlines">
           <div class="foundaddress_header">Dit is het gekozen adres:</div>
-          <div>Hovevierstraat 3</div>
-          <div>{{postcode}} Amsterdam</div>
+          <div>{{street}} {{huisnummer}}</div>
+          <div>{{postcode}} {{city}}</div>
           <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
 
           <ul>  
@@ -68,20 +68,24 @@ export default {
       postcode: "",
       huisnummer: "",
       invalid_postcode: true,
-      viewer_default_image: "images/3dnetherlands_viewer.PNG"
-      
+      viewer_default_image: "images/3dnetherlands_viewer.PNG",
+      street:"",
+      city: "",
+      notfound:false,
+      bagcoordinates    
     }
   },
   computed:{
-    notfound: function(){
-     return this.huisnummer != "" && this.huisnummer != 3 ;
-    },
+    // notfound: function(){
+      
+    //  return this.street == "" && this.huisnummer != "";
+    // },
     found_address: function(){
-        return !this.invalid_postcode &&  this.huisnummer == 3;
+        return this.huisnummer != "" && this.street != "";
     },
     viewer_image: {
       get(){
-        if(!this.invalid_postcode && this.found_address){
+        if(!this.invalid_postcode && this.found_address){          
           return "images/hovenierstraat3.png";
         }
         else{
@@ -99,8 +103,13 @@ export default {
       //TODO add regex
       this.invalid_postcode = val.length != 6;
     },
-      huisnummer: function (val) {
-      //TODO check building using BAG API     
+      huisnummer: function (val) {        
+        if(val == "") return;
+
+        this.street = "";
+        this.city = "";
+        this.notfound = false;
+        this.getAddress(this.postcode, val);
     }
   },
   created:function(){
@@ -118,7 +127,53 @@ export default {
       {
         return true;
       }
+    },
+    getAddress: function(postcode, huisnummer){
+
+      let headers = { "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7" }
+
+      fetch(`https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen?postcode=${postcode}&huisnummer=${huisnummer}&exacteMatch=true`, { headers })
+        .then(response => response.json())
+        .then(data => {
+
+          if(!data._embedded){
+            //alert("niks gevonden");
+            this.notfound = true;
+            return;
+          }
+
+          let adres = data._embedded.adressen[0];
+          this.street = adres.korteNaam;
+          this.city = adres.woonplaatsNaam;
+
+          let bagid = adres.adresseerbaarObjectIdentificatie;
+          this.getBagCoordinate(bagid);
+        });
+
+    },
+    getBagCoordinate: function(bagid){
+      
+      let headers = { "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7", "Accept-Crs": "epsg:28992" }
+
+      fetch(`https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/verblijfsobjecten/${bagid}`, { headers })
+        .then(response => response.json())
+        .then(data => {
+
+          if(!data.verblijfsobject){            
+            return;
+          }
+          this.bagcoordinates = data.verblijfsobject.geometrie.punt.coordinates;
+
+          //TODO for now show satellite photo of building
+
+          //var bbox = $"{tileChange.X},{tileChange.Y},{(tileChange.X + tileSize)},{(tileChange.Y + tileSize)}";
+          //var imageUrl = $"https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox={bbox}&width={resolution}&height={resolution}&srs=EPSG:28992";          
+
+        });
+
+
     }
+
  },
 
   components: {
