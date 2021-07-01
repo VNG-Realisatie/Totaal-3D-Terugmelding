@@ -13,36 +13,38 @@
 
       <div class="entryform">
         <div class="formheader">Postcode</div>
-
-        <!-- <input type="text" :value="postcode.toUpperCase()" @input="postcode = $event.target.value.toUpperCase()"> -->        
-        <b-form-input  class="forminput noselect" v-model="postcode" @keypress="isNumber($event)"></b-form-input>
-        
-
+        <b-form-input class="forminput noselect" v-model="postcode" @keypress="checkPostcode($event)" :state="postcodeState"></b-form-input>
       </div>
 
       <div class="entryform">
         <div class="formheader">Huisnummer + toevoeging</div>
-        <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode"></b-form-input>   
+        <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
       </div>
 
       <div class="status">
         <div v-if="notfound" class="formlines notfound">
           <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
-          <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>      
+          <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>
         </div>
 
         <div v-if="found_address" class="foundaddress formlines">
           <div class="foundaddress_header">Dit is het gekozen adres:</div>
           <div>{{street}} {{huisnummer}}</div>
           <div>{{postcode}} {{city}}</div>
-          <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
+          
+          <!-- <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div> -->
 
-          <ul>  
+          <!-- <ul>
             <li>Het gebouw is een rijksmonument.</li>
             <li>Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
-          </ul>
-
+          </ul> -->
+      
         </div>
+
+      <p class="gaverder">
+          <b-button v-if="found_address" variant="danger">Ga verder</b-button>
+      </p>
+  
       </div>
 
     </b-col>
@@ -81,16 +83,20 @@ export default {
     }
   },
   computed:{
-    // notfound: function(){
-      
-    //  return this.street == "" && this.huisnummer != "";
-    // },
+    postcodeState:function(){
+        if(this.postcode.length != 6) return null;        
+        return true;
+    },
+    addressState: function (){
+      if(!this.found_address) return null;
+      return true;
+    },   
     found_address: function(){
         return this.huisnummer != "" && this.street != "";
     },
     viewer_image: {
       get(){        
-        if(this.bagcoordinates.length == 3){
+        if( this.bagcoordinates.length == 3){
           let x = this.bagcoordinates[0];
           let y = this.bagcoordinates[1];
            //TODO get 3dmodel, for now show satellite photo of building
@@ -111,12 +117,27 @@ export default {
   },
   watch: {
     postcode: function (val, oldval) {
-      this.postcode = val.toUpperCase();    
-      this.invalid_postcode = !this.postcode_regex.test(val); //val.length != 6;
+
+      this.postcode = val.toUpperCase().replace(/ /g, ""); 
+      
+      if(this.postcode.length > 6){
+        this.postcode = null;
+        return;
+      }
+
+      this.invalid_postcode = !this.postcode_regex.test(val);
+      
+      if(this.invalid_postcode){
+        this.bagcoordinates = [];
+        this.street = "";
+        this.notfound = false;  
+      }
+
     },
       huisnummer: function (val) {                
         if(val == ""){
           this.bagcoordinates = [];
+          this.street = "";
           return;
         } 
 
@@ -131,7 +152,7 @@ export default {
     this.viewer_image = this.viewer_default_image;
   },
  methods: {
-    isNumber: function(evt) {
+    checkPostcode: function(evt) {
       evt = (evt) ? evt : window.event;
       //var charCode = (evt.which) ? evt.which : evt.keyCode;
       if(evt.srcElement.selectionEnd - evt.srcElement.selectionStart > 0){
@@ -177,9 +198,9 @@ export default {
         .then(response => response.json())
         .then(data => {
 
-          if(!data._embedded){
-            //alert("niks gevonden");
+          if(!data._embedded){            
             this.notfound = true;
+            this.bagcoordinates = [];
             return;
           }
 
@@ -216,6 +237,14 @@ export default {
 </script>
 
 <style scoped>
+
+.gaverder{
+
+  position: absolute;
+  bottom:10px;
+  right:22px;
+  /* text-align: left; */
+}
 
 .foundaddress_header{
   margin-top:8px;
