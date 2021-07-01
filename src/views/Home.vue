@@ -14,8 +14,10 @@
       <div class="entryform">
         <div class="formheader">Postcode</div>
 
-        <!-- <input v-model="postcode" @keypress="isNumber($event)"> -->
-        <b-form-input class="forminput" v-model="postcode" ></b-form-input>   
+        <!-- <input type="text" :value="postcode.toUpperCase()" @input="postcode = $event.target.value.toUpperCase()"> -->        
+        <b-form-input  class="forminput noselect" v-model="postcode" @keypress="isNumber($event)"></b-form-input>
+        
+
       </div>
 
       <div class="entryform">
@@ -74,7 +76,8 @@ export default {
       notfound:false,
       bagcoordinates: [],
       map_img_resolution:600,
-      map_img_size: 40
+      map_img_size: 40,
+      postcode_regex: /^[1-9][0-9][0-9][0-9]?(?!sa|sd|ss)[a-z][a-z]$/i
     }
   },
   computed:{
@@ -86,19 +89,14 @@ export default {
         return this.huisnummer != "" && this.street != "";
     },
     viewer_image: {
-      get(){
-        // if(!this.invalid_postcode && this.found_address){          
-        //   return "images/hovenierstraat3.png";
-        // }
+      get(){        
         if(this.bagcoordinates.length == 3){
-
           let x = this.bagcoordinates[0];
           let y = this.bagcoordinates[1];
            //TODO get 3dmodel, for now show satellite photo of building
           let half = this.map_img_size/2;
           let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
-          let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
-          console.log(mapurl);
+          let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;          
           return mapurl;
         }
         else{
@@ -112,16 +110,20 @@ export default {
     }
   },
   watch: {
-    postcode: function (val) {
-      //TODO add regex
-      this.invalid_postcode = val.length != 6;
+    postcode: function (val, oldval) {
+      this.postcode = val.toUpperCase();    
+      this.invalid_postcode = !this.postcode_regex.test(val); //val.length != 6;
     },
-      huisnummer: function (val) {        
-        if(val == "") return;
+      huisnummer: function (val) {                
+        if(val == ""){
+          this.bagcoordinates = [];
+          return;
+        } 
 
         this.street = "";
         this.city = "";
         this.notfound = false;
+        
         this.getAddress(this.postcode, val);
     }
   },
@@ -131,15 +133,41 @@ export default {
  methods: {
     isNumber: function(evt) {
       evt = (evt) ? evt : window.event;
-      var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) 
-      {
-        evt.preventDefault();
+      //var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if(evt.srcElement.selectionEnd - evt.srcElement.selectionStart > 0){
+        this.postcode = "";         
       }
-      else 
-      {
+
+      let isvalid = false;
+      let newPostcode = this.postcode + evt.key;
+      let count = newPostcode.length;
+
+      if(count == 1){        
+        isvalid = /^[1-9]$/i.test(newPostcode);
+      }
+      else if(count == 2){      
+        isvalid = /^[1-9][0-9]$/i.test(newPostcode);
+      }
+      else if(count == 3){      
+        isvalid = /^[1-9][0-9][0-9]$/i.test(newPostcode);
+      }
+      else if(count == 4){
+        isvalid = /^[1-9][0-9][0-9][0-9]$/i.test(newPostcode);
+      }
+      else if(count == 5){
+        isvalid = /^[1-9][0-9][0-9][0-9][a-z]$/i.test(newPostcode);
+      }
+      else if(count == 6){
+        isvalid = this.postcode_regex.test(newPostcode);
+      }
+      
+      if(isvalid == false){
+         evt.preventDefault();
+      }
+      else {
         return true;
       }
+
     },
     getAddress: function(postcode, huisnummer){
 
@@ -176,11 +204,7 @@ export default {
             return;
           }
           this.bagcoordinates = data.verblijfsobject.geometrie.punt.coordinates;
-//          console.log(this.bagcoordinates);
-
         });
-
-
     }
 
  },
