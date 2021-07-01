@@ -72,7 +72,9 @@ export default {
       street:"",
       city: "",
       notfound:false,
-      bagcoordinates    
+      bagcoordinates: [],
+      map_img_resolution:600,
+      map_img_size: 40
     }
   },
   computed:{
@@ -85,8 +87,19 @@ export default {
     },
     viewer_image: {
       get(){
-        if(!this.invalid_postcode && this.found_address){          
-          return "images/hovenierstraat3.png";
+        // if(!this.invalid_postcode && this.found_address){          
+        //   return "images/hovenierstraat3.png";
+        // }
+        if(this.bagcoordinates.length == 3){
+
+          let x = this.bagcoordinates[0];
+          let y = this.bagcoordinates[1];
+           //TODO get 3dmodel, for now show satellite photo of building
+          let half = this.map_img_size/2;
+          let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
+          let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
+          console.log(mapurl);
+          return mapurl;
         }
         else{
           return this.viewer_default_image;
@@ -163,11 +176,7 @@ export default {
             return;
           }
           this.bagcoordinates = data.verblijfsobject.geometrie.punt.coordinates;
-
-          //TODO for now show satellite photo of building
-
-          //var bbox = $"{tileChange.X},{tileChange.Y},{(tileChange.X + tileSize)},{(tileChange.Y + tileSize)}";
-          //var imageUrl = $"https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox={bbox}&width={resolution}&height={resolution}&srs=EPSG:28992";          
+//          console.log(this.bagcoordinates);
 
         });
 
