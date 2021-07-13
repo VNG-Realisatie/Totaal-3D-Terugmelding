@@ -31,19 +31,15 @@
           <div class="foundaddress_header">Dit is het gekozen adres:</div>
           <div>{{street}} {{huisnummer}}</div>
           <div>{{postcode}} {{city}}</div>
-          
-          <!-- <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div> -->
-
-          <!-- <ul>
-            <li>Het gebouw is een rijksmonument.</li>
-            <li>Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
-          </ul> -->
-      
         </div>
 
       <p class="gaverder">
-          <b-button v-if="found_address" variant="danger">Ga verder</b-button>
+          <b-button v-if="found_address" v-bind:href="bagurl" target="_blank" variant="danger">Ga verder</b-button>
       </p>
+      
+      <!-- <div v-for="id in bagids" v-bind:key="id">
+        <div>Bagid:{{id}}</div>
+        </div>       -->
   
       </div>
 
@@ -54,6 +50,8 @@
     </b-col>
     
   </b-row>
+
+  
 
 
 
@@ -69,6 +67,7 @@ export default {
   name: 'Home',
   data: function () {
     return {
+      viewer_base_url: "http://localhost:8081",
       postcode: "",
       huisnummer: "",
       invalid_postcode: true,
@@ -79,7 +78,9 @@ export default {
       bagcoordinates: [],
       map_img_resolution:600,
       map_img_size: 40,
-      postcode_regex: /^[1-9][0-9][0-9][0-9]?(?!sa|sd|ss)[a-z][a-z]$/i
+      postcode_regex: /^[1-9][0-9][0-9][0-9]?(?!sa|sd|ss)[a-z][a-z]$/i,
+      verblijfsobject_id: "",
+      bagids:[]
     }
   },
   computed:{
@@ -93,6 +94,9 @@ export default {
     },   
     found_address: function(){
         return this.huisnummer != "" && this.street != "";
+    },
+    bagurl: function(){
+      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}`;
     },
     viewer_image: {
       get(){        
@@ -131,6 +135,7 @@ export default {
         this.bagcoordinates = [];
         this.street = "";
         this.notfound = false;  
+        this.bagids =[];
       }
 
     },
@@ -138,6 +143,7 @@ export default {
         if(val == ""){
           this.bagcoordinates = [];
           this.street = "";
+          this.bagids = [];
           return;
         } 
 
@@ -208,8 +214,9 @@ export default {
           this.street = adres.korteNaam;
           this.city = adres.woonplaatsNaam;
 
-          let bagid = adres.adresseerbaarObjectIdentificatie;
-          this.getBagCoordinate(bagid);
+          this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
+          this.bagids = adres.pandIdentificaties;          
+          this.getBagCoordinate(this.verblijfsobject_id);
         });
 
     },
@@ -227,6 +234,8 @@ export default {
           this.bagcoordinates = data.verblijfsobject.geometrie.punt.coordinates;
         });
     }
+
+    
 
  },
 
