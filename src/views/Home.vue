@@ -45,8 +45,9 @@
 
     </b-col>
 
-    <b-col>     
-        <img class="unity" v-bind:src="viewer_image" alt="">
+    <b-col>
+         <model-obj src="/3dmodels/cube.obj"></model-obj>        
+        <!-- <img v-if="found_address" class="unity" v-bind:src="viewer_image" alt=""> -->
     </b-col>
     
   </b-row>
@@ -62,6 +63,7 @@
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
+import { ModelObj } from 'vue-3d-model'
 
 export default {
   name: 'Home',
@@ -80,7 +82,9 @@ export default {
       map_img_size: 40,
       postcode_regex: /^[1-9][0-9][0-9][0-9]?(?!sa|sd|ss)[a-z][a-z]$/i,
       verblijfsobject_id: "",
-      bagids:[]
+      bagids:[],
+      model_pos: { x: 157769, y: 467204, z: 0 },
+      model_scale: { x: 0.1, y: 0.1, z: 0.1 }
     }
   },
   computed:{
@@ -240,7 +244,8 @@ export default {
  },
 
   components: {
-    HelloWorld
+    HelloWorld,
+    ModelObj
   }
 }
 </script>
