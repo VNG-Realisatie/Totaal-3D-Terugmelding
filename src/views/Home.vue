@@ -22,6 +22,10 @@
       </div>
 
       <div class="status">
+
+          <!-- <div>{{bagcoordinates[0]}}</div>
+          <div>{{bagcoordinates[1]}}</div> -->
+
         <div v-if="notfound" class="formlines notfound">
           <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
           <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>
@@ -46,8 +50,12 @@
     </b-col>
 
     <b-col>
-         <model-obj src="/3dmodels/cube.obj"></model-obj>        
+         <!-- <model-obj
+            src="/3dmodels/bbox.obj"
+            >
+          </model-obj>         -->
         <!-- <img v-if="found_address" class="unity" v-bind:src="viewer_image" alt=""> -->
+        <img  class="unity" v-bind:src="viewer_image" alt="">
     </b-col>
     
   </b-row>
@@ -84,7 +92,9 @@ export default {
       verblijfsobject_id: "",
       bagids:[],
       model_pos: { x: 157769, y: 467204, z: 0 },
-      model_scale: { x: 0.1, y: 0.1, z: 0.1 }
+      model_scale: { x: 0.1, y: 0.1, z: 0.1 },
+      model_rotation: { x: 0.5, y: 0, z: 0 },
+      mode_scale : { x: 10, y: 10, z: 10 }
     }
   },
   computed:{
@@ -110,7 +120,10 @@ export default {
            //TODO get 3dmodel, for now show satellite photo of building
           let half = this.map_img_size/2;
           let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
-          let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;          
+//        let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
+//        let mapurl = `https://geodata.nationaalgeoregister.nl/bag/wms/v1_1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=pand&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
+          let mapurl = `https://service.pdok.nl/kadaster/cp/wms/v1_0?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=CP.CadastralParcel&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
+
           return mapurl;
         }
         else{
