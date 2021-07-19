@@ -137,20 +137,20 @@ export default {
     },
     viewer_image: {
       get(){        
-        if( this.bagcoordinates.length == 3){
-          let x = this.bagcoordinates[0];
-          let y = this.bagcoordinates[1];           
-          let half = this.map_img_size/2;
-          let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
-//        let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
-//        let mapurl = `https://geodata.nationaalgeoregister.nl/bag/wms/v1_1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=pand&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
-          let mapurl = `https://service.pdok.nl/kadaster/cp/wms/v1_0?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=CP.CadastralParcel&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
+//         if( this.bagcoordinates.length == 3){
+//           let x = this.bagcoordinates[0];
+//           let y = this.bagcoordinates[1];           
+//           let half = this.map_img_size/2;
+//           let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
+// //        let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
+// //        let mapurl = `https://geodata.nationaalgeoregister.nl/bag/wms/v1_1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=pand&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
+//           let mapurl = `https://service.pdok.nl/kadaster/cp/wms/v1_0?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=CP.CadastralParcel&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
 
-          return mapurl;
-        }
-        else{
+//           return mapurl;
+//         }
+//         else{
           return this.viewer_default_image;
-        }
+       // }
       },
       set(newname){
         //v-bind needs a setter
@@ -216,9 +216,9 @@ export default {
           return;
         } 
 
-        this.street = "";
-        this.city = "";
-        this.notfound = false;
+        // this.street = "";
+        // this.city = "";
+        // this.notfound = false;
         
         this.getAddress(this.postcode, val);
     }
