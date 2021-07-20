@@ -18,7 +18,7 @@
 
       <div class="entryform">
         <div class="formheader">Huisnummer + toevoeging</div>
-        <b-form-input class="forminput" v-model="huisnummer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
+        <b-form-input class="forminput" v-model="huisnummerinvoer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
       </div>
 
       <div class="status">
@@ -30,7 +30,7 @@
 
         <div v-if="found_address" class="foundaddress formlines">
           <div class="foundaddress_header">Dit is het gekozen adres:</div>
-          <div>{{street}} {{huisnummer}}</div>
+          <div>{{street}} {{huisnummer}}{{huisletter}}</div>
           <div>{{postcode}} {{city}}</div>          
           <div>Bouwjaar: {{bouwjaar}}</div>
           <div>Perceeloppervlakte: {{kadastraleGrootteWaarde}}m&#178;</div>
@@ -63,7 +63,7 @@
 
           </l-map>
         
-          <img v-else  class="unity" v-bind:src="viewer_image" alt="">
+          <img v-else  class="unity" src="images/3dnetherlands_viewer.PNG" alt="">
         
     </b-col>
     
@@ -95,10 +95,11 @@ export default {
     return {
       viewer_base_url: "http://localhost:8081",
       postcode: "",
+      huisnummerinvoer: "",
       huisnummer: "",
+      huisletter: "",
       bouwjaar:0,
       invalid_postcode: true,
-      viewer_default_image: "images/3dnetherlands_viewer.PNG",
       street:"",
       city: "",
       notfound:false,
@@ -130,42 +131,23 @@ export default {
       return true;
     },   
     found_address: function(){
-        return this.huisnummer != "" && this.street != "";
+        return this.huisnummer != "" && this.street != "" &&  this.notfound == false;
+    },
+    not_found_address: function(){
+        return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
       return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}`;
-    },
-    viewer_image: {
-      get(){        
-//         if( this.bagcoordinates.length == 3){
-//           let x = this.bagcoordinates[0];
-//           let y = this.bagcoordinates[1];           
-//           let half = this.map_img_size/2;
-//           let bbox = `${x-half},${y-half},${x+this.map_img_size},${y+this.map_img_size}`;
-// //        let mapurl = `https://geodata.nationaalgeoregister.nl/luchtfoto/rgb/wms?styles=&layers=Actueel_ortho25&service=WMS&request=GetMap&format=image%2Fpng&version=1.1.0&bbox=${bbox}&width=${this.map_img_resolution}&height=${this.map_img_resolution}&srs=EPSG:28992`;
-// //        let mapurl = `https://geodata.nationaalgeoregister.nl/bag/wms/v1_1?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=pand&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
-//           let mapurl = `https://service.pdok.nl/kadaster/cp/wms/v1_0?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&layers=CP.CadastralParcel&CRS=EPSG%3A28992&STYLES=&WIDTH=${this.map_img_resolution}&HEIGHT=${this.map_img_resolution}&BBOX=${bbox}`;
-
-//           return mapurl;
-//         }
-//         else{
-          return this.viewer_default_image;
-       // }
-      },
-      set(newname){
-        //v-bind needs a setter
-      }
-      
-    },
+    },      
     center: {
       get(){    
-      if(this.bagcoordinates.length == 0 ){
-        return rdToWgs84(155000, 463000);  
-      } 
-      let x = this.bagcoordinates[0];
-      let y = this.bagcoordinates[1];
-      var wgs84 = rdToWgs84(x, y);
-      return [wgs84.lat, wgs84.lon];
+        if(this.bagcoordinates.length == 0 ){
+          return rdToWgs84(155000, 463000);  
+        } 
+        let x = this.bagcoordinates[0];
+        let y = this.bagcoordinates[1];
+        var wgs84 = rdToWgs84(x, y);
+        return [wgs84.lat, wgs84.lon];
       },    
       set(newname){
         //v-bind needs a setter
@@ -208,18 +190,17 @@ export default {
       }
 
     },
-      huisnummer: function (val) {                
+    huisnummerinvoer: function (val) {  
+      
+      this.huisnummerinvoer = val.toUpperCase().replace(/ /g, ""); 
+
         if(val == ""){
           this.bagcoordinates = [];
           this.street = "";
           this.bagids = [];
+           this.notfound = false;
           return;
-        } 
-
-        // this.street = "";
-        // this.city = "";
-        // this.notfound = false;
-        
+        }         
         this.getAddress(this.postcode, val);
     }
   },
@@ -267,14 +248,22 @@ export default {
     },
     getAddress: function(postcode, huisnummer){
 
+
+      var regex = new RegExp('([0-9]+)|([a-zA-Z]+)','g');
+      var splittedArray = huisnummer.match(regex);
+
+      var num = splittedArray[0];
+      var text = splittedArray[1];
+           
       let headers = { 
                       "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
                       "Accept-Crs": "epsg:28992" 
                     }
 
-      //https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=3829AZ&huisnummer=14&exacteMatch=true
+      let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
+        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisletter=${text}&exacteMatch=true`
 
-      fetch(`https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${huisnummer}&exacteMatch=true`, { headers })
+      fetch(url, { headers })
         .then(response => response.json())
         .then(data => {
 
@@ -284,13 +273,16 @@ export default {
             return;
           }
 
+          console.log(data);
+
+          this.notfound = false;
+
           let adres = data._embedded.adressen[0];
           this.street = adres.korteNaam;
+          this.huisnummer = adres.huisnummer;
+          this.huisletter = adres.huisletter;
           this.city = adres.woonplaatsNaam;
           this.bouwjaar = adres.oorspronkelijkBouwjaar[0];
-
-      console.log(adres);
-
           this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
           this.bagids = adres.pandIdentificaties;          
           this.getBagCoordinate(this.verblijfsobject_id);
@@ -334,7 +326,6 @@ export default {
       this.bounds = bounds;
     }
    
-
  },
 
   components: {    
