@@ -6,7 +6,7 @@
 
   <b-row>
 
-    <b-col class="entrycontainer">
+    <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
 
     <div class="formheader">Adresgegevens</div>
     <div class="formlines">Voer het adres in waar u de uitbouw wilt gaan plaatsen</div>
@@ -32,8 +32,20 @@
           <div class="foundaddress_header">Dit is het gekozen adres:</div>
           <div>{{street}} {{huisnummer}}{{huisletter}}</div>
           <div>{{postcode}} {{city}}</div>          
-          <div>Bouwjaar: {{bouwjaar}}</div>
-          <div>Perceeloppervlakte: {{kadastraleGrootteWaarde}}m&#178;</div>
+
+
+          <p></p>
+
+          <div v-if="found_address">
+            <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
+            <ul>
+              <li>Bouwjaar: {{bouwjaar}}</li>
+              <li>Perceeloppervlakte: {{kadastraleGrootteWaarde}}m&#178;</li>
+              <li v-if="ismonument">Het gebouw is een rijksmonument <a v-bind:href="monumentUrl">[pdf]</a></li>
+              <li v-if="isbeschermd">Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
+            </ul>
+          </div>
+
         </div>
 
       <p class="gaverder">
@@ -103,6 +115,9 @@ export default {
       street:"",
       city: "",
       notfound:false,
+      ismonument:false,
+      monumentUrl: "",
+      isbeschermd:false,
       bagcoordinates: [],
       map_img_resolution:600,
       map_img_size: 40,
@@ -198,7 +213,9 @@ export default {
           this.bagcoordinates = [];
           this.street = "";
           this.bagids = [];
-           this.notfound = false;
+          this.notfound = false;
+          this.ismonument = false;
+          this.isbeschermd = false;
           return;
         }         
         this.getAddress(this.postcode, val);
@@ -269,11 +286,11 @@ export default {
 
           if(!data._embedded){            
             this.notfound = true;
+            this.ismonument = false;
+            this.isbeschermd = false;
             this.bagcoordinates = [];
             return;
           }
-
-          console.log(data);
 
           this.notfound = false;
 
@@ -302,12 +319,39 @@ export default {
           }
           this.bagcoordinates = data.verblijfsobject.geometrie.punt.coordinates;
           this.getPerceel(this.bagcoordinates[0], this.bagcoordinates[1]);
-
+          this.checkMonument(this.bagcoordinates[0], this.bagcoordinates[1]);
+          this.checkBeschermd(this.bagcoordinates[0], this.bagcoordinates[1]);
         });
     },
+    checkMonument: function(x,y){
+        let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
+        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX=${bbox}&outputFormat=json`)
+        .then(response => response.json())
+        .then(data => {
+          this.ismonument = data.features.length > 0;
+          if(this.ismonument){
+            let feature = data.features[0];
+            this.monumentUrl = feature.properties.KICH_URL;
+            //console.log(feature.properties);
+          }
+        });
+    },
+    checkBeschermd: function(x,y){
+        let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
+        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:ArcheologicalMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX=${bbox}&outputFormat=json`)
+        .then(response => response.json())
+        .then(data => {
+          this.isbeschermd = data.features.length > 0;
+          // if(this.isbeschermd){
+          //   let feature = data.features[0];
+          //   //console.log(feature.properties);
+          // }
+        });
+    
+    },
     getPerceel:function(x,y){
-        let bbox = `${x-0.5},${y-0.5},${x+0.5},${y-0.5}`;
-        fetch(`https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=kadastralekaartv4:perceel&STARTINDEX=0&COUNT=1000&SRSNAME=urn:ogc:def:crs:EPSG::28992&BBOX=${bbox},urn:ogc:def:crs:EPSG::28992&outputFormat=json`)
+        let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
+        fetch(`https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=kadastralekaartv4:perceel&STARTINDEX=0&COUNT=1&SRSNAME=urn:ogc:def:crs:EPSG::28992&BBOX=${bbox},urn:ogc:def:crs:EPSG::28992&outputFormat=json`)
         .then(response => response.json())
         .then(data => {
           let feature = data.features[0];
@@ -341,12 +385,16 @@ export default {
 
 <style scoped>
 
+a:visited, a:link {
+  color: #fff;
+}
+
 .gaverder{
 
   position: absolute;
-  bottom:10px;
+  bottom: -4px;
+  right: 16px;
   right:22px;
-  /* text-align: left; */
 }
 
 .foundaddress_header{
@@ -358,7 +406,8 @@ export default {
 .foundaddress{
   background-color:rgb(0, 70, 153);;
   color:#fff;
-  padding: 12px;
+  padding: 10px;
+  margin-top: -10px;
 }
 
 .bold{
@@ -400,7 +449,11 @@ margin-top:26px;
 .entrycontainer{
   background-color: #eee;
   height:520px;
+}
 
+.ismonument{
+  background-color: #eee;
+  height:566px;
 }
 
 .unity{
