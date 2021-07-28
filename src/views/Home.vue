@@ -105,7 +105,7 @@ export default {
   name: 'Home',
   data: function () {
     return {
-      viewer_base_url: "http://localhost:8081",
+      viewer_base_url: "http://t3d.lab4242.nl/3d/",
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
