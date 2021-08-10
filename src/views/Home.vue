@@ -51,6 +51,10 @@
       <p class="gaverder">
           <b-button v-if="found_address" v-bind:href="bagurl" target="_blank" variant="danger">Ga verder</b-button>
       </p>
+
+      <div v-for="id in bagids">
+        {{id}}
+      </div>
       
       </div>
 
@@ -152,7 +156,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}`;
+      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.verblijfsobject_id}`;
     },      
     center: {
       get(){    
