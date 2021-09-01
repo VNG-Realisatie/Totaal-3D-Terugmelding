@@ -2,10 +2,15 @@
 
 <b-container class="bv-example-row" >
 
+  <b-dropdown id="dropdown-1" text="Laad adres" class="m-md-2">
+      <b-dropdown-item @click="laadAdres('138350.607_455582.274', '0344100000021804')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
+      <b-dropdown-item @click="laadAdres('137383.174_454037.042', '0344100000068320')">Hertestraat 15 Utrecht</b-dropdown-item>
+      <b-dropdown-item @click="laadAdres('137837.926_452307.472', '0344100000052214')">Catalonië 5 Utrecht</b-dropdown-item>
+  </b-dropdown>
+
 <div class="header">Uitbouw plaatsen</div>
 
   <b-row>
-
     <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
 
     <div class="formheader">Adresgegevens</div>
@@ -51,10 +56,6 @@
       <p class="gaverder">
           <b-button v-if="found_address" v-bind:href="bagurl" target="_blank" variant="danger">Ga verder</b-button>
       </p>
-
-      <div v-for="id in bagids">
-        {{id}}
-      </div>
       
       </div>
 
@@ -84,9 +85,6 @@
     </b-col>
     
   </b-row>
-
-
-
 </b-container>
 
 </template>
@@ -156,7 +154,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.verblijfsobject_id}`;
+      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}`;
     },      
     center: {
       get(){    
@@ -266,6 +264,9 @@ export default {
         return true;
       }
 
+    },
+    laadAdres: function(xy,id) {      
+      window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;      
     },
     getAddress: function(postcode, huisnummer){
 
