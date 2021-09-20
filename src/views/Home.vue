@@ -2,15 +2,18 @@
 
 <b-container class="bv-example-row" >
 
-  <b-dropdown id="dropdown-1" text="Laad adres" class="m-md-2">
-      <b-dropdown-item @click="laadAdres('138350.607_455582.274', '0344100000021804')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
-      <b-dropdown-item @click="laadAdres('137383.174_454037.042', '0344100000068320')">Hertestraat 15 Utrecht</b-dropdown-item>
-      <b-dropdown-item @click="laadAdres('137837.926_452307.472', '0344100000052214')">Catalonië 5 Utrecht</b-dropdown-item>
+  <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
+      <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
+      <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
+      <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
+      <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item>
   </b-dropdown>
+
+
 
 <div class="header">Uitbouw plaatsen</div>
 
-  <b-row>
+  <b-row v-if="step==1">
     <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
 
     <div class="formheader">Adresgegevens</div>
@@ -54,7 +57,7 @@
         </div>
 
       <p class="gaverder">
-          <b-button v-if="found_address" v-bind:href="bagurl" target="_blank" variant="danger">Ga verder</b-button>
+          <b-button v-if="found_address" @click="verder()" variant="danger">Ga verder</b-button>
       </p>
       
       </div>
@@ -62,8 +65,7 @@
     </b-col>
 
     <b-col>
-         <!-- <model-obj src="/3dmodels/bbox.obj"></model-obj> -->
-        
+       
           <l-map v-if="found_address"
                   style="height: 100%; width: 100%"
                   :zoom="zoom"
@@ -85,6 +87,37 @@
     </b-col>
     
   </b-row>
+
+  <b-row v-if="step==2">
+      <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
+      
+          <div class="formheader">Heeft u een bestand van een 3D model van de uitbouw?</div>
+          
+          <div class="formlines topmargin10">Om de vergunning te kunnen beoordelen hebben we een 3D tekening van de uitbouw nodig.</div>
+
+          <b-form-group class="alignleft topmargin20">
+            
+            <b-form-radio v-model="hasfile" name="some-radios" value="A">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
+
+              <div v-if="showfile" class="topmargin10 leftmargin20 file">Vansomeren_uitb...v.1.12.BIM</div>
+              
+              <b-button @click="browsefile()"  class="topmargin10 leftmargin20"  variant="primary">Browse bestand</b-button>
+
+
+            <b-form-radio v-model="hasfile" class="topmargin10" name="some-radios" value="B">Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
+          </b-form-group>
+
+        <p v-if="hasfile == 'B' || (hasfile == 'A' && showfile) " class="bekijk">
+          <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
+      </p>
+
+      </b-col>
+
+
+      
+
+  </b-row>
+
 </b-container>
 
 </template>
@@ -107,6 +140,7 @@ export default {
   name: 'Home',
   data: function () {
     return {
+      step: 1,
       viewer_base_url: "http://t3d.lab4242.nl/3d/",
       postcode: "",
       huisnummerinvoer: "",
@@ -134,7 +168,9 @@ export default {
       zoom: 19,
       bounds: null,
       polygon_rd: [],
-      kadastraleGrootteWaarde:0
+      kadastraleGrootteWaarde:0,
+      hasfile: "",
+      showfile:false      
 
     }
   },
@@ -265,11 +301,14 @@ export default {
       }
 
     },
-    laadAdres: function(xy,id) {      
+    laadAdresRedir: function(xy,id) {      
       window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;      
     },
+    laadAdres: function(postcode,nummer) {      
+      this.postcode = postcode;
+      this.huisnummerinvoer = nummer;
+    },
     getAddress: function(postcode, huisnummer){
-
 
       var regex = new RegExp('([0-9]+)|([a-zA-Z]+)','g');
       var splittedArray = huisnummer.match(regex);
@@ -373,6 +412,12 @@ export default {
     },
     boundsUpdated (bounds) {
       this.bounds = bounds;
+    },
+    verder(){
+      this.step = 2;
+    },
+    browsefile(){
+        this.showfile = true;        
     }
    
  },
@@ -395,11 +440,16 @@ a:visited, a:link {
 }
 
 .gaverder{
-
   position: absolute;
   bottom: -4px;
   right: 16px;
   right:22px;
+}
+
+.bekijk{
+  position: absolute;
+  bottom: 60px;
+  right: 100px;
 }
 
 .foundaddress_header{
@@ -468,4 +518,32 @@ margin-top:26px;
 .entryform{
   text-align: left;;
 }
+
+.alignleft{
+  text-align: left;
+}
+
+.topmargin10{
+  margin-top: 10px;
+}
+
+.topmargin20{
+  margin-top: 20px;;
+}
+
+.leftmargin10{
+  margin-left: 10px;
+}
+.leftmargin20{
+  margin-left: 20px;
+}
+
+.file{
+  border: 1px solid rgb(187, 187, 187);
+  width: 224px;
+  padding: 4px;
+  background-color: rgb(221, 221, 221);
+
+}
+
 </style>
