@@ -141,7 +141,7 @@ export default {
   data: function () {
     return {
       step: 1,
-      viewer_base_url: "http://t3d.lab4242.nl/3d/",
+      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net/3d/",
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
