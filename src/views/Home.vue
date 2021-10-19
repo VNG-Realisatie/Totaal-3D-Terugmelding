@@ -142,6 +142,7 @@ export default {
     return {
       step: 1,
       viewer_base_url: "https://opslagt3d.z6.web.core.windows.net/3d/",
+      //viewer_base_url: "http://localhost:8080/",
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
@@ -190,7 +191,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}`;
+      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}`;
     },      
     center: {
       get(){    
