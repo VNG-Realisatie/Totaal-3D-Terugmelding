@@ -97,17 +97,47 @@
 
           <b-form-group class="alignleft topmargin20">
             
-            <b-form-radio v-model="hasfile" name="some-radios" value="A">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
+          <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
 
-              <div v-if="showfile" class="topmargin10 leftmargin20 file">Vansomeren_uitb...v.1.12.BIM</div>
-              
-              <b-button @click="browsefile()"  class="topmargin10 leftmargin20"  variant="primary">Browse bestand</b-button>
+          <b-form-file 
+            class="topmargin20"
+            v-if="hasfile == 'BimMode' && bim.isUploading == false "
+            v-model="bim.file"
+            :state="Boolean(bim.file)"
+            placeholder="Kies een bestand of sleep het hierin...."
+            drop-placeholder="Zet het bestand hier neer...">
+          </b-form-file>
+          
+          <b-progress          
+            v-if="bim.isUploading"
+            variant="info" 
+            striped 
+            
+            height="40px"
+            :value="bim.progressValue" 
+             max="100" 
+             show-progress 
+             class="mb-3; topmargin20">
+          </b-progress>
+
+          <b-button 
+            v-if="bim.file != null && bim.isUploading == false"
+            class="topmargin20"
+            @click="uploadAndConvert()"  
+            variant="primary">Upload bestand</b-button>
 
 
-            <b-form-radio v-model="hasfile" class="topmargin10" name="some-radios" value="B">Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
-          </b-form-group>
+      <b-form-radio 
+        v-model="hasfile" 
+        class="topmargin20" 
+        name="some-radios" 
+        value="DrawMode">
+        Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
+      </b-form-group>
 
-        <p v-if="hasfile == 'B' || (hasfile == 'A' && showfile) " class="bekijk">
+
+
+        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded) " class="bekijk">
           <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
       </p>
 
@@ -125,6 +155,7 @@
 <script>
 // @ is an alias to /src
 import { ModelObj } from 'vue-3d-model'
+import axios from 'axios';
 
 import L from 'leaflet';
 import { LMap, 
@@ -171,7 +202,17 @@ export default {
       polygon_rd: [],
       kadastraleGrootteWaarde:0,
       hasfile: "",
-      showfile:false      
+      showfile:false,
+      bim:{
+        file:null,
+        progressValue:0,
+        isUploading:false,
+        isUploaded:false,
+        authToken: this.$route.query.auth,
+        organisationId: "6194fc20c0da463026d4d8fe",
+        projectId: "6194fc2ac0da463026d4d90e",  
+      }
+      
 
     }
   },
@@ -417,8 +458,57 @@ export default {
     verder(){
       this.step = 2;
     },
-    browsefile(){
-        this.showfile = true;        
+    uploadAndConvert(){
+        this.bim.isUploading = true;
+            
+        var dn = Date.now();
+
+        var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models`;
+        var body = JSON.stringify({ name: "Model-" + dn.toString() });
+        
+        const options = {
+            method: 'POST',
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${this.bim.authToken}`
+            },
+            data: body,
+            url
+        };
+        
+        axios(options)
+        .then(response => {            
+            //console.log(response.data._id);
+            this.addVersion(response.data._id);
+        });
+            
+        
+    },
+    addVersion(id){
+      //console.log(this.file);
+
+      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${id}/versions`;
+
+      var formdata=  new FormData();
+      formdata.append("version", this.bim.file, this.bim.file.name );
+
+      var requestOptions = {
+        method: "POST",
+        headers: {                        
+            "Authorization": `Bearer ${this.bim.authToken}`
+        },
+        onUploadProgress: uploadEvent =>{
+            this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
+            //console.log(  `Upload progress: ${this.progressValue}` );
+        }
+      };
+      
+      axios.post(url, formdata, requestOptions)                        
+      .then(response =>
+      {
+          console.log(response);
+          this.bim.isUploaded = true;
+      } );
     }
    
  },
@@ -546,5 +636,7 @@ margin-top:26px;
   background-color: rgb(221, 221, 221);
 
 }
+
+
 
 </style>
