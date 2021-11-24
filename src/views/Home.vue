@@ -10,7 +10,6 @@
   </b-dropdown>
 
 
-
 <div class="header">Uitbouw plaatsen</div>
 
   <b-row v-if="step==1">
@@ -99,7 +98,9 @@
             
           <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
 
-          <b-form-file 
+          <b-form-file   
+            @input="onFile"          
+            accept=".ifc"
             class="topmargin20"
             v-if="hasfile == 'BimMode' && bim.isUploading == false "
             v-model="bim.file"
@@ -126,6 +127,13 @@
             @click="uploadAndConvert()"  
             variant="primary">Upload bestand</b-button>
 
+      <div v-if="hasfile == 'BimMode' && bim.file == null" class="topmargin40" style="text-align:left">
+        <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
+        <b-list-group>
+          <b-list-group-item button @click="downloadModel('ASP9 - Bestaand - Nieuw.ifc')">ASP9 - Bestaand - Nieuw.ifc</b-list-group-item>
+          <b-list-group-item button @click="downloadModel('ASP9 - Nieuw.ifc')">ASP9 - Nieuw.ifc</b-list-group-item>            
+        </b-list-group>      
+      </div>
 
       <b-form-radio 
         v-model="hasfile" 
@@ -135,16 +143,11 @@
         Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
       </b-form-group>
 
-
-
-        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded) " class="bekijk">
+        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded) " class="bekijk">                  
           <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
       </p>
-
-      </b-col>
-
-
       
+      </b-col>
 
   </b-row>
 
@@ -211,8 +214,9 @@ export default {
         authToken: this.$route.query.auth,
         organisationId: "6194fc20c0da463026d4d8fe",
         projectId: "6194fc2ac0da463026d4d90e",  
-      }
-      
+        currentModelId:null,
+        currentVersionId:null
+      }      
 
     }
   },
@@ -232,7 +236,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}`;
+      return `${this.viewer_base_url}?auth=${this.bim.authToken}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
     },      
     center: {
       get(){    
@@ -477,8 +481,7 @@ export default {
         };
         
         axios(options)
-        .then(response => {            
-            //console.log(response.data._id);
+        .then(response => {                        
             this.addVersion(response.data._id);
         });
             
@@ -508,7 +511,22 @@ export default {
       {
           console.log(response);
           this.bim.isUploaded = true;
+          this.bim.currentModelId = id;
+          this.bim.currentVersionId = response.data.version
       } );
+    },
+    onFile(file){
+      var ext = file.name.split('.').pop().toLowerCase();
+      if(ext != "ifc"){
+        this.bim.file = null;        
+      }       
+    },
+    downloadModel(filename){
+      
+        const link = document.createElement('a');      
+        link.href = `https://opslagt3d.z6.web.core.windows.net/bim_modellen/${filename}`;
+        link.download = filename;        
+        link.click();      
     }
    
  },
@@ -620,6 +638,10 @@ margin-top:26px;
 
 .topmargin20{
   margin-top: 20px;;
+}
+
+.topmargin40{
+  margin-top: 40px;;
 }
 
 .leftmargin10{
