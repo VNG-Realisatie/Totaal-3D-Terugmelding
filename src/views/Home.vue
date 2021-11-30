@@ -2,161 +2,164 @@
 
 <b-container class="bv-example-row" >
 
-  <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
-      <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
-      <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
-      <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
-      <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item>
-  </b-dropdown>
+  <div v-if="$route.query.auth != null">
+    <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
+        <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item>
+    </b-dropdown>
 
+    <div class="header">Uitbouw plaatsen</div>
 
-<div class="header">Uitbouw plaatsen</div>
-
-  <b-row v-if="step==1">
-    <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
-
-    <div class="formheader">Adresgegevens</div>
-    <div class="formlines">Voer het adres in waar u de uitbouw wilt gaan plaatsen</div>
-
-      <div class="entryform">
-        <div class="formheader">Postcode</div>
-        <b-form-input class="forminput noselect" v-model="postcode" @keypress="checkPostcode($event)" :state="postcodeState"></b-form-input>
-      </div>
-
-      <div class="entryform">
-        <div class="formheader">Huisnummer + toevoeging</div>
-        <b-form-input class="forminput" v-model="huisnummerinvoer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
-      </div>
-
-      <div class="status">
-
-        <div v-if="notfound" class="formlines notfound">
-          <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
-          <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>
-        </div>
-
-        <div v-if="found_address" class="foundaddress formlines">
-          <div class="foundaddress_header">Dit is het gekozen adres:</div>
-          <div>{{street}} {{huisnummer}}{{huisletter}}</div>
-          <div>{{postcode}} {{city}}</div>          
-
-
-          <p></p>
-
-          <div v-if="found_address">
-            <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
-            <ul>
-              <li>Bouwjaar: {{bouwjaar}}</li>
-              <li>Perceeloppervlakte: {{kadastraleGrootteWaarde}}m&#178;</li>
-              <li v-if="ismonument">Het gebouw is een rijksmonument <a v-bind:href="monumentUrl">[pdf]</a></li>
-              <li v-if="isbeschermd">Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
-            </ul>
-          </div>
-
-        </div>
-
-      <p class="gaverder">
-          <b-button v-if="found_address" @click="verder()" variant="danger">Ga verder</b-button>
-      </p>
-      
-      </div>
-
-    </b-col>
-
-    <b-col>
-       
-          <l-map v-if="found_address"
-                  style="height: 100%; width: 100%"
-                  :zoom="zoom"
-                  :center="center"      
-                  @update:zoom="zoomUpdated"
-                  @update:center="centerUpdated"
-                  @update:bounds="boundsUpdated">
-                <l-tile-layer :url="url" :options="{ maxZoom: 19 }"></l-tile-layer>
-
-                <l-polygon
-                  :lat-lngs="polygon_wgs84"
-                  color="#28A745"
-                />
-
-          </l-map>
-        
-          <img v-else  class="unity" src="images/3dnetherlands_viewer.PNG" alt="">
-        
-    </b-col>
-    
-  </b-row>
-
-  <b-row v-if="step==2">
+    <b-row v-if="step==1">
       <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
-      
-          <div class="formheader">Heeft u een bestand van een 3D model van de uitbouw?</div>
-          
-          <div class="formlines topmargin10">Om de vergunning te kunnen beoordelen hebben we een 3D tekening van de uitbouw nodig.</div>
 
-          <b-form-group class="alignleft topmargin20">
-            
-          <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
+      <div class="formheader">Adresgegevens</div>
+      <div class="formlines">Voer het adres in waar u de uitbouw wilt gaan plaatsen</div>
 
-          <b-form-file   
-            @input="onFile"          
-            accept=".ifc"
-            class="topmargin20"
-            v-if="hasfile == 'BimMode' && bim.isUploading == false "
-            v-model="bim.file"
-            :state="Boolean(bim.file)"
-            placeholder="Kies een bestand of sleep het hierin...."
-            drop-placeholder="Zet het bestand hier neer...">
-          </b-form-file>
-          
-          <b-progress          
-            v-if="bim.isUploading"
-            variant="info" 
-            striped 
-            
-            height="40px"
-            :value="bim.progressValue" 
-             max="100" 
-             show-progress 
-             class="mb-3; topmargin20">
-          </b-progress>
+        <div class="entryform">
+          <div class="formheader">Postcode</div>
+          <b-form-input class="forminput noselect" v-model="postcode" @keypress="checkPostcode($event)" :state="postcodeState"></b-form-input>
+        </div>
 
+        <div class="entryform">
+          <div class="formheader">Huisnummer + toevoeging</div>
+          <b-form-input class="forminput" v-model="huisnummerinvoer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
+        </div>
 
-          <div v-if="bim.isUploaded">          
-              <span>Conversion status: {{bim.conversionStatus}}</span>
-              <BusyAnimation :isbusy="bim.conversionStatus !='DONE'"></BusyAnimation>          
+        <div class="status">
+
+          <div v-if="notfound" class="formlines notfound">
+            <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
+            <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>
           </div>
 
-          <b-button 
-            v-if="bim.file != null && bim.isUploading == false"
-            class="topmargin20"
-            @click="uploadAndConvert()"  
-            variant="primary">Upload bestand</b-button>
+          <div v-if="found_address" class="foundaddress formlines">
+            <div class="foundaddress_header">Dit is het gekozen adres:</div>
+            <div>{{street}} {{huisnummer}}{{huisletter}}</div>
+            <div>{{postcode}} {{city}}</div>          
 
 
-      <div v-if="hasfile == 'BimMode' && bim.file == null" class="topmargin40" style="text-align:left">
-        <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
-        <b-list-group>
-          <b-list-group-item button @click="downloadModel('ASP9 - Bestaand - Nieuw.ifc')">ASP9 - Bestaand - Nieuw.ifc</b-list-group-item>
-          <b-list-group-item button @click="downloadModel('ASP9 - Nieuw.ifc')">ASP9 - Nieuw.ifc</b-list-group-item>            
-        </b-list-group>      
-      </div>
+            <p></p>
 
-      <b-form-radio 
-        v-model="hasfile" 
-        class="topmargin20" 
-        name="some-radios" 
-        value="DrawMode">
-        Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
-      </b-form-group>
+            <div v-if="found_address">
+              <div class="foundaddress_header">Over dit adres hebben we de volgende gegevens gevonden:</div>
+              <ul>
+                <li>Bouwjaar: {{bouwjaar}}</li>
+                <li>Perceeloppervlakte: {{kadastraleGrootteWaarde}}m&#178;</li>
+                <li v-if="ismonument">Het gebouw is een rijksmonument <a v-bind:href="monumentUrl">[pdf]</a></li>
+                <li v-if="isbeschermd">Het gebouw ligt in een rijksbeschermd stads- of dorpsgezicht.</li>
+              </ul>
+            </div>
 
-        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
-          <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
+          </div>
+
+        <p class="gaverder">
+            <b-button v-if="found_address" @click="verder()" variant="danger">Ga verder</b-button>
         </p>
-      
+        
+        </div>
+
       </b-col>
 
-  </b-row>
+      <b-col>
+        
+            <l-map v-if="found_address"
+                    style="height: 100%; width: 100%"
+                    :zoom="zoom"
+                    :center="center"      
+                    @update:zoom="zoomUpdated"
+                    @update:center="centerUpdated"
+                    @update:bounds="boundsUpdated">
+                  <l-tile-layer :url="url" :options="{ maxZoom: 19 }"></l-tile-layer>
+
+                  <l-polygon
+                    :lat-lngs="polygon_wgs84"
+                    color="#28A745"
+                  />
+
+            </l-map>
+          
+            <img v-else  class="unity" src="images/3dnetherlands_viewer.PNG" alt="">
+          
+      </b-col>
+      
+    </b-row>
+
+    <b-row v-if="step==2">
+        <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
+        
+            <div class="formheader">Heeft u een bestand van een 3D model van de uitbouw?</div>
+            
+            <div class="formlines topmargin10">Om de vergunning te kunnen beoordelen hebben we een 3D tekening van de uitbouw nodig.</div>
+
+            <b-form-group class="alignleft topmargin20">
+              
+            <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
+
+            <b-form-file   
+              @input="onFile"          
+              accept=".ifc"
+              class="topmargin20"
+              v-if="hasfile == 'BimMode' && bim.isUploading == false "
+              v-model="bim.file"
+              :state="Boolean(bim.file)"
+              placeholder="Kies een bestand of sleep het hierin...."
+              drop-placeholder="Zet het bestand hier neer...">
+            </b-form-file>
+            
+            <b-progress          
+              v-if="bim.isUploading"
+              variant="info" 
+              striped 
+              
+              height="40px"
+              :value="bim.progressValue" 
+              max="100" 
+              show-progress 
+              class="mb-3; topmargin20">
+            </b-progress>
+
+
+            <div v-if="bim.isUploaded">          
+                <span>Conversie status: {{bim.conversionStatus}}</span>
+                <BusyAnimation :isbusy="bim.conversionStatus !='DONE'"></BusyAnimation>          
+            </div>
+
+            <b-button 
+              v-if="bim.file != null && bim.isUploading == false"
+              class="topmargin20"
+              @click="uploadAndConvert()"  
+              variant="primary">Upload bestand</b-button>
+
+
+        <div v-if="hasfile == 'BimMode' && bim.file == null" class="topmargin40" style="text-align:left">
+          <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
+          <b-list-group>
+            <b-list-group-item button @click="downloadModel('ASP9 - Bestaand - Nieuw.ifc')">ASP9 - Bestaand - Nieuw.ifc</b-list-group-item>
+            <b-list-group-item button @click="downloadModel('ASP9 - Nieuw.ifc')">ASP9 - Nieuw.ifc</b-list-group-item>            
+          </b-list-group>      
+        </div>
+
+        <b-form-radio 
+          v-model="hasfile" 
+          class="topmargin20" 
+          name="some-radios" 
+          value="DrawMode">
+          Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
+        </b-form-group>
+
+          <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
+            <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
+          </p>
+        
+        </b-col>
+
+    </b-row>
+</div>
+<div class="noaccess" v-else>Gebruik deze site met een link met een authentication token
+</div>
 
 </b-container>
 
@@ -598,6 +601,12 @@ export default {
 </script>
 
 <style scoped>
+
+.noaccess{
+  margin-top: 80px;
+  color:red;
+  font-size: 18px;;
+}
 
 a:visited, a:link {
   color: #fff;
