@@ -121,11 +121,18 @@
              class="mb-3; topmargin20">
           </b-progress>
 
+
+          <div v-if="bim.isUploaded">          
+              <span>Conversion status: {{bim.conversionStatus}}</span>
+              <BusyAnimation :isbusy="bim.conversionStatus !='DONE'"></BusyAnimation>          
+          </div>
+
           <b-button 
             v-if="bim.file != null && bim.isUploading == false"
             class="topmargin20"
             @click="uploadAndConvert()"  
             variant="primary">Upload bestand</b-button>
+
 
       <div v-if="hasfile == 'BimMode' && bim.file == null" class="topmargin40" style="text-align:left">
         <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
@@ -143,9 +150,9 @@
         Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
       </b-form-group>
 
-        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded) " class="bekijk">                  
+        <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
           <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
-      </p>
+        </p>
       
       </b-col>
 
@@ -156,6 +163,13 @@
 </template>
 
 <script>
+
+// import UUID from "vue-uuid";
+
+import { uuid } from 'vue-uuid'; // uuid object is also exported to things
+                                   // outside Vue instance.
+
+
 // @ is an alias to /src
 import { ModelObj } from 'vue-3d-model'
 import axios from 'axios';
@@ -169,11 +183,13 @@ import { LMap,
         } from 'vue2-leaflet';
 
 import rdToWgs84 from "rd-to-wgs84";
+import BusyAnimation from '../components/BusyAnimation.vue';
 
 export default {
   name: 'Home',
   data: function () {
     return {
+      sessionId:null,
       step: 1,
       viewer_base_url: "https://opslagt3d.z6.web.core.windows.net/3d/",
       //viewer_base_url: "http://localhost:8080/",
@@ -215,7 +231,8 @@ export default {
         organisationId: "6194fc20c0da463026d4d8fe",
         projectId: "6194fc2ac0da463026d4d90e",  
         currentModelId:null,
-        currentVersionId:null
+        currentVersionId:null,
+        conversionStatus:""
       }      
 
     }
@@ -236,7 +253,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?auth=${this.bim.authToken}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+      return `${this.viewer_base_url}?sessionId=${this.sessionId}&auth=${this.bim.authToken}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
     },      
     center: {
       get(){    
@@ -305,9 +322,16 @@ export default {
         this.getAddress(this.postcode, val);
     }
   },
-  created:function(){
+  created:function(){    
     this.viewer_image = this.viewer_default_image;
   },
+  mounted:function(){
+      if (!localStorage.sessionId) {
+        localStorage.sessionId = uuid.v1();
+      }
+      this.sessionId = localStorage.sessionId;
+  },
+
  methods: {
     checkPostcode: function(evt) {
       evt = (evt) ? evt : window.event;
@@ -490,7 +514,7 @@ export default {
     addVersion(id){
       //console.log(this.file);
 
-      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${id}/versions`;
+      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${id}/versions?cityjson=true`;
 
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -509,10 +533,40 @@ export default {
       axios.post(url, formdata, requestOptions)                        
       .then(response =>
       {
-          console.log(response);
+         // console.log(response);
           this.bim.isUploaded = true;
           this.bim.currentModelId = id;
-          this.bim.currentVersionId = response.data.version
+          this.bim.currentVersionId = response.data.version;
+
+          this.checkVersion(id, this.bim.currentVersionId);
+
+      } );
+    },
+    checkVersion(modelId, versionId){
+
+      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
+
+      var requestOptions = {
+        method: "GET",
+        headers: {                        
+            "Authorization": `Bearer ${this.bim.authToken}`
+        },
+        url:url
+      };
+      
+      axios(requestOptions)                        
+      .then(response =>
+      {
+          //console.log(response);
+          var status = response.data.conversions.cityjson;
+          this.bim.conversionStatus = status;
+          
+          if(status != "DONE"){
+            setTimeout(() => {
+              this.checkVersion(modelId, versionId);
+            }, 1000);
+          }
+
       } );
     },
     onFile(file){
@@ -537,7 +591,8 @@ export default {
     LTileLayer,
     LMarker,
     LPolygon,
-    LPolyline
+    LPolyline,
+    BusyAnimation
   }
 }
 </script>
