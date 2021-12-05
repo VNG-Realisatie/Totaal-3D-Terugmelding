@@ -491,7 +491,7 @@ export default {
       this.bim.isUploading = true;
 
       //var url = `http://10.0.0.5:7071/api/uploadbim/${this.bim.file.name}`;
-      var url = `http://t3dapi.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
+      var url = `https://t3dapi.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -517,7 +517,7 @@ export default {
 
       //var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
       //var url = `http://10.0.0.5:7071/api/getbimversionstatus/${this.bim.currentModelId}`;
-      var url = `http://t3dapi.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `https://t3dapi.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",        
