@@ -31,6 +31,11 @@
     </b-thead>
   </b-table-simple>
 
+
+  <b-button @click="addBim()"  variant="primary">Add bim</b-button>
+  <b-button @click="blobTest()"  variant="primary">Blob test</b-button>
+    <b-button @click="testBimApi()"  variant="primary">Test Bim API</b-button>
+
     <div class="margintop100">
 
     <!-- Plain mode -->
@@ -226,6 +231,63 @@ export default {
                 this.getmodels();           
             } );
         },
+        addBim(){
+            //console.log(this.file);
+
+            var url = `http://10.0.0.5:7071/api/uploadbim/${this.file.name}`;
+            //var url = "https://t3dapi.azurewebsites.net/api/uploadbim/testupload";
+
+            var formdata=  new FormData();
+            formdata.append("version", this.file, this.file.name );
+
+            var requestOptions = {
+            method: "PUT",
+            // headers: {                        
+            //     "Authorization": `Bearer ${this.authToken}`
+            // },
+            onUploadProgress: uploadEvent =>{
+                this.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
+                console.log(  `Upload progress: ${this.progressValue}` );
+            }
+            };
+            
+            axios.put(url, formdata, requestOptions)                        
+            .then(response =>
+            {
+                console.log(response);
+                
+            } );
+        },
+        testBimApi(){
+            var url = `http://localhost:7071/api/uploadbim`;
+            axios.get(url)
+            .then(response =>
+            {
+                console.log(response);                
+            } );
+        },
+        blobTest(){
+            //console.log(this.file);
+
+            var url = `http://localhost:7071/api/upload/blobtest`;
+
+            var requestOptions = {
+                method: "PUT",                
+                headers: {                 
+                    'Content-Type' : 'application/octet-stream',
+                },
+                data: "test body",
+                url: url
+            };
+            
+            
+            axios(requestOptions )
+            .then(response =>
+            {
+                console.log(response);                
+            } );
+        },
+
         getCityJSON(id, versions){
             var latest = versions[versions.length-1];
 

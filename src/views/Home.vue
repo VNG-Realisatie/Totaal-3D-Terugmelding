@@ -2,7 +2,7 @@
 
 <b-container class="bv-example-row" >
 
-  <div v-if="$route.query.auth != null">
+  <div>
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
         <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
@@ -130,7 +130,7 @@
             <b-button 
               v-if="bim.file != null && bim.isUploading == false"
               class="topmargin20"
-              @click="uploadAndConvert()"  
+              @click="addBim()"  
               variant="primary">Upload bestand</b-button>
 
 
@@ -158,8 +158,7 @@
 
     </b-row>
 </div>
-<div class="noaccess" v-else>Gebruik deze site met een link met een authentication token
-</div>
+
 
 </b-container>
 
@@ -489,71 +488,43 @@ export default {
     verder(){
       this.step = 2;
     },
-    uploadAndConvert(){
-        this.bim.isUploading = true;
-            
-        var dn = Date.now();
+    addBim(){
+      this.bim.isUploading = true;
 
-        var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models`;
-        var body = JSON.stringify({ name: "Model-" + dn.toString() });
-        
-        const options = {
-            method: 'POST',
-            headers: { 
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${this.bim.authToken}`
-            },
-            data: body,
-            url
-        };
-        
-        axios(options)
-        .then(response => {                        
-            this.addVersion(response.data._id);
-        });
-            
-        
-    },
-    addVersion(id){
-      //console.log(this.file);
-
-      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${id}/versions?cityjson=true`;
-
+      //var url = `http://10.0.0.5:7071/api/uploadbim/${this.bim.file.name}`;
+      var url = `http://t3dapi.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
+      
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
 
       var requestOptions = {
-        method: "POST",
-        headers: {                        
-            "Authorization": `Bearer ${this.bim.authToken}`
-        },
-        onUploadProgress: uploadEvent =>{
-            this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
-            //console.log(  `Upload progress: ${this.progressValue}` );
-        }
+      method: "PUT",
+      onUploadProgress: uploadEvent =>{
+          this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
+          console.log(  `Upload progress: ${this.bim.progressValue}` );
+      }
       };
       
-      axios.post(url, formdata, requestOptions)                        
+      axios.put(url, formdata, requestOptions)                        
       .then(response =>
-      {
-         // console.log(response);
-          this.bim.isUploaded = true;
-          this.bim.currentModelId = id;
-          this.bim.currentVersionId = response.data.version;
-
-          this.checkVersion(id, this.bim.currentVersionId);
-
+      {                
+          this.bim.isUploaded = true;                
+          this.bim.currentModelId = response.data.modelId;                
+          this.bim.currentVersionId = 1;
+          this.checkVersion(this.bim.currentModelId, this.bim.currentVersionId);
       } );
     },
     checkVersion(modelId, versionId){
 
-      var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
+      //var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
+      //var url = `http://10.0.0.5:7071/api/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `http://t3dapi.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",
-        headers: {                        
-            "Authorization": `Bearer ${this.bim.authToken}`
-        },
+        // headers: {                        
+        //     "Authorization": `Bearer ${this.bim.authToken}`
+        // },
         url:url
       };
       
@@ -722,7 +693,4 @@ margin-top:26px;
   background-color: rgb(221, 221, 221);
 
 }
-
-
-
 </style>
