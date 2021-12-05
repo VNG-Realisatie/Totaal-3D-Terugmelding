@@ -228,8 +228,7 @@ export default {
         file:null,
         progressValue:0,
         isUploading:false,
-        isUploaded:false,
-        authToken: this.$route.query.auth,
+        isUploaded:false,        
         organisationId: "6194fc20c0da463026d4d8fe",
         projectId: "6194fc2ac0da463026d4d90e",  
         currentModelId:null,
@@ -255,7 +254,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?sessionId=${this.sessionId}&auth=${this.bim.authToken}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+      return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
     },      
     center: {
       get(){    
@@ -521,17 +520,13 @@ export default {
       var url = `http://t3dapi.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
-        method: "GET",
-        // headers: {                        
-        //     "Authorization": `Bearer ${this.bim.authToken}`
-        // },
+        method: "GET",        
         url:url
       };
       
       axios(requestOptions)                        
       .then(response =>
-      {
-          //console.log(response);
+      {          
           var status = response.data.conversions.cityjson;
           this.bim.conversionStatus = status;
           
