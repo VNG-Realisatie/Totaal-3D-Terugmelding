@@ -222,8 +222,7 @@ export default {
       bounds: null,
       polygon_rd: [],
       kadastraleGrootteWaarde:0,
-      hasfile: "",
-      showfile:false,
+      hasfile: "",      
       bim:{
         file:null,
         progressValue:0,
@@ -254,7 +253,7 @@ export default {
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
     bagurl: function(){
-      return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'A' && this.showfile}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+      return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
     },      
     center: {
       get(){    
