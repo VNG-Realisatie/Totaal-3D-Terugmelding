@@ -100,7 +100,7 @@
 
             <b-form-file   
               @input="onFile"          
-              accept=".ifc"
+              accept=".ifc,.skp"
               class="topmargin20"
               v-if="hasfile == 'BimMode' && bim.isUploading == false "
               v-model="bim.file"
@@ -151,7 +151,7 @@
         </b-form-group>
 
           <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
-            <b-button  v-bind:href="bagurl" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
+            <b-button  v-bind:href="url3d" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
           </p>
         
         </b-col>
@@ -232,7 +232,8 @@ export default {
         projectId: "6194fc2ac0da463026d4d90e",  
         currentModelId:null,
         currentVersionId:null,
-        conversionStatus:""
+        conversionStatus:"",
+        blobId:null
       }      
 
     }
@@ -252,8 +253,16 @@ export default {
     not_found_address: function(){
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
     },
-    bagurl: function(){
-      return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+    url3d: function(){
+
+        if(this.bim.blobId != null){
+          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&blobId=${this.bim.blobId}`;    
+        }
+        else{
+          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+        }
+
+
     },      
     center: {
       get(){    
@@ -489,7 +498,7 @@ export default {
     addBim(){
       this.bim.isUploading = true;
 
-      //var url = `http://10.0.0.5:7071/api/uploadbim/${this.bim.file.name}`;
+      //var url = `http://localhost:7071/api/uploadbim/${this.bim.file.name}`;
       var url = `https://t3dapi.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
@@ -499,17 +508,31 @@ export default {
       method: "PUT",
       onUploadProgress: uploadEvent =>{
           this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
+          
+          this.bim.isUploaded = this.bim.progressValue == 100;
+
           console.log(  `Upload progress: ${this.bim.progressValue}` );
       }
       };
       
       axios.put(url, formdata, requestOptions)                        
       .then(response =>
-      {                
-          this.bim.isUploaded = true;                
-          this.bim.currentModelId = response.data.modelId;                
-          this.bim.currentVersionId = 1;
-          this.checkVersion(this.bim.currentModelId, this.bim.currentVersionId);
+      {      
+        
+        console.log(response);
+           this.bim.isUploaded = true;
+           
+           if(response.data.blobId != null){
+             this.bim.blobId = response.data.blobId;
+             this.bim.conversionStatus = "DONE";
+           }
+           else{
+            this.bim.currentModelId = response.data.modelId;                
+            this.bim.currentVersionId = 1;
+            this.checkVersion(this.bim.currentModelId, this.bim.currentVersionId);
+           }
+
+          
       } );
     },
     checkVersion(modelId, versionId){
@@ -539,7 +562,8 @@ export default {
     },
     onFile(file){
       var ext = file.name.split('.').pop().toLowerCase();
-      if(ext != "ifc"){
+     
+      if(ext != "ifc" && ext != "skp"){
         this.bim.file = null;        
       }       
     },
