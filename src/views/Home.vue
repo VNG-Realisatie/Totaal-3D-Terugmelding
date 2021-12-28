@@ -256,10 +256,10 @@ export default {
     url3d: function(){
 
         if(this.bim.blobId != null){
-          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&blobId=${this.bim.blobId}`;    
+          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&blobId=${this.bim.blobId}&iseditmode=true`;    
         }
         else{
-          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}true`;
         }
 
 
