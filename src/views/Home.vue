@@ -134,7 +134,7 @@
               variant="primary">Upload bestand</b-button>
 
 
-        <div v-if="hasfile == 'BimMode' && bim.file == null" class="topmargin40" style="text-align:left">
+        <div v-if="isBimMode && bim.file == null" class="topmargin40" style="text-align:left">
           <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
           <b-list-group>
             <b-list-group-item button @click="downloadModel('ASP9 - Bestaand - Nieuw.ifc')">ASP9 - Bestaand - Nieuw.ifc</b-list-group-item>
@@ -150,8 +150,8 @@
           Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
         </b-form-group>
 
-          <p v-if="hasfile == 'DrawMode' || (hasfile == 'BimMode' && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
-            <b-button  v-bind:href="url3d" target="_blank" variant="danger">Bekijk de uitbouw in de 3D omgeving</b-button>
+          <p v-if="hasfile == 'DrawMode' || (isBimMode && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
+            <b-button  v-bind:href="url3d" target="_blank" variant="danger">{{gaverderTekst}}</b-button>
           </p>
         
         </b-col>
@@ -239,6 +239,13 @@ export default {
     }
   },
   computed:{
+    gaverderTekst:function(){
+      if(this.isBimMode) return "Bekijk de uitbouw in de 3D omgeving";
+      else return "Start ontwerp uitbouw in 3D omgeving";
+    },
+    isBimMode:function(){
+      return this.hasfile == 'BimMode';
+    },
     postcodeState:function(){
         if(this.postcode.length != 6) return null;        
         return true;
@@ -255,14 +262,15 @@ export default {
     },
     url3d: function(){
 
-        if(this.bim.blobId != null){
-          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&blobId=${this.bim.blobId}`;    
+        if(this.isBimMode){
+          if(this.bim.blobId != null){
+            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&blobId=${this.bim.blobId}`;    
+          }
+          else{
+            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+          }
         }
-        else{
-          return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=${this.hasfile == 'BimMode'}&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
-        }
-
-
+        else return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=false`; 
     },      
     center: {
       get(){    
