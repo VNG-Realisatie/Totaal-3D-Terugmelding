@@ -87,7 +87,7 @@ export default {
 
         },
         getFeedbackUrl(feedbackFileName){            
-            return `https://opslagt3d.z6.web.core.windows.net/3d/?sessionId=${feedbackFileName}&isuserfeedback=true`;
+            return `https://opslagt3d.z6.web.core.windows.net/3d/?sessionId=${feedbackFileName}&isuserfeedback=true&iseditmode=false`;
         },
         getFeedbackDetailUrl(feedbackFileName){
             return `#/userfeedback/${feedbackFileName}`;            

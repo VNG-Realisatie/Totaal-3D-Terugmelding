@@ -264,13 +264,13 @@ export default {
 
         if(this.isBimMode){
           if(this.bim.blobId != null){
-            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&blobId=${this.bim.blobId}`;    
+            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&blobId=${this.bim.blobId}&iseditmode=true`;
           }
           else{
-            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}`;
+            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}&iseditmode=true`;
           }
         }
-        else return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=false`; 
+        else return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=false&iseditmode=true`; 
     },      
     center: {
       get(){    
