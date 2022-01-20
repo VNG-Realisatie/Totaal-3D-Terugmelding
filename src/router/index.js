@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Vergunningschecker from '../views/Vergunningschecker.vue'
 import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
 import UserFeedBackList from '../views/UserFeedBackList.vue'
@@ -12,6 +13,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/vergunningschecker',
+    name: 'VergunningsChecker',
+    component: Vergunningschecker
   },
   {
     path: '/bim',
@@ -31,7 +37,10 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes
+  routes,
+  scrollBehavior() {
+    document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+}
 })
 
 export default router

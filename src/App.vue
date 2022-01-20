@@ -41,6 +41,60 @@
 
 <style>
 
+@font-face {
+  font-family: "AvenirBold";
+  src: local("AvenirBold"),
+   url(./fonts/avenir/AvenirNextLTPro-Bold.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirDemi";
+  src: local("AvenirDemi"),
+   url(./fonts/avenir/AvenirNextLTPro-Demi.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirHeavy";
+  src: local("AvenirHeavy"),
+   url(./fonts/avenir/AvenirNextLTPro-Heavy.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirIt";
+  src: local("AvenirIt"),
+   url(./fonts/avenir/AvenirNextLTPro-It.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirLight";
+  src: local("AvenirLight"),
+   url(./fonts/avenir/AvenirNextLTPro-Light.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirMedium";
+  src: local("AvenirMedium"),
+   url(./fonts/avenir/AvenirNextLTPro-Medium.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirRegular";
+  src: local("AvenirRegular"),
+   url(./fonts/avenir/AvenirNextLTPro-Regular.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirThin";
+  src: local("AvenirThin"),
+   url(./fonts/avenir/AvenirNextLTPro-Thin.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "AvenirUltLt";
+  src: local("AvenirUltLt"),
+   url(./fonts/avenir/AvenirNextLTPro-UltLt.ttf) format("truetype");
+}
+
 #footer{
   margin-top:100px;
   background: #777;
