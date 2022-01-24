@@ -1,0 +1,42 @@
+[
+    {
+        "name":"Bart Burkhardt",
+        "title": "Unity Developer, Front-end developer",
+        "image":"images/team/bart.png"
+    },
+    {
+        "name":"Tom Simons",
+        "title": "Unity Developer, Front-end developer",
+        "image":"images/team/tom.png"
+    },
+    {
+        "name":"Iris Wilbrink",
+        "title": "Product Owner, UX/UI designer",
+        "image":"images/team/iris.png"
+    },
+    {
+        "name":"Robert-Jan van Diepen",
+        "title": "UX Rearcher",
+        "image":"images/team/rj.png"
+    },
+    {
+        "name":"Steven Fruijtier",
+        "title": "Back-end developer, API",
+        "image":"images/team/steven.png"
+    },
+    {
+        "name":"Bastiaan du Pon",
+        "title": "Back-end developer, API",
+        "image":"images/team/bastiaan.png"
+    },
+    {
+        "name":"Alex Peters",
+        "title": "Projectleider, Scrum Master",
+        "image":"images/team/alex.png"
+    },
+    {
+        "name":"Wietse Balster",
+        "title": "Business Owner",
+        "image":"images/team/wietse.png"
+    }
+]
