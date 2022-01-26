@@ -62,7 +62,7 @@ Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlenin
       <h2>Contact</h2>
       <strong>Alex Peters</strong>
       <div>Projectleider T3D</div>
-      <div class="email">alex@.peters@amsterdam.nl</div>
+      <div class="email">alex.peters@amsterdam.nl</div>
     </b-col>
   </b-row>
 
@@ -132,8 +132,6 @@ p{
 .buttons{
  background-color: #ff9100;
  padding: 40px;
-
-
 }
 
 .linkcard{
@@ -166,7 +164,7 @@ p{
 
 .button-link{
   margin-top:40px;
-  background-color: royalblue;
+  background-color: #01489A;
 }
 
 

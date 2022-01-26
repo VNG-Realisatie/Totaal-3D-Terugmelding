@@ -151,7 +151,7 @@
         </b-form-group>
 
           <p v-if="hasfile == 'DrawMode' || (isBimMode && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
-            <b-button  v-bind:href="url3d" target="_blank" variant="danger">{{gaverderTekst}}</b-button>
+            <b-button @click="SaveSession()" v-bind:href="url3d" target="_blank" variant="danger">{{gaverderTekst}}</b-button>
           </p>
         
         </b-col>
@@ -159,12 +159,16 @@
     </b-row>
 </div>
 
+<!-- <button @click="SaveSession()">Save session</button> -->
 
 </b-container>
 
 </template>
 
 <script>
+
+import Session from '@/assets/session.json'
+import Months from '@/assets/months.json'
 
 // import UUID from "vue-uuid";
 
@@ -581,8 +585,40 @@ export default {
         link.href = `https://opslagt3d.z6.web.core.windows.net/bim_modellen/${filename}`;
         link.download = filename;        
         link.click();      
-    }
-   
+    },
+    SaveSession(){
+
+        var date = new Date();
+        var month = Months[date.getMonth()];
+
+        Session.session_id = this.sessionId;
+        Session.street = this.street;
+        Session.city = this.city;
+        Session.huisnummer = this.huisnummer;
+        Session.postcode = this.postcode;
+        Session.hasfile = this.hasfile != "DrawMode";
+        Session.rd_position_x = this.bagcoordinates[0];
+        Session.rd_position_y = this.bagcoordinates[1];
+        Session.bag_id = this.bagids[0];
+        Session.blob_id = this.bim.blobId;
+        Session.model_id = this.bim.currentModelId;
+        Session.model_version_id = this.bim.currentVersionId;
+        Session.date = `${date.getDate()} ${month} ${date.getFullYear()}`;
+
+      //var url = `http://localhost:7071/api/upload/${Session.session_id}_html`;
+      var url = `https://t3dapi.azurewebsites.net/api/upload/${Session.session_id}_html`;
+      
+      var requestOptions = {
+                method: "PUT",
+                 body: JSON.stringify(Session)
+            };            
+            fetch(url, requestOptions)    
+            .then(response => response.text())        
+            .then(data =>
+            {     
+              console.log(data);                
+            } );
+    }   
  },
 
   components: {    

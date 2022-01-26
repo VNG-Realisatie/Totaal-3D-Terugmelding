@@ -4,21 +4,21 @@
     <div>
       <b-navbar toggleable="lg" >
         <b-navbar-brand href="#">   
-        <img id="logo" alt="logo" src="images/amsterdam_logo.png">    
+        <img id="logo" alt="logo" src="images/amsterdam_logo.png">
+        
         </b-navbar-brand>
 
         <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
 
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav>
-
+          <b-navbar-nav class="header">Totaal 3D Amsterdam - Vergunningen
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
 
-            <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
-            <b-nav-item href="#">English site</b-nav-item>
+            <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
+            <b-nav-item href="#">English site</b-nav-item> -->
 
             <!-- <router-link to="/">Mijn Amsterdam</router-link> |
             <router-link to="/about">English site</router-link> -->
@@ -32,9 +32,24 @@
    
     <router-view/>
 
-    <div id="footer">
-      <img src="images/footer.png" alt="">
-    </div>
+
+
+<div id="footer">
+
+<b-container>
+    <div class="title">Disclaimer projectwebsite Programma T3D</div>
+      
+        <div>Deze website verwijst naar twee technische proefopstellingen.</div>
+        <div>Aan de inhoud kunnen geen rechten worden ontleend.</div>
+        <div>Deze technische demo is enkel ontwikkeld om de haalbaarheid te toetsen.</div>
+      
+      <!-- <img src="images/footer.png" alt=""> -->
+</b-container>
+
+</div>
+  
+
+    
 
   </div>
 </template>
@@ -95,32 +110,41 @@
    url(./fonts/avenir/AvenirNextLTPro-UltLt.ttf) format("truetype");
 }
 
+.header{
+  font-family: AvenirBold;
+  font-size: 20px;
+}
+
 #footer{
   margin-top:100px;
   background: #777;
-    height:330px;
-padding: 30px;
+  height:200px;
+  padding: 30px;
+  color:#fff;
+  text-align: left;
 }
 
 #logo{
   margin-top:-10px;
+  width: 80px;
+  padding-top: 20px;
 }
 
 hr {
-  margin-top:-30px;
+  margin-top:2px;
   border: 0;  
   background-color: #eee;
-  height: 40px;
+  height: 1px;
 }
 
 
 #app {
   /* font-family: Avenir, Helvetica, Arial, sans-serif; */
-  font-family: Arial, sans-serif;
+  font-family: AvenirLight;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  /* color: #2c3e50; */
 }
 
 #nav {
@@ -134,5 +158,11 @@ hr {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.title{
+  font-family: AvenirBold;  
+  padding-bottom: 20px;
+  font-size: 18px !important;
 }
 </style>

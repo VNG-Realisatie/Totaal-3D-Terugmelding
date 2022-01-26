@@ -1,0 +1,15 @@
+{
+    "session_id":"",
+    "street": "",
+    "city":"",
+    "huisnummer": "",
+    "postcode": "",
+    "hasfile": false,
+    "rd_position_x":0,
+    "rd_position_y":0,
+    "bag_id":"",
+    "blob_id":"",
+    "model_id":"",
+    "model_version_id":"",
+    "date": null
+}
