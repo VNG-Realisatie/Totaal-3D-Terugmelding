@@ -3,29 +3,23 @@
 
     <div>
       <b-navbar toggleable="lg" >
-        <b-navbar-brand href="#">   
-        <img id="logo" alt="logo" src="images/amsterdam_logo.png">
-        
+        <b-navbar-brand href="#">            
+          <router-link to="/"><img id="logo" src="images/amsterdam_logo.png"/></router-link>        
         </b-navbar-brand>
 
         <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
 
         <b-collapse id="nav-collapse" is-nav>
-          <b-navbar-nav class="header">Totaal 3D Amsterdam - Vergunningen
-          </b-navbar-nav>
+          <b-navbar-nav class="header">{{$route.name}}</b-navbar-nav>
 
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-
-            <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
-            <b-nav-item href="#">English site</b-nav-item> -->
-
-            <!-- <router-link to="/">Mijn Amsterdam</router-link> |
-            <router-link to="/about">English site</router-link> -->
-
+            <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item> -->
+            <!-- <router-link to="/">Login</router-link>  -->
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
+
     </div>
 
     <hr>
@@ -126,7 +120,7 @@
 
 #logo{
   margin-top:-10px;
-  width: 80px;
+  width: 120px;
   padding-top: 20px;
 }
 
@@ -136,7 +130,6 @@ hr {
   background-color: #eee;
   height: 1px;
 }
-
 
 #app {
   /* font-family: Avenir, Helvetica, Arial, sans-serif; */

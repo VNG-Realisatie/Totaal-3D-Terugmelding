@@ -597,14 +597,31 @@ export default {
         Session.huisnummer = this.huisnummer;
         Session.postcode = this.postcode;
         Session.hasfile = this.hasfile != "DrawMode";
-        Session.rd_position_x = this.bagcoordinates[0];
-        Session.rd_position_y = this.bagcoordinates[1];
+        Session["rd_position.x"] = this.bagcoordinates[0];
+        Session["rd_position.y"] = this.bagcoordinates[1];
         Session.bag_id = this.bagids[0];
         Session.blob_id = this.bim.blobId;
         Session.model_id = this.bim.currentModelId;
         Session.model_version_id = this.bim.currentVersionId;
-        Session.date = `${date.getDate()} ${month} ${date.getFullYear()}`;
+        Session.date = `${date.getDate()} ${month} ${date.getFullYear()}`;    
+        
+        var requestOptions = {
+            method: "GET"       
+        };
 
+      if (!localStorage.session) {
+        localStorage.session = JSON.stringify(Session);
+      }
+      
+      var session = JSON.parse(localStorage.session);
+      
+      if(session.bag_id != Session.bag_id){        
+              Session.load_previous_session = false;              
+      }
+      this.UpdateSession();       
+
+    },
+    UpdateSession(){
       //var url = `http://localhost:7071/api/upload/${Session.session_id}_html`;
       var url = `https://t3dapi.azurewebsites.net/api/upload/${Session.session_id}_html`;
       
@@ -618,7 +635,7 @@ export default {
             {     
               console.log(data);                
             } );
-    }   
+    } 
  },
 
   components: {    

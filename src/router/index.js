@@ -12,12 +12,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'Totaal 3D Amsterdam - Vergunningen',
     component: Home
   },
   {
     path: '/vergunningschecker',
-    name: 'VergunningsChecker',
+    name: 'Vergunningschecker',
     component: Vergunningschecker
   },
   {
