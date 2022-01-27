@@ -2,13 +2,12 @@
 
 <b-container class="content">
 
-  <div class="aanvragen" v-for="item in aanvragen" v-bind:key="item.session_id">
+  <div class="aanvragen" v-for="item in aanvragen" v-bind:key="item.$_session_id">
 
     <img src="images/icoon_externe_link.png" class="linkimg" alt="">
 
-    <span @click="opensession(item.session_id)">Aanvraag omgevingsvergunning {{item.street}} {{item.huisnummer}}, {{item.postcode}} {{item.city}} </span>
-    <!-- <span @click="getsession(item.session_id)">Aanvraag omgevingsvergunning {{item.street}} {{item.huisnummer}}, {{item.postcode}} {{item.city}} </span> -->
-    <div class="datum">{{item.date}}</div>
+    <span @click="opensession(item.$_session_id)">Aanvraag omgevingsvergunning {{item.$_street}} {{item.$_huisnummer}}, {{item.$_postcode}} {{item.$_city}} </span>    
+    <div class="datum">{{item.$_date}}</div>
   </div>
 
 </b-container>

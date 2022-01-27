@@ -591,19 +591,19 @@ export default {
         var date = new Date();
         var month = Months[date.getMonth()];
 
-        Session.session_id = this.sessionId;
-        Session.street = this.street;
-        Session.city = this.city;
-        Session.huisnummer = this.huisnummer;
-        Session.postcode = this.postcode;
-        Session.hasfile = this.hasfile != "DrawMode";
-        Session["rd_position.x"] = this.bagcoordinates[0];
-        Session["rd_position.y"] = this.bagcoordinates[1];
-        Session.bag_id = this.bagids[0];
-        Session.blob_id = this.bim.blobId;
-        Session.model_id = this.bim.currentModelId;
-        Session.model_version_id = this.bim.currentVersionId;
-        Session.date = `${date.getDate()} ${month} ${date.getFullYear()}`;    
+        Session.$_session_id = this.sessionId;
+        Session.$_street = this.street;
+        Session.$_city = this.city;
+        Session.$_huisnummer = this.huisnummer;
+        Session.$_postcode = this.postcode;
+        Session.$_hasfile = this.hasfile != "DrawMode";
+        Session["$_rd_position.x"] = this.bagcoordinates[0];
+        Session["$_rd_position.y"] = this.bagcoordinates[1];
+        Session.$_bag_id = this.bagids[0];
+        Session.$_blob_id = this.bim.blobId;
+        Session.$_model_id = this.bim.currentModelId;
+        Session.$_model_version_id = this.bim.currentVersionId;
+        Session.$_date = `${date.getDate()} ${month} ${date.getFullYear()}`;    
         
         var requestOptions = {
             method: "GET"       
@@ -615,15 +615,15 @@ export default {
       
       var session = JSON.parse(localStorage.session);
       
-      if(session.bag_id != Session.bag_id){        
-              Session.load_previous_session = false;              
+      if(session.$_bag_id != Session.$_bag_id){        
+              Session.$_load_previous_session = false;              
       }
       this.UpdateSession();       
 
     },
     UpdateSession(){
       //var url = `http://localhost:7071/api/upload/${Session.session_id}_html`;
-      var url = `https://t3dapi.azurewebsites.net/api/upload/${Session.session_id}_html`;
+      var url = `https://t3dapi.azurewebsites.net/api/upload/${Session.$_session_id}_html`;
       
       var requestOptions = {
                 method: "PUT",
