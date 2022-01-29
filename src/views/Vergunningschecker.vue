@@ -151,15 +151,13 @@
         </b-form-group>
 
           <p v-if="hasfile == 'DrawMode' || (isBimMode && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
-            <b-button @click="SaveSession()" v-bind:href="url3d" target="_blank" variant="danger">{{gaverderTekst}}</b-button>
+            <b-button @click="SaveSession()" variant="danger">{{gaverderTekst}}</b-button>
           </p>
         
         </b-col>
 
     </b-row>
 </div>
-
-<!-- <button @click="SaveSession()">Save session</button> -->
 
 </b-container>
 
@@ -263,19 +261,7 @@ export default {
     },
     not_found_address: function(){
         return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
-    },
-    url3d: function(){
-
-        if(this.isBimMode){
-          if(this.bim.blobId != null){
-            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&blobId=${this.bim.blobId}&iseditmode=true`;
-          }
-          else{
-            return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=true&modelId=${this.bim.currentModelId}&versionId=${this.bim.currentVersionId}&iseditmode=true`;
-          }
-        }
-        else return `${this.viewer_base_url}?sessionId=${this.sessionId}&position=${this.bagcoordinates[0]}_${this.bagcoordinates[1]}&id=${this.bagids[0]}&hasfile=false&iseditmode=true`; 
-    },      
+    },  
     center: {
       get(){    
         if(this.bagcoordinates.length == 0 ){
@@ -393,7 +379,7 @@ export default {
 
     },
     laadAdresRedir: function(xy,id) {      
-      window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;      
+      window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
       this.postcode = postcode;
@@ -612,13 +598,24 @@ export default {
       if (!localStorage.session) {
         localStorage.session = JSON.stringify(Session);
       }
-      
-      var session = JSON.parse(localStorage.session);
-      
-      if(session.$_bag_id != Session.$_bag_id){        
-              Session.$_load_previous_session = false;              
+      else{
+        //vorige sessie ophalen en controleren of bad anders is
+        var session = JSON.parse(localStorage.session);      
+        if(session.$_bag_id != Session.$_bag_id){
+            //nieuw adres gedetecteerd, we maken een nieuwe sessie_id en deleten de oude
+            this.deleteSession(`${localStorage.sessionId}_html.json`);
+            localStorage.sessionId = uuid.v1();
+            this. session_id = localStorage.sessionId;
+            Session.$_session_id = localStorage.sessionId;
+        }
+        //updaten session object lokaal
+        localStorage.session = JSON.stringify(Session);
       }
-      this.UpdateSession();       
+
+      //update session server
+      this.UpdateSession();
+      
+      window.location.href = `${this.viewer_base_url}?sessionId=${Session.$_session_id}`;
 
     },
     UpdateSession(){
@@ -635,7 +632,23 @@ export default {
             {     
               console.log(data);                
             } );
-    } 
+    },
+    deleteSession(filename){
+            var requestOptions = {
+                method: "DELETE",
+                headers: { 
+                    "Content-Type": "application/json",                
+                }            
+            };
+
+            fetch(`https://t3dapi.azurewebsites.net/api/session/${filename}`, requestOptions)
+            //fetch(`http://localhost:7071/api/userfeedback/${filename}`, requestOptions)            
+            .then(data =>
+            {                
+                console.log("deleted session");
+            } );
+
+        },
  },
 
   components: {    
