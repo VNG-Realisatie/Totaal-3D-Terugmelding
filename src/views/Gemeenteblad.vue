@@ -2,13 +2,21 @@
 
 <b-container class="content">
 
-  <div class="aanvragen" v-for="item in aanvragen" v-bind:key="item.$_session_id">
+  <div class="aanvragen" v-for="item in pagedItems" v-bind:key="item.$_session_id">
 
     <img src="images/icoon_externe_link.png" class="linkimg" alt="">
 
     <span @click="opensession(item.$_session_id)">Aanvraag omgevingsvergunning {{item.$_street}} {{item.$_huisnummer}}, {{item.$_postcode}} {{item.$_city}} </span>    
     <div class="datum">{{item.$_date}}</div>
   </div>
+
+<b-pagination
+      v-model="currentPage"
+      :total-rows="aanvragen.length"
+      :per-page="perPage"      
+      prev-text="Vorige"
+      next-text="Volgende"      
+    ></b-pagination>
 
 </b-container>
 </template>
@@ -17,16 +25,30 @@
 <script>
 export default {
   name: 'Gemeenteblad',
+  computed:{
+    pagedItems:function(){
+
+      var start = (this.currentPage-1) * this.perPage;
+      var end = start + this.perPage;
+      var itemsLen = this.aanvragen.length;
+
+      if(end > itemsLen) end = itemsLen;
+
+      return this.aanvragen.slice(start,end);
+    }
+  },
   data: function () {
     return{
       name: "gemeenteblad",
-      aanvragen:[]
+      aanvragen:[],      
+      perPage: 10,
+      currentPage: 1
     }
   },
   created:function(){
     this.getsessionlist();
   },
-  mounted:function(){    
+  mounted:function(){        
   },
   methods: {
         getsessionlist(){
@@ -43,10 +65,8 @@ export default {
             .then(data =>
             {               
                 this.aanvragen = data;
-                console.log(this.aanvragen);
-                                
+                console.log(this.aanvragen);                            
             } );
-
         },
         getsession(idstring){
             var requestOptions = {
