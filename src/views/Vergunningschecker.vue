@@ -1,5 +1,6 @@
 <template>
 
+
 <b-container class="bv-example-row" >
 
   <div>
@@ -39,7 +40,6 @@
             <div class="foundaddress_header">Dit is het gekozen adres:</div>
             <div>{{street}} {{huisnummer}}{{huisletter}}</div>
             <div>{{postcode}} {{city}}</div>          
-
 
             <p></p>
 
@@ -614,8 +614,12 @@ export default {
 
       //update session server
       this.UpdateSession();
-      
-      window.location.href = `${this.viewer_base_url}?sessionId=${Session.$_session_id}`;
+
+      window.open(
+        `${this.viewer_base_url}?sessionId=${Session.$_session_id}`,
+        '_blank'
+      );
+
 
     },
     UpdateSession(){
