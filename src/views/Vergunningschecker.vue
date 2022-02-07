@@ -200,7 +200,7 @@ export default {
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
-      huisletter: "",
+      huisnummertoevoeging: "",
       bouwjaar:0,
       invalid_postcode: true,
       street:"",
@@ -396,10 +396,10 @@ export default {
       let headers = { 
                       "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
                       "Accept-Crs": "epsg:28992" 
-                    }
+                    }      
 
       let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
-        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisletter=${text}&exacteMatch=true`
+        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisnummertoevoeging=${text}&exacteMatch=true`
 
       fetch(url, { headers })
         .then(response => response.json())
@@ -418,7 +418,7 @@ export default {
           let adres = data._embedded.adressen[0];
           this.street = adres.korteNaam;
           this.huisnummer = adres.huisnummer;
-          this.huisletter = adres.huisletter;
+          this.huisnummertoevoeging = adres.huisnummertoevoeging;
           this.city = adres.woonplaatsNaam;
           this.bouwjaar = adres.oorspronkelijkBouwjaar[0];
           this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
@@ -581,6 +581,7 @@ export default {
         Session.$_street = this.street;
         Session.$_city = this.city;
         Session.$_huisnummer = this.huisnummer;
+        Session.$_huisnummertoevoeging = this.huisnummertoevoeging;
         Session.$_postcode = this.postcode;
         Session.$_hasfile = this.hasfile != "DrawMode";
         Session["$_rd_position.x"] = this.bagcoordinates[0];

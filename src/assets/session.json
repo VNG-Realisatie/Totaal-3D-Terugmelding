@@ -3,6 +3,7 @@
     "$_street": "",
     "$_city": "",
     "$_huisnummer": "",
+    "$_huisnummertoevoeging": "",
     "$_postcode": "",
     "$_hasfile": false,
     "$_rd_position.x": 0,
