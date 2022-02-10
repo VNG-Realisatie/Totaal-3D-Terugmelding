@@ -12,5 +12,6 @@
     "$_model_id": "",
     "$_model_version_id": "",
     "$_date": null,
-    "$_is_user_feedback": false    
+    "$_is_user_feedback": false,    
+    "$_has_submitted": false
 }
