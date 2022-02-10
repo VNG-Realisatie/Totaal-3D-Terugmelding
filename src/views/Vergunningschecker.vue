@@ -1,5 +1,6 @@
 <template>
 
+
 <b-container class="bv-example-row" >
 
   <div>
@@ -9,6 +10,8 @@
         <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item>
     </b-dropdown>
+       
+    <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
 
     <div class="header">Uitbouw plaatsen</div>
 
@@ -37,9 +40,9 @@
 
           <div v-if="found_address" class="foundaddress formlines">
             <div class="foundaddress_header">Dit is het gekozen adres:</div>
-            <div>{{street}} {{huisnummer}}{{huisletter}}</div>
+            <!-- <div>{{street}} {{huisnummer}}{{huisletter}}</div> -->
+            <div>{{street}} {{huisnummer}}{{huisnummertoevoeging}}</div>
             <div>{{postcode}} {{city}}</div>          
-
 
             <p></p>
 
@@ -195,12 +198,12 @@ export default {
     return {
       sessionId:null,
       step: 1,
-      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net/3d/",
+      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net",
       //viewer_base_url: "http://localhost:8080/",
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
-      huisletter: "",
+      huisnummertoevoeging: "",
       bouwjaar:0,
       invalid_postcode: true,
       street:"",
@@ -236,7 +239,12 @@ export default {
         currentVersionId:null,
         conversionStatus:"",
         blobId:null
-      }      
+      },
+      build_options: [      
+        {value: "3d", text: 'laatste build'},
+        {value: "wmsprojector", text: 'feature WMS projector'}
+      ],
+      selected_build: "3d"
 
     }
   },
@@ -396,10 +404,15 @@ export default {
       let headers = { 
                       "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
                       "Accept-Crs": "epsg:28992" 
-                    }
+                    }      
+
+      // let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
+      //   `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisnummertoevoeging=${text}&exacteMatch=true`
 
       let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
-        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisletter=${text}&exacteMatch=true`
+        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisletter=${text}&exacteMatch=true`  
+
+              
 
       fetch(url, { headers })
         .then(response => response.json())
@@ -416,9 +429,16 @@ export default {
           this.notfound = false;
 
           let adres = data._embedded.adressen[0];
+
+console.log(adres);
+
           this.street = adres.korteNaam;
           this.huisnummer = adres.huisnummer;
-          this.huisletter = adres.huisletter;
+          
+          //this.huisnummertoevoeging = adres.huisnummertoevoeging;
+
+          this.huisnummertoevoeging = adres.huisletter;
+
           this.city = adres.woonplaatsNaam;
           this.bouwjaar = adres.oorspronkelijkBouwjaar[0];
           this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
@@ -446,7 +466,7 @@ export default {
     },
     checkMonument: function(x,y){
         let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
-        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX=${bbox}&outputFormat=json`)
+        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&npm=${bbox}&outputFormat=json`)
         .then(response => response.json())
         .then(data => {
           this.ismonument = data.features.length > 0;
@@ -581,6 +601,7 @@ export default {
         Session.$_street = this.street;
         Session.$_city = this.city;
         Session.$_huisnummer = this.huisnummer;
+        Session.$_huisnummertoevoeging = this.huisnummertoevoeging;
         Session.$_postcode = this.postcode;
         Session.$_hasfile = this.hasfile != "DrawMode";
         Session["$_rd_position.x"] = this.bagcoordinates[0];
@@ -614,8 +635,12 @@ export default {
 
       //update session server
       this.UpdateSession();
-      
-      window.location.href = `${this.viewer_base_url}?sessionId=${Session.$_session_id}`;
+
+      window.open(
+        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${Session.$_session_id}`,
+        '_blank'
+      );
+
 
     },
     UpdateSession(){
