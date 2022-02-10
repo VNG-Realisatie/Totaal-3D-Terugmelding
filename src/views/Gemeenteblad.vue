@@ -12,7 +12,7 @@
 
 <b-pagination
       v-model="currentPage"
-      :total-rows="aanvragen.length"
+      :total-rows="filtered.length"
       :per-page="perPage"      
       prev-text="Vorige"
       next-text="Volgende"      
@@ -30,11 +30,21 @@ export default {
 
       var start = (this.currentPage-1) * this.perPage;
       var end = start + this.perPage;
-      var itemsLen = this.aanvragen.length;
+      var itemsLen = this.filtered.length;
 
       if(end > itemsLen) end = itemsLen;
 
-      return this.aanvragen.slice(start,end);
+      return this.filtered.slice(start,end);
+    },
+    filtered: function () {
+      var submitted = [];
+
+      for (let i = 0; i < this.aanvragen.length; i++) {
+        if (this.aanvragen[i].$_has_submitted) {
+          submitted.push(this.aanvragen[i]);
+         }
+      }
+      return submitted;
     }
   },
   data: function () {
