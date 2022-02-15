@@ -36,6 +36,13 @@ Deze technische demo is een eerste werkend prototype uit het programma T3D van d
     </b-col>
 </b-row>
 
+<p>
+Deze technische demo is een eerste werkend prototype uit het programma T3D van de samenwerkende Gemeenten Amsterdam, Rotterdam en Den Haag.
+</p>
+
+<p>
+Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlening 3D bouwaanvragen gebruikt kunnen worden als input voor de 3D registratie.
+</p>
 
 
   <b-row class="team">

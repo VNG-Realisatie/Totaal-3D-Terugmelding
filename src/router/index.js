@@ -6,6 +6,7 @@ import Gemeenteblad from '../views/Gemeenteblad.vue'
 import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
 import UserFeedBackList from '../views/UserFeedBackList.vue'
+import Bevindingen from '../views/Bevindingen.vue'
 
 Vue.use(VueRouter)
 
@@ -19,6 +20,11 @@ const routes = [
     path: '/vergunningschecker',
     name: 'Vergunningschecker',
     component: Vergunningschecker
+  },
+  {
+    path: '/bevindingen',
+    name: 'Bevindingen',
+    component: Bevindingen
   },
   {
     path: '/gemeenteblad',
