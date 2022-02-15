@@ -242,6 +242,8 @@ export default {
       },
       build_options: [      
         {value: "3d", text: 'laatste build'},
+        {value: "v2.11.1", text: 'v2.11.1'},
+        {value: "v2.8.3", text: 'v2.8.3'},
         {value: "wmsprojector", text: 'feature WMS projector'}
       ],
       selected_build: "3d"
