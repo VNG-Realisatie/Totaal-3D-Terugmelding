@@ -468,7 +468,7 @@ console.log(adres);
     },
     checkMonument: function(x,y){
         let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
-        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&npm=${bbox}&outputFormat=json`)
+        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&bbox=${bbox}&outputFormat=json`)
         .then(response => response.json())
         .then(data => {
           this.ismonument = data.features.length > 0;
