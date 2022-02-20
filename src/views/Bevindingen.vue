@@ -2,7 +2,8 @@
 
 <b-container class="content">
 
-    <h1>Floating point precision</h1>
+<h1>Floating point precision</h1>
+<h2>17 februari 2022, Bart Burkhardt</h2>
   
 <p>
 Bij het maken van onze testomgeving zijn we begonnen met een 3D wereld waarbij we de Dom toren in Utrecht als middenpunt hadden gebruikt. 
@@ -37,14 +38,21 @@ Unity, onze ontwikkeltool, geeft het het zelfs al aan dat een 3D object te ver w
 </p>
  
 <p>
-    <b-img src="images/floating point precision.gif" fluid alt="Responsive image"></b-img>
+    <b-img src="images/floating point precision.gif" width=600 fluid alt="Responsive image"></b-img>
 </p>
 
 <h2>Oplossing</h2>
 
 <p>
-Een oplossing is om het middepunt te verplaatsen naar de positie van het opgevraagde adres.
+Een oplossing is om het middenpunt te verplaatsen naar de positie van het opgevraagde adres. Dit bleek in code een vrij eenvoudige oplossing te zijn. 
+Dit komt omdat we gebruik maken van the Netherlands3D library. In deze library zitten functies om coordinaten te converteren. 
+Bij het converteren naar de Unity positie wordt er gebruik gemaakt van een instelbaare configuratie. In dit geval was het voldoende om bij het starten als eerste 
 </p>
+
+<p>
+    <b-img src="images/floating point precision fixed.gif" fluid alt="Responsive image"></b-img>
+</p>
+
 
   
 
@@ -86,6 +94,11 @@ export default {
   font-family: AvenirBold;
   font-size: 56px;
 } */
+
+h2{
+    font-size: 12px;    
+    margin-bottom: 20px;
+}
 
 
 </style>
