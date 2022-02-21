@@ -1,6 +1,5 @@
 <template>
 
-
 <b-container class="bv-example-row" >
 
   <div>
@@ -8,7 +7,7 @@
         <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
-        <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item>
+        <!-- <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item> -->
     </b-dropdown>
        
     <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
@@ -18,30 +17,20 @@
     <b-row v-if="step==1">
       <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
 
-      <div class="formheader">Adresgegevens</div>
-      <div class="formlines">Voer het adres in waar u de uitbouw wilt gaan plaatsen</div>
-
         <div class="entryform">
-          <div class="formheader">Postcode</div>
-          <b-form-input class="forminput noselect" v-model="postcode" @keypress="checkPostcode($event)" :state="postcodeState"></b-form-input>
+          <input id="zoek" v-model="zoektext" list="zoekresultaten" placeholder="Zoek adres..."  >
+          <datalist id="zoekresultaten" >
+            <option v-for="item in zoekresultaten" v-bind:key="item.identificatie" >{{item.omschrijving}}</option>  
+          </datalist>
         </div>
-
-        <div class="entryform">
-          <div class="formheader">Huisnummer + toevoeging</div>
-          <b-form-input class="forminput" v-model="huisnummerinvoer" v-bind:disabled="invalid_postcode" :state="addressState"></b-form-input>
-        </div>
-
+  
         <div class="status">
 
-          <div v-if="notfound" class="formlines notfound">
-            <div class="bold">Helaas. Wij kunnen geen adres vinden bij deze combinatie van postcode en huisnummer.</div>
-            <div>Probeer het opnieuw. Of neem contact op met de gemeente op telefoonnummer<a href="tel:14020">&#160;14020</a></div>
-          </div>
-
           <div v-if="found_address" class="foundaddress formlines">
-            <div class="foundaddress_header">Dit is het gekozen adres:</div>
-            <!-- <div>{{street}} {{huisnummer}}{{huisletter}}</div> -->
-            <div>{{street}} {{huisnummer}}{{huisnummertoevoeging}}</div>
+            <div class="foundaddress_header">Dit is het gekozen adres:</div>            
+            <div v-if="huisletter == undefined && huisnummertoevoeging == undefined">{{street}} {{huisnummer}}</div>
+            <div v-if="huisletter != undefined">{{street}} {{huisnummer}}{{huisletter}}</div>
+            <div v-if="huisnummertoevoeging != undefined">{{street}} {{huisnummer}}-{{huisnummertoevoeging}}</div>
             <div>{{postcode}} {{city}}</div>          
 
             <p></p>
@@ -124,7 +113,6 @@
               class="mb-3; topmargin20">
             </b-progress>
 
-
             <div v-if="bim.isUploaded">          
                 <span>Conversie status: {{bim.conversionStatus}}</span>
                 <BusyAnimation :isbusy="bim.conversionStatus !='DONE'"></BusyAnimation>          
@@ -171,6 +159,8 @@
 import Session from '@/assets/session.json'
 import Months from '@/assets/months.json'
 
+import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap';
+
 // import UUID from "vue-uuid";
 
 import { uuid } from 'vue-uuid'; // uuid object is also exported to things
@@ -198,24 +188,21 @@ export default {
     return {
       sessionId:null,
       step: 1,
-      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net",
-      //viewer_base_url: "http://localhost:8080/",
+      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net",      
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
+      huisletter: "",
       huisnummertoevoeging: "",
-      bouwjaar:0,
-      invalid_postcode: true,
+      bouwjaar:0,      
       street:"",
-      city: "",
-      notfound:false,
+      city: "",      
       ismonument:false,
       monumentUrl: "",
       isbeschermd:false,
       bagcoordinates: [],
       map_img_resolution:600,
-      map_img_size: 40,
-      postcode_regex: /^[1-9][0-9][0-9][0-9]?(?!sa|sd|ss)[a-z][a-z]$/i,
+      map_img_size: 40,      
       verblijfsobject_id: "",
       bagids:[],
       model_pos: { x: 157769, y: 467204, z: 0 },
@@ -227,7 +214,12 @@ export default {
       bounds: null,
       polygon_rd: [],
       kadastraleGrootteWaarde:0,
-      hasfile: "",      
+      hasfile: "",
+      query: "3829az 14",
+      zoektext: "",
+      zoekresultaten:[],
+      lastadres: "",
+      found_address: false,
       bim:{
         file:null,
         progressValue:0,
@@ -266,12 +258,6 @@ export default {
       if(!this.found_address) return null;
       return true;
     },   
-    found_address: function(){
-        return this.huisnummer != "" && this.street != "" &&  this.notfound == false;
-    },
-    not_found_address: function(){
-        return !this.invalid_postcode && this.huisnummer != "" && this.street == "";
-    },  
     center: {
       get(){    
         if(this.bagcoordinates.length == 0 ){
@@ -304,39 +290,25 @@ export default {
     }
   },
   watch: {
-    postcode: function (val, oldval) {
+    zoektext: function(val, oldval){
 
-      this.postcode = val.toUpperCase().replace(/ /g, ""); 
-      
-      if(this.postcode.length > 6){
-        this.postcode = null;
-        return;
-      }
+        var selected = false;
+        for(var i= 0; i < this.zoekresultaten.length ;  i++){
 
-      this.invalid_postcode = !this.postcode_regex.test(val);
-      
-      if(this.invalid_postcode){
-        this.bagcoordinates = [];
-        this.street = "";
-        this.notfound = false;  
-        this.bagids =[];
-      }
+          if(this.zoekresultaten[i].omschrijving == val){
+            var adres = this.zoekresultaten[i];              
+            this.getAdres(adres.identificatie);            
+            selected = true;
+            break;
+          }
+        }
 
-    },
-    huisnummerinvoer: function (val) {  
-      
-      this.huisnummerinvoer = val.toUpperCase().replace(/ /g, ""); 
-
-        if(val == ""){
-          this.bagcoordinates = [];
-          this.street = "";
-          this.bagids = [];
-          this.notfound = false;
-          this.ismonument = false;
-          this.isbeschermd = false;
-          return;
-        }         
-        this.getAddress(this.postcode, val);
+        if(val != "" && !selected){
+          this.zoekAdres(val);      
+        }
+        else{
+          this.found_address = false;
+        }
     }
   },
   created:function(){    
@@ -348,107 +320,85 @@ export default {
       }
       this.sessionId = localStorage.sessionId;
   },
-
  methods: {
-    checkPostcode: function(evt) {
-      evt = (evt) ? evt : window.event;
-      //var charCode = (evt.which) ? evt.which : evt.keyCode;
-      if(evt.srcElement.selectionEnd - evt.srcElement.selectionStart > 0){
-        this.postcode = "";         
-      }
-
-      let isvalid = false;
-      let newPostcode = this.postcode + evt.key;
-      let count = newPostcode.length;
-
-      if(count == 1){        
-        isvalid = /^[1-9]$/i.test(newPostcode);
-      }
-      else if(count == 2){      
-        isvalid = /^[1-9][0-9]$/i.test(newPostcode);
-      }
-      else if(count == 3){      
-        isvalid = /^[1-9][0-9][0-9]$/i.test(newPostcode);
-      }
-      else if(count == 4){
-        isvalid = /^[1-9][0-9][0-9][0-9]$/i.test(newPostcode);
-      }
-      else if(count == 5){
-        isvalid = /^[1-9][0-9][0-9][0-9][a-z]$/i.test(newPostcode);
-      }
-      else if(count == 6){
-        isvalid = this.postcode_regex.test(newPostcode);
-      }
-      
-      if(isvalid == false){
-         evt.preventDefault();
-      }
-      else {
-        return true;
-      }
-
-    },
     laadAdresRedir: function(xy,id) {      
       window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
-      this.postcode = postcode;
-      this.huisnummerinvoer = nummer;
+      this.zoekAdres(`${postcode} ${nummer}`)
     },
-    getAddress: function(postcode, huisnummer){
+    zoekAdres:function(text){
 
-      var regex = new RegExp('([0-9]+)|([a-zA-Z]+)','g');
-      var splittedArray = huisnummer.match(regex);
-
-      var num = splittedArray[0];
-      var text = splittedArray[1];
-           
       let headers = { 
                       "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
                       "Accept-Crs": "epsg:28992" 
-                    }      
+                    } 
 
-      // let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
-      //   `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisnummertoevoeging=${text}&exacteMatch=true`
-
-      let url = text == undefined ? `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&exacteMatch=true` :
-        `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressenuitgebreid?postcode=${postcode}&huisnummer=${num}&huisletter=${text}&exacteMatch=true`  
-
-              
+      let url = `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen/zoek?zoek=${text}&page=1&pageSize=20`;
 
       fetch(url, { headers })
         .then(response => response.json())
         .then(data => {
 
-          if(!data._embedded){            
-            this.notfound = true;
-            this.ismonument = false;
-            this.isbeschermd = false;
-            this.bagcoordinates = [];
-            return;
+          if(data._embedded == undefined) return;
+
+          this.zoekresultaten = data._embedded.zoekresultaten;
+
+          if(this.zoekresultaten.length == 1){
+              this.zoektext = this.zoekresultaten[0].omschrijving;
           }
-
-          this.notfound = false;
-
-          let adres = data._embedded.adressen[0];
-
-console.log(adres);
-
-          this.street = adres.korteNaam;
-          this.huisnummer = adres.huisnummer;
           
-          //this.huisnummertoevoeging = adres.huisnummertoevoeging;
-
-          this.huisnummertoevoeging = adres.huisletter;
-
-          this.city = adres.woonplaatsNaam;
-          this.bouwjaar = adres.oorspronkelijkBouwjaar[0];
-          this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
-          this.bagids = adres.pandIdentificaties;          
-          this.getBagCoordinate(this.verblijfsobject_id);
         });
 
     },
+    getAdres:function(id){
+
+      let headers = { 
+                      "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
+                      "Accept-Crs": "epsg:28992" 
+                    } 
+
+      let url = `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen?zoekresultaatIdentificatie=${id}`;
+
+      fetch(url, { headers })
+        .then(response => response.json())
+        .then(data => {          
+          var adres = data._embedded.adressen[0];
+          this.verblijfsobject_id = adres.adresseerbaarObjectIdentificatie;
+          this.bagids = adres.pandIdentificaties;
+          this.street = adres.korteNaam;
+          this.huisnummer = adres.huisnummer;          
+          this.postcode = adres.postcode;
+          this.huisletter = adres.huisletter;
+          this.huisnummertoevoeging = adres.huisnummertoevoeging;
+          this.city = adres.woonplaatsNaam;
+          //console.log(adres);
+
+          this.getBagCoordinate(this.verblijfsobject_id);
+
+          //voor bouwjaar
+          this.getPand(this.bagids[0]);
+
+          this.found_address = true;
+        });
+
+    }, 
+    getPand:function(id){
+
+      let headers = { 
+                      "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
+                      "Accept-Crs": "epsg:28992" 
+                    } 
+
+      let url = `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/panden/${id}`;
+
+      fetch(url, { headers })
+        .then(response => response.json())
+        .then(data => {     
+              this.bouwjaar = data.pand.oorspronkelijkBouwjaar;
+        });
+
+    },  
     getBagCoordinate: function(bagid){
       
       let headers = { "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7", "Accept-Crs": "epsg:28992" }
@@ -468,7 +418,7 @@ console.log(adres);
     },
     checkMonument: function(x,y){
         let bbox = `${x-0.5},${y-0.5},${x+0.5},${y+0.5}`;
-        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&bbox=${bbox}&outputFormat=json`)
+        fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:NationalListedMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX=${bbox}&outputFormat=json`)
         .then(response => response.json())
         .then(data => {
           this.ismonument = data.features.length > 0;
@@ -484,11 +434,7 @@ console.log(adres);
         fetch(`https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:ArcheologicalMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX=${bbox}&outputFormat=json`)
         .then(response => response.json())
         .then(data => {
-          this.isbeschermd = data.features.length > 0;
-          // if(this.isbeschermd){
-          //   let feature = data.features[0];
-          //   //console.log(feature.properties);
-          // }
+          this.isbeschermd = data.features.length > 0;          
         });
     
     },
@@ -527,10 +473,8 @@ console.log(adres);
       var requestOptions = {
       method: "PUT",
       onUploadProgress: uploadEvent =>{
-          this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
-          
+          this.bim.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;          
           this.bim.isUploaded = this.bim.progressValue == 100;
-
           console.log(  `Upload progress: ${this.bim.progressValue}` );
       }
       };
@@ -685,7 +629,8 @@ console.log(adres);
     LMarker,
     LPolygon,
     LPolyline,
-    BusyAnimation
+    BusyAnimation,
+    VueTypeaheadBootstrap
   }
 }
 </script>
@@ -737,11 +682,6 @@ a:visited, a:link {
 margin-top:26px;  
 }
 
-.notfound{
-  border: #f00 2px solid;
-  padding: 8px;  
-}
-
 .formlines{
   text-align: left;
 }
@@ -779,7 +719,8 @@ margin-top:26px;
 }
 
 .entryform{
-  text-align: left;;
+  text-align: left;
+  margin-top:18px;
 }
 
 .alignleft{
@@ -791,7 +732,7 @@ margin-top:26px;
 }
 
 .topmargin20{
-  margin-top: 20px;;
+  margin-top: 20px;
 }
 
 .topmargin40{
@@ -812,4 +753,42 @@ margin-top:26px;
   background-color: rgb(221, 221, 221);
 
 }
+
+.entryform input{
+  border-radius: 10px;
+  border-color: #eee;
+  height:40px;
+}
+
+#zoek{
+  width:400px;
+  padding-left: 10px;
+  border-width: 4px;
+  border-radius: 10px;
+  border-style:none;
+  height: 40px;
+  animation-name: shadow_out;
+  animation-duration: 0.6s;
+  margin-bottom: 20px;
+}
+
+#zoek:focus { 
+    outline: none !important;
+    animation-name: shadow_in;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;      
+ }
+
+ @keyframes shadow_in {
+  from {box-shadow: 0 0 0px 0px #B3D2F3;}
+  to {box-shadow: 0 0 0px 2px #B3D2F3;}
+}
+
+ @keyframes shadow_out {
+  from {box-shadow: 0 0 0px 2px #B3D2F3;}
+  to {box-shadow: 0 0 0px 0px #B3D2F3;}
+}
+
+ 
+
 </style>
