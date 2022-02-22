@@ -159,10 +159,6 @@
 import Session from '@/assets/session.json'
 import Months from '@/assets/months.json'
 
-import VueTypeaheadBootstrap from 'vue-typeahead-bootstrap';
-
-// import UUID from "vue-uuid";
-
 import { uuid } from 'vue-uuid'; // uuid object is also exported to things
                                    // outside Vue instance.
 
@@ -629,8 +625,7 @@ export default {
     LMarker,
     LPolygon,
     LPolyline,
-    BusyAnimation,
-    VueTypeaheadBootstrap
+    BusyAnimation
   }
 }
 </script>
