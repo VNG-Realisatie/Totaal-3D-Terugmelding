@@ -184,7 +184,7 @@ export default {
     return {
       sessionId:null,
       step: 1,
-      viewer_base_url: "https://opslagt3d.z6.web.core.windows.net",      
+      viewer_base_url: "https://t3dstorage.z6.web.core.windows.net",      
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
@@ -229,10 +229,10 @@ export default {
         blobId:null
       },
       build_options: [      
-        {value: "3d", text: 'laatste build'},
-        {value: "v2.11.1", text: 'v2.11.1'},
-        {value: "v2.8.3", text: 'v2.8.3'},
-        {value: "wmsprojector", text: 'feature WMS projector'}
+        {value: "3d", text: 'laatste build'}//,
+        // {value: "v2.11.1", text: 'v2.11.1'},
+        // {value: "v2.8.3", text: 'v2.8.3'},
+        // {value: "wmsprojector", text: 'feature WMS projector'}
       ],
       selected_build: "3d"
 
@@ -300,7 +300,7 @@ export default {
         }
 
         if(val != "" && !selected){
-          this.zoekAdres(val);      
+          this.zoekAdres(val, false);      
         }
         else{
           this.found_address = false;
@@ -321,9 +321,9 @@ export default {
       window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
-      this.zoekAdres(`${postcode} ${nummer}`)
+      this.zoekAdres(`${postcode} ${nummer}`, true);
     },
-    zoekAdres:function(text){
+    zoekAdres:function(text, select){
 
       let headers = { 
                       "X-Api-Key": "l772bb9814e5584919b36a91077cdacea7",
@@ -335,15 +335,13 @@ export default {
       fetch(url, { headers })
         .then(response => response.json())
         .then(data => {
-
           if(data._embedded == undefined) return;
-
           this.zoekresultaten = data._embedded.zoekresultaten;
 
-          if(this.zoekresultaten.length == 1){
-              this.zoektext = this.zoekresultaten[0].omschrijving;
+          if(select && this.zoekresultaten.length == 1){
+            this.zoektext = this.zoekresultaten[0].omschrijving;
           }
-          
+
         });
 
     },
@@ -461,7 +459,7 @@ export default {
       this.bim.isUploading = true;
 
       //var url = `http://localhost:7071/api/uploadbim/${this.bim.file.name}`;
-      var url = `https://t3dapi.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
+      var url = `https://t3dbackend.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -499,7 +497,7 @@ export default {
 
       //var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
       //var url = `http://10.0.0.5:7071/api/getbimversionstatus/${this.bim.currentModelId}`;
-      var url = `https://t3dapi.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `https://t3dbackend.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",        
@@ -587,7 +585,7 @@ export default {
     },
     UpdateSession(){
       //var url = `http://localhost:7071/api/upload/${Session.session_id}_html`;
-      var url = `https://t3dapi.azurewebsites.net/api/upload/${Session.$_session_id}_html`;
+      var url = `https://t3dbackend.azurewebsites.net/api/upload/${Session.$_session_id}_html`;
       
       var requestOptions = {
                 method: "PUT",
@@ -608,7 +606,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dapi.azurewebsites.net/api/session/${filename}`, requestOptions)
+            fetch(`https://t3dbackend.azurewebsites.net/api/session/${filename}`, requestOptions)
             //fetch(`http://localhost:7071/api/userfeedback/${filename}`, requestOptions)            
             .then(data =>
             {                
