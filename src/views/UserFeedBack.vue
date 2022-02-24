@@ -53,7 +53,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
+            fetch(`https://t3dbackend.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
             .then(response => response.json())
             .then(data =>
             {

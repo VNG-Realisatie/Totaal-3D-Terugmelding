@@ -69,7 +69,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dapi.azurewebsites.net/api/getsessionlist`, requestOptions)
+            fetch(`https://t3dbackend.azurewebsites.net/api/getsessionlist`, requestOptions)
             //fetch(`http://localhost:7071/api/getsessionlist`, requestOptions)
             .then(response => response.json())
             .then(data =>
@@ -85,7 +85,7 @@ export default {
 
             var id = idstring.replace('.json', '');
 
-            fetch(`https://t3dapi.azurewebsites.net/api/download/${id}_html`, requestOptions)    
+            fetch(`https://t3dbackend.azurewebsites.net/api/download/${id}_html`, requestOptions)    
             //fetch(`http://localhost:7071/api/download/${id}`, requestOptions)    
             .then(response => response.json())        
             .then(data =>

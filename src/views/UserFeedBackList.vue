@@ -61,7 +61,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedbacklist`, requestOptions)
+            fetch(`https://t3dbackend.azurewebsites.net/api/getuserfeedbacklist`, requestOptions)
             .then(response => response.json())
             .then(data =>
             {                
@@ -78,7 +78,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dapi.azurewebsites.net/api/userfeedback/${filename}`, requestOptions)
+            fetch(`https://t3dbackend.azurewebsites.net/api/userfeedback/${filename}`, requestOptions)
             //fetch(`http://localhost:7071/api/userfeedback/${filename}`, requestOptions)            
             .then(data =>
             {                

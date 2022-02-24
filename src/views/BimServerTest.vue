@@ -235,7 +235,7 @@ export default {
             //console.log(this.file);
 
             var url = `http://10.0.0.5:7071/api/uploadbim/${this.file.name}`;
-            //var url = "https://t3dapi.azurewebsites.net/api/uploadbim/testupload";
+            //var url = "https://t3dbackend.azurewebsites.net/api/uploadbim/testupload";
 
             var formdata=  new FormData();
             formdata.append("version", this.file, this.file.name );
