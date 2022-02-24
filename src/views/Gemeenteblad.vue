@@ -23,6 +23,9 @@
         
 
 <script>
+
+import Config from '@/assets/config.json';
+
 export default {
   name: 'Gemeenteblad',
   computed:{
@@ -69,8 +72,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dbackend.azurewebsites.net/api/getsessionlist`, requestOptions)
-            //fetch(`http://localhost:7071/api/getsessionlist`, requestOptions)
+            fetch(`${Config.backend_url_base}/getsessionlist`, requestOptions)
             .then(response => response.json())
             .then(data =>
             {               
@@ -85,8 +87,7 @@ export default {
 
             var id = idstring.replace('.json', '');
 
-            fetch(`https://t3dbackend.azurewebsites.net/api/download/${id}_html`, requestOptions)    
-            //fetch(`http://localhost:7071/api/download/${id}`, requestOptions)    
+            fetch(`${Config.backend_url_base}/api/download/${id}_html`, requestOptions) 
             .then(response => response.json())        
             .then(data =>
             {     
@@ -95,7 +96,7 @@ export default {
 
         },
         opensession(sessionid){
-          window.location=`https://opslagt3d.z6.web.core.windows.net/3d/?sessionId=${sessionid}`;
+          window.location=`${Config.frontend_url_base}/3d/?sessionId=${sessionid}`;
         }
   }
 }

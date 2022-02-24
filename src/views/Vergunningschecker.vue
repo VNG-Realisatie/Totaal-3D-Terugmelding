@@ -156,8 +156,9 @@
 
 <script>
 
-import Session from '@/assets/session.json'
-import Months from '@/assets/months.json'
+import Session from '@/assets/session.json';
+import Months from '@/assets/months.json';
+import Config from '@/assets/config.json';
 
 import { uuid } from 'vue-uuid'; // uuid object is also exported to things
                                    // outside Vue instance.
@@ -458,8 +459,7 @@ export default {
     addBim(){
       this.bim.isUploading = true;
 
-      //var url = `http://localhost:7071/api/uploadbim/${this.bim.file.name}`;
-      var url = `https://t3dbackend.azurewebsites.net/api/uploadbim/${this.bim.file.name}`;
+      var url = `${Config.backend_url_base}/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -495,9 +495,7 @@ export default {
     },
     checkVersion(modelId, versionId){
 
-      //var url = `https://bim.clearly.app/api/organisations/${this.bim.organisationId}/projects/${this.bim.projectId}/models/${modelId}/versions/${versionId}`;
-      //var url = `http://10.0.0.5:7071/api/getbimversionstatus/${this.bim.currentModelId}`;
-      var url = `https://t3dbackend.azurewebsites.net/api/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `${Config.backend_url_base}/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",        
@@ -584,8 +582,7 @@ export default {
 
     },
     UpdateSession(){
-      //var url = `http://localhost:7071/api/upload/${Session.session_id}_html`;
-      var url = `https://t3dbackend.azurewebsites.net/api/upload/${Session.$_session_id}_html`;
+      var url = `${Config.backend_url_base}/upload/${Session.$_session_id}_html`;
       
       var requestOptions = {
                 method: "PUT",
@@ -605,9 +602,7 @@ export default {
                     "Content-Type": "application/json",                
                 }            
             };
-
-            fetch(`https://t3dbackend.azurewebsites.net/api/session/${filename}`, requestOptions)
-            //fetch(`http://localhost:7071/api/userfeedback/${filename}`, requestOptions)            
+            fetch(`${Config.backend_url_base}/session/${filename}`, requestOptions)           
             .then(data =>
             {                
                 console.log("deleted session");

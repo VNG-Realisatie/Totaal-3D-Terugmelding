@@ -40,6 +40,8 @@
 
 <script>
 
+import Config from '@/assets/config.json';
+
 export default {
   name: 'UserFeedBack',
   created:function(){    
@@ -61,7 +63,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dbackend.azurewebsites.net/api/getuserfeedbacklist`, requestOptions)
+            fetch(`${Config.backend_url_base}/getuserfeedbacklist`, requestOptions)
             .then(response => response.json())
             .then(data =>
             {                
@@ -78,8 +80,7 @@ export default {
                 }            
             };
 
-            fetch(`https://t3dbackend.azurewebsites.net/api/userfeedback/${filename}`, requestOptions)
-            //fetch(`http://localhost:7071/api/userfeedback/${filename}`, requestOptions)            
+            fetch(`${Config.backend_url_base}/userfeedback/${filename}`, requestOptions)           
             .then(data =>
             {                
                 this.getuserfeedback();            
@@ -87,7 +88,7 @@ export default {
 
         },
         getFeedbackUrl(feedbackFileName){            
-            return `https://opslagt3d.z6.web.core.windows.net/3d/?sessionId=${feedbackFileName}&isuserfeedback=true&iseditmode=false`;
+            return `${Config.frontend_url_base}/3d/?sessionId=${feedbackFileName}&isuserfeedback=true&iseditmode=false`;
         },
         getFeedbackDetailUrl(feedbackFileName){
             return `#/userfeedback/${feedbackFileName}`;            
