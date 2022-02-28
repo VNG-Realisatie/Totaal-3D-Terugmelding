@@ -14,8 +14,21 @@
 
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-            <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item> -->
-            <!-- <router-link to="/">Login</router-link>  -->
+            <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
+            <router-link to="/">Login</router-link> -->
+
+<b-dropdown id="dropdown-1" text="bart.burkhardt@gmail.com" class="m-md-2">
+    <b-dropdown-item href="#/userfeedback">User Feedback</b-dropdown-item>
+    <b-dropdown-item href="#/users">Users
+    
+    </b-dropdown-item>
+    <b-dropdown-item>Third Action</b-dropdown-item>
+    <b-dropdown-divider></b-dropdown-divider>
+    <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
+    <!-- <b-dropdown-item disabled>Disabled action</b-dropdown-item> -->
+  </b-dropdown>
+
+
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -47,6 +60,52 @@
 
   </div>
 </template>
+
+<script>
+export default {
+  name: 'App',
+  data: function () {
+    return{
+      name: "App"      
+    }
+  },
+  created:function(){
+  },
+  mounted:function(){        
+  },
+  methods: {      
+
+        logout(){
+
+            alert("logged out");
+
+            // var requestOptions = {
+            //     method: "GET",
+            //     headers: { 
+            //         "Content-Type": "application/json",                
+            //     }            
+            // };
+
+            // fetch(`http://localhost:7071/api/GetUsers`, requestOptions)
+            // // fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
+            // .then(response => response.json())
+            // .then(data =>
+            // {
+            //     console.log(data);
+            //     this.users  = data;
+            
+            // } );
+
+        },
+        activate(){
+          alert(this.activateCode);
+        }
+
+
+  }
+}
+
+</script>
 
 <style>
 

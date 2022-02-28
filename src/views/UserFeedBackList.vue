@@ -13,7 +13,7 @@
         <b-th>Actie</b-th>
       </b-tr>
 
-      <b-tr v-for="item in userfeedbackList" v-bind:key="item">
+      <b-tr v-for="item in userfeedbackList" v-bind:key="item" >
         <b-td>{{item}}</b-td>
         <b-td>
             <b-link v-bind:href="getFeedbackDetailUrl(item)">Detail</b-link>

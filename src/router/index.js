@@ -7,6 +7,8 @@ import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
 import UserFeedBackList from '../views/UserFeedBackList.vue'
 import Bevindingen from '../views/Bevindingen.vue'
+import Users from '../views/Users.vue'
+import Activate from '../views/Activate.vue'
 
 Vue.use(VueRouter)
 
@@ -25,6 +27,16 @@ const routes = [
     path: '/bevindingen',
     name: 'Bevindingen',
     component: Bevindingen
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: Users
+  },
+  {
+    path: '/activate',
+    name: 'Activeer T3D Beheer',
+    component: Activate
   },
   {
     path: '/gemeenteblad',
