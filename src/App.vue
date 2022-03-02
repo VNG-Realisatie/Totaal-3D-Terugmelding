@@ -17,17 +17,15 @@
             <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
             <router-link to="/">Login</router-link> -->
 
-<b-dropdown id="dropdown-1" text="bart.burkhardt@gmail.com" class="m-md-2">
+<b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="$root.user" class="m-md-2">
+<!-- <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="user" class="m-md-2"> -->
     <b-dropdown-item href="#/userfeedback">User Feedback</b-dropdown-item>
-    <b-dropdown-item href="#/users">Users
-    
-    </b-dropdown-item>
-    <b-dropdown-item>Third Action</b-dropdown-item>
+    <b-dropdown-item href="#/users">Users</b-dropdown-item>
+    <b-dropdown-item href="#/bevindingen">Bevindingen Blog</b-dropdown-item>
     <b-dropdown-divider></b-dropdown-divider>
     <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
     <!-- <b-dropdown-item disabled>Disabled action</b-dropdown-item> -->
   </b-dropdown>
-
 
           </b-navbar-nav>
         </b-collapse>
@@ -66,42 +64,33 @@ export default {
   name: 'App',
   data: function () {
     return{
-      name: "App"      
+      name: "App"
     }
   },
   created:function(){
+
+    this.$root.$on("authenticated", () => {
+      this.$root.authenticated = true;
+      this.$root.user = localStorage.user;
+      this.$root.authToken = localStorage.authToken;
+    })  
+    
   },
-  mounted:function(){        
+  mounted:function(){   
+
+    if( localStorage.getItem("authToken") != null  && localStorage.getItem("user") != null  ){      
+      this.$root.$emit('authenticated');
+    }
+   
   },
   methods: {      
+    logout(){
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        this.$root.authenticated = false;
 
-        logout(){
-
-            alert("logged out");
-
-            // var requestOptions = {
-            //     method: "GET",
-            //     headers: { 
-            //         "Content-Type": "application/json",                
-            //     }            
-            // };
-
-            // fetch(`http://localhost:7071/api/GetUsers`, requestOptions)
-            // // fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
-            // .then(response => response.json())
-            // .then(data =>
-            // {
-            //     console.log(data);
-            //     this.users  = data;
-            
-            // } );
-
-        },
-        activate(){
-          alert(this.activateCode);
-        }
-
-
+        this.$router.replace({ path: '/' })
+    }
   }
 }
 

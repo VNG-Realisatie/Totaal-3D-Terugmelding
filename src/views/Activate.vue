@@ -2,17 +2,21 @@
 
 <b-container class="content">
 
-<p>Activeer je T3D beheer pagina, voer de code die je gekregen hebt</p>
+  <div v-if="!isActivated">
+      <p>Activeer je T3D beheer pagina, voer de code die je gekregen hebt</p>
 
-<p>
-   <b-input v-model="activateCode"></b-input>
-</p>
+      <p>
+        <b-input v-model="activateCode"></b-input>
+      </p>
 
-<p>
-    <b-button @click="activate">Activeer</b-button>
-</p>
+      <p>
+          <b-button @click="activate()">Activeer</b-button>
+      </p>
+  </div>
 
-    
+  <div v-if="isActivated">
+     <img src="https://cataas.com/cat/says/Je bent nu geactiveerd!?width=300" >
+  </div>
 
 
 
@@ -25,45 +29,48 @@
         
 
 <script>
+
+import Config from '@/assets/config.json';
+
 export default {
   name: 'AuthTest',
   data: function () {
     return{
-      name: "Azure AD Test pagina",
+      name: "Activate",
       users:[],
-      activateCode:""
+      activateCode:"",
+      isActivated:false
     }
   },
   created:function(){
-
-    this.getuserfeedback();
     
   },
   mounted:function(){        
   },
   methods: {      
+        activate(){
 
-        getuserfeedback(filename){
             var requestOptions = {
-                method: "GET",
+                method: "POST",
                 headers: { 
                     "Content-Type": "application/json",                
-                }            
+                },
+                body: JSON.stringify({  "authToken" : this.activateCode  })     
             };
 
-            fetch(`http://localhost:7071/api/GetUsers`, requestOptions)
-            // fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
-            .then(response => response.json())
-            .then(data =>
-            {
-                console.log(data);
-                this.users  = data;
-            
-            } );
+            fetch(`${Config.backend_url_base}/activate`, requestOptions)            
+            .then(response => {
+                  if(response.status ==200){
+                    response.json().then(data =>
+                    {  
+                        this.isActivated = true;
+                        localStorage.authToken = this.activateCode;
+                        localStorage.user = data.user;                                                
+                        this.$root.$emit('authenticated');
+                    });
+                  };
+            });
 
-        },
-        activate(){
-          alert(this.activateCode);
         }
 
 

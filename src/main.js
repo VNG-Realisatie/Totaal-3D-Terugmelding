@@ -14,6 +14,13 @@ Vue.component('l-marker', LMarker);
 Vue.config.productionTip = false;
 
 new Vue({
+  data() {    
+    return {
+      authenticated: false,
+      user:"",
+      authToken:""
+    }
+  },
   router,
   render: function (h) { return h(App) }
 }).$mount('#app')

@@ -2,31 +2,38 @@
 
 <b-container class="content">
 
-  <b-table-simple class="margintop100" hover small caption-top responsive>
-    <b-thead head-variant="dark">
-      <b-tr>
-        <b-th>Email</b-th>
-        <b-th>Invite Id</b-th>
-        <b-th>IsActive</b-th>
-        <b-th></b-th>        
-      </b-tr>
+  <div v-if="$root.authenticated">
+      <b-table-simple class="margintop100" hover small caption-top responsive>
+          <b-thead head-variant="dark">
+            <b-tr>
+              <b-th>Email</b-th>
+              <b-th>Invite Id</b-th>
+              <b-th>IsActive</b-th>
+              <b-th></b-th>        
+            </b-tr>
 
-      <b-tr v-for="user in users" v-bind:key="user.RowKey" >
-        <b-td>{{user.PartitionKey}}</b-td>
-        <b-td>{{user.RowKey}}</b-td>
-        <b-td>{{user.IsActive}}</b-td>
-        <b-td><a href="#" @click="copyText(user)">Kopieer invite tekst</a></b-td>
-        
-      </b-tr>
-    </b-thead>
-  </b-table-simple>
+            <b-tr v-for="user in users" v-bind:key="user.RowKey" >
+              <b-td>{{user.PartitionKey}}</b-td>
+              <b-td>{{user.RowKey}}</b-td>
+              <b-td>{{user.IsActive}}</b-td>
+              <b-td><a href="#" @click="copyText(user)">Kopieer invite tekst</a></b-td>
+              
+            </b-tr>
+          </b-thead>
+        </b-table-simple>
+  </div>
 
+  
+  
 </b-container>
 
 </template>
         
 
 <script>
+
+import Config from '@/assets/config.json';
+
 export default {
   name: 'AuthTest',
   data: function () {
@@ -34,43 +41,48 @@ export default {
       name: "T3D Users",
       users:[],
       selectedUser:"",
-      selectedInviteCode:"",
-      authToken:""
+      selectedInviteCode:""
+      
     }
   },
-  created:function(){
+  created:function(){    
 
-    this.authToken = localStorage.authToken;
+    if(this.$root.authenticated){      
+        this.getusers();              
+    }
 
-    this.getusers();
-    
+    this.$root.$on("authenticated", () => {      
+        this.getusers();  
+    })  
+        
   },
   mounted:function(){        
   },
   methods: {      
 
-        getusers(filename){
-            var requestOptions = {
+        getusers(){
+
+          var requestOptions = {
                 method: "GET",
                 headers: { 
                     "Content-Type": "application/json",
-                    "Authorization": `${this.authToken}`
+                    "Authorization": this.$root.authToken
                 }            
             };
 
-            fetch(`http://localhost:7071/api/GetUsers`, requestOptions)
-            // fetch(`https://t3dapi.azurewebsites.net/api/getuserfeedback/${filename}`, requestOptions)
-            .then(response => response.json())
-            .then(data =>
-            {
-                console.log(data);
-                this.users  = data;
-            
+            fetch(`${Config.backend_url_base}/getusers`, requestOptions)                        
+            .then(response => {
+              if(response.status ==200){
+                response.json().then(data =>
+                {  
+                  this.users = data;
+                });
+             
+              }              
             } );
 
         },
-        ShowActivate(user){
-          //alert(rowkey);
+        ShowActivate(user){          
           this.selectedUser = user.PartitionKey;
           this.selectedInviteCode = user.RowKey;
         },

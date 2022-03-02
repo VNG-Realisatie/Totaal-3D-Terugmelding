@@ -1,9 +1,6 @@
 <template>
 
-
 <b-container class="bv-example-row" >
-
-
 
   <b-table-simple class="marginTop20" hover small caption-top responsive>
     <b-thead head-variant="dark">
@@ -24,9 +21,7 @@
     </b-thead>
   </b-table-simple>
 
-
 </b-container>
-
 
 </template>
 
@@ -36,26 +31,37 @@ import Config from '@/assets/config.json';
 
 export default {
   name: 'UserFeedBack',
+  mounted:function(){   
+  },
   created:function(){    
-    this.getuserfeedback(this.$route.params.id);
-    
+
+    if(this.$root.authenticated){
+        this.getuserfeedback(this.$route.params.id);   
+    }
+
+    this.$root.$on("authenticated", () => {
+        this.getuserfeedback(this.$route.params.id);   
+    })
   },
   data: function () {
     return {
-        userfeedback: null      
+        userfeedback: null,
+
     }
   },
    methods: {
 
         getuserfeedback(filename){
+
             var requestOptions = {
                 method: "GET",
                 headers: { 
-                    "Content-Type": "application/json",                
+                  "Content-Type": "application/json",
+                  "Authorization": this.$root.authToken
                 }            
             };
 
-            fetch(`${Config.backend_url_base}/getuserfeedback/${filename}`, requestOptions)
+            fetch(`${Config.backend_url_base}/getuserfeedback/${filename}`, requestOptions)            
             .then(response => response.json())
             .then(data =>
             {
