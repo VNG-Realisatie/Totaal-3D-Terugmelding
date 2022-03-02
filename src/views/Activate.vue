@@ -55,7 +55,7 @@ export default {
                 headers: { 
                     "Content-Type": "application/json",                
                 },
-                body: JSON.stringify({  "authToken" : this.activateCode  })     
+                body: JSON.stringify({  "authToken" : this.activateCode.trim()  })     
             };
 
             fetch(`${Config.backend_url_base}/activate`, requestOptions)            
