@@ -231,7 +231,9 @@ export default {
         blobId:null
       },
       build_options: [      
-        {value: "3d", text: 'laatste build'},
+        {value: "3d", text: 'laatste build (3.7.2)'},
+        {value: "v3.7.1", text: 'v3.7.1'},
+        {value: "v3.3.1", text: 'v3.3.1'},
         {value: "v2.24.1", text: 'v2.24.1'},
         // {value: "v2.8.3", text: 'v2.8.3'},
         // {value: "wmsprojector", text: 'feature WMS projector'}
@@ -356,7 +358,7 @@ export default {
             this.zoekresultaten = data._embedded.zoekresultaten;
 
             if(select && this.zoekresultaten.length == 1){
-              this.zoektext = this.zoekresultaten[0].omschrijving;
+              this.selectAdres(0);             
             }
 
         });
