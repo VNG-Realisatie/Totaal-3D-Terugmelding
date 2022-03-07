@@ -2,7 +2,12 @@
 
 <b-container class="bv-example-row" >
 
-  <div>
+  <div v-if="hasSession">      
+      <b-button class="btnHasSession" @click="NewSession()" variant="danger">Begin opnieuw</b-button>  
+      <b-button class="btnHasSession" @click="OpenSession()" variant="primary">Ga verder met ontwerp uitbouw in 3D omgeving</b-button>
+    </div>
+
+  <div v-if="!hasSession">
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
         <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
@@ -253,6 +258,9 @@ export default {
   	window.removeEventListener('keydown', this.handleKeydown);
   },
   computed:{
+    hasSession:function(){
+      return this.sessionId != null;
+    },
     gaverderTekst:function(){
       if(this.isBimMode) return "Bekijk de uitbouw in de 3D omgeving";
       else return "Start ontwerp uitbouw in 3D omgeving";
@@ -326,10 +334,10 @@ export default {
     this.viewer_image = this.viewer_default_image;
   },
   mounted:function(){
-      if (!localStorage.sessionId) {
-        localStorage.sessionId = uuid.v1();
+      if (localStorage.sessionId) {
+        this.sessionId= localStorage.sessionId;        
       }
-      this.sessionId = localStorage.sessionId;
+      
   },
  methods: {
     laadAdresRedir: function(xy,id) {      
@@ -548,12 +556,20 @@ export default {
         link.download = filename;        
         link.click();      
     },
+    NewSession(){
+        localStorage.removeItem("sessionId");        
+        this.sessionId = null;
+        
+    },
     SaveSession(){
 
         var date = new Date();
         var month = Months[date.getMonth()];
 
-        Session.$_session_id = this.sessionId;
+        localStorage.sessionId = uuid.v1();
+        this.sessionId = localStorage.sessionId;
+
+        Session.$_session_id = localStorage.sessionId;
         Session.$_street = this.street;
         Session.$_city = this.city;
         Session.$_huisnummer = this.huisnummer;
@@ -570,34 +586,16 @@ export default {
         Session.$_ismonument = this.ismonument;
         Session.$_isbeschermd = this.isbeschermd;
         
-        var requestOptions = {
-            method: "GET"       
-        };
-
-      if (!localStorage.session) {
-        localStorage.session = JSON.stringify(Session);
-      }
-      else{
-        //vorige sessie ophalen en controleren of bag_id anders is
-        var session = JSON.parse(localStorage.session);      
-        if(session.$_bag_id != Session.$_bag_id){          
-            localStorage.sessionId = uuid.v1();
-            this. session_id = localStorage.sessionId;
-            Session.$_session_id = localStorage.sessionId;
-        }
-        //updaten session object lokaal
-        localStorage.session = JSON.stringify(Session);
-      }
-
       //update session server
       this.UpdateSession();
 
+      this.OpenSession();
+    },
+    OpenSession(){
       window.open(
-        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${Session.$_session_id}`,
+        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${this.sessionId}`,
         '_blank'
       );
-
-
     },
     UpdateSession(){
       var url = `${Config.backend_url_base}/upload/${Session.$_session_id}_html`;
@@ -612,20 +610,6 @@ export default {
             {     
               console.log(data);                
             } );
-    },
-    deleteSession(filename){
-            var requestOptions = {
-                method: "DELETE",
-                headers: { 
-                    "Content-Type": "application/json",                
-                }            
-            };
-            fetch(`${Config.backend_url_base}/session/${filename}`, requestOptions)           
-            .then(data =>
-            {                
-                console.log("deleted session");
-            } );
-
     },
     isactive(index){
       return this.is_selecting && index == this.searchlist_index;
@@ -674,6 +658,14 @@ export default {
 </script>
 
 <style scoped>
+
+.btnHasSession{
+  margin-top: 60px;
+  margin-bottom: 60px;
+  margin-left: 20px;
+  margin-right: 20px;
+
+}
 
 .noaccess{
   margin-top: 80px;
