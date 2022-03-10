@@ -7,6 +7,7 @@ import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
 import UserFeedBackList from '../views/UserFeedBackList.vue'
 import Bevindingen from '../views/Bevindingen.vue'
+import BevindingenEdit from '../views/BevindingenEdit.vue'
 import Users from '../views/Users.vue'
 import Activate from '../views/Activate.vue'
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/bevindingen',
     name: 'Bevindingen',
     component: Bevindingen
+  },
+  {
+    path: '/blog',
+    name: 'BevindingenEdit',
+    component: BevindingenEdit
   },
   {
     path: '/users',

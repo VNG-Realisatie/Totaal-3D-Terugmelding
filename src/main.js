@@ -3,6 +3,11 @@ import './plugins/bootstrap-vue'
 import App from './App.vue'
 import router from './router'
 
+import wysiwyg from "vue-wysiwyg";
+Vue.use(wysiwyg, {}); // config is optional. more below
+
+import "vue-wysiwyg/dist/vueWysiwyg.css";
+
 import 'leaflet/dist/leaflet.css';
 import { LMap, LTileLayer, LMarker } from 'vue2-leaflet';
 
