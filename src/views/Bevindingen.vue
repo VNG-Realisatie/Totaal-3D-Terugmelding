@@ -38,23 +38,26 @@ Unity, onze ontwikkeltool, geeft het het zelfs al aan dat een 3D object te ver w
 </p>
  
 <p>
-    <b-img src="images/floating point precision.gif" width=600 fluid alt="Responsive image"></b-img>
+    <b-img src="images/floating point precision.gif" width=800 fluid alt="Responsive image"></b-img>
 </p>
 
 <h2>Oplossing</h2>
 
 <p>
-Een oplossing is om het middenpunt te verplaatsen naar de positie van het opgevraagde adres. Dit bleek in code een vrij eenvoudige oplossing te zijn. 
-Dit komt omdat we gebruik maken van the Netherlands3D library. In deze library zitten functies om coordinaten te converteren. 
-Bij het converteren naar de Unity positie wordt er gebruik gemaakt van een instelbaare configuratie. In dit geval was het voldoende om bij het starten als eerste 
+Een oplossing is om het middenpunt te verplaatsen naar de positie van het opgevraagde adres.
 </p>
 
+<p>Dit bleek in code een vrij eenvoudige oplossing te zijn. 
+Dit komt omdat we gebruik maken van the Netherlands3D library. In deze library zitten functies om coordinaten te converteren. </p>
+
+<p>Bij het converteren naar de Unity positie wordt er gebruik gemaakt van een instelbaare configuratie. <br>
+In dit geval was het voldoende om bij het starten van de applicatie als eerste deze configuratie te doen. </p>
 <p>
-    <b-img src="images/floating point precision fixed.gif" fluid alt="Responsive image"></b-img>
-</p>
 
+<p><b>Het resultaat is hieronder zichtbaar, geen floating point precision problemen meer en een stabiel beeld!</b></p>
 
-  
+    <b-img src="images/floating point precision fixed.gif" width=800 fluid alt="Responsive image"></b-img>
+ 
 
 
 </b-container>

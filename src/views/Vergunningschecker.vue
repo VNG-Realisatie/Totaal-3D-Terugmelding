@@ -2,7 +2,12 @@
 
 <b-container class="bv-example-row" >
 
-  <div>
+  <div v-if="hasSession">      
+      <b-button class="btnHasSession" @click="NewSession()" variant="danger">Begin opnieuw</b-button>  
+      <b-button class="btnHasSession" @click="OpenSession()" variant="primary">Ga verder met ontwerp uitbouw in 3D omgeving</b-button>
+    </div>
+
+  <div v-if="!hasSession">
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
         <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
         <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
@@ -18,10 +23,11 @@
       <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
 
         <div class="entryform">
-          <input id="zoek" v-model="zoektext" list="zoekresultaten" placeholder="Zoek adres..."  >
-          <datalist id="zoekresultaten" >
-            <option v-for="item in zoekresultaten" v-bind:key="item.identificatie" >{{item.omschrijving}}</option>  
-          </datalist>
+          <input id="zoek" v-model="zoektext" placeholder="Zoek adres..."  >
+          <b-list-group v-if="selected_adres == null">
+            <b-list-group-item :active="isactive(index)" class="listitem" v-for="(item,index) in zoekresultaten" v-bind:key="item.identificatie" button @click="selectAdres(index)"  >{{item.omschrijving}}</b-list-group-item>
+          </b-list-group>
+
         </div>
   
         <div class="status">
@@ -230,16 +236,31 @@ export default {
         blobId:null
       },
       build_options: [      
-        {value: "3d", text: 'laatste build'},
+        {value: "3d", text: 'laatste build (3.7.2)'},
+        {value: "v3.7.1", text: 'v3.7.1'},
+        {value: "v3.3.1", text: 'v3.3.1'},
         {value: "v2.24.1", text: 'v2.24.1'},
         // {value: "v2.8.3", text: 'v2.8.3'},
         // {value: "wmsprojector", text: 'feature WMS projector'}
       ],
-      selected_build: "3d"
+      selected_build: "3d",
+      searchlist_index:-1,
+      is_selecting:false,
+      selected_adres:null
+      
 
     }
   },
+  beforeMount () {
+  	window.addEventListener('keydown', this.handleKeydown, null);
+  },
+  beforeDestroy () {
+  	window.removeEventListener('keydown', this.handleKeydown);
+  },
   computed:{
+    hasSession:function(){
+      return this.sessionId != null;
+    },
     gaverderTekst:function(){
       if(this.isBimMode) return "Bekijk de uitbouw in de 3D omgeving";
       else return "Start ontwerp uitbouw in 3D omgeving";
@@ -250,11 +271,7 @@ export default {
     postcodeState:function(){
         if(this.postcode.length != 6) return null;        
         return true;
-    },
-    addressState: function (){
-      if(!this.found_address) return null;
-      return true;
-    },   
+    }, 
     center: {
       get(){    
         if(this.bagcoordinates.length == 0 ){
@@ -289,6 +306,9 @@ export default {
   watch: {
     zoektext: function(val, oldval){
 
+ this.found_address = false;
+ this.searchlist_index = -1;
+
         var selected = false;
         for(var i= 0; i < this.zoekresultaten.length ;  i++){
 
@@ -301,7 +321,9 @@ export default {
         }
 
         if(val != "" && !selected){
-          this.zoekAdres(val, false);      
+          this.zoekAdres(val, false);
+          this.is_selecting = false;
+          this.selected_adres = null;
         }
         else{
           this.found_address = false;
@@ -312,10 +334,10 @@ export default {
     this.viewer_image = this.viewer_default_image;
   },
   mounted:function(){
-      if (!localStorage.sessionId) {
-        localStorage.sessionId = uuid.v1();
+      if (localStorage.sessionId) {
+        this.sessionId= localStorage.sessionId;        
       }
-      this.sessionId = localStorage.sessionId;
+      
   },
  methods: {
     laadAdresRedir: function(xy,id) {      
@@ -331,17 +353,21 @@ export default {
                       "Accept-Crs": "epsg:28992" 
                     } 
 
-      let url = `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen/zoek?zoek=${text}&page=1&pageSize=20`;
+      let url = `https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen/zoek?zoek=${text}&page=1&pageSize=10`;
 
       fetch(url, { headers })
         .then(response => response.json())
         .then(data => {
-          if(data._embedded == undefined) return;
-          this.zoekresultaten = data._embedded.zoekresultaten;
-
-          if(select && this.zoekresultaten.length == 1){
-            this.zoektext = this.zoekresultaten[0].omschrijving;
+          if(data._embedded == undefined){
+            this.zoekresultaten = [];            
+            return;
           }
+
+            this.zoekresultaten = data._embedded.zoekresultaten;
+
+            if(select && this.zoekresultaten.length == 1){
+              this.selectAdres(0);             
+            }
 
         });
 
@@ -530,12 +556,20 @@ export default {
         link.download = filename;        
         link.click();      
     },
+    NewSession(){
+        localStorage.removeItem("sessionId");        
+        this.sessionId = null;
+        
+    },
     SaveSession(){
 
         var date = new Date();
         var month = Months[date.getMonth()];
 
-        Session.$_session_id = this.sessionId;
+        localStorage.sessionId = uuid.v1();
+        this.sessionId = localStorage.sessionId;
+
+        Session.$_session_id = localStorage.sessionId;
         Session.$_street = this.street;
         Session.$_city = this.city;
         Session.$_huisnummer = this.huisnummer;
@@ -548,38 +582,20 @@ export default {
         Session.$_blob_id = this.bim.blobId;
         Session.$_model_id = this.bim.currentModelId;
         Session.$_model_version_id = this.bim.currentVersionId;
-        Session.$_date = `${date.getDate()} ${month} ${date.getFullYear()}`;    
+        Session.$_date = `${date.getDate()} ${month} ${date.getFullYear()}`;
+        Session.$_ismonument = this.ismonument;
+        Session.$_isbeschermd = this.isbeschermd;
         
-        var requestOptions = {
-            method: "GET"       
-        };
-
-      if (!localStorage.session) {
-        localStorage.session = JSON.stringify(Session);
-      }
-      else{
-        //vorige sessie ophalen en controleren of bad anders is
-        var session = JSON.parse(localStorage.session);      
-        if(session.$_bag_id != Session.$_bag_id){
-            //nieuw adres gedetecteerd, we maken een nieuwe sessie_id en deleten de oude
-            this.deleteSession(`${localStorage.sessionId}_html.json`);
-            localStorage.sessionId = uuid.v1();
-            this. session_id = localStorage.sessionId;
-            Session.$_session_id = localStorage.sessionId;
-        }
-        //updaten session object lokaal
-        localStorage.session = JSON.stringify(Session);
-      }
-
       //update session server
       this.UpdateSession();
 
+      this.OpenSession();
+    },
+    OpenSession(){
       window.open(
-        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${Session.$_session_id}`,
+        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${this.sessionId}`,
         '_blank'
       );
-
-
     },
     UpdateSession(){
       var url = `${Config.backend_url_base}/upload/${Session.$_session_id}_html`;
@@ -595,20 +611,38 @@ export default {
               console.log(data);                
             } );
     },
-    deleteSession(filename){
-            var requestOptions = {
-                method: "DELETE",
-                headers: { 
-                    "Content-Type": "application/json",                
-                }            
-            };
-            fetch(`${Config.backend_url_base}/session/${filename}`, requestOptions)           
-            .then(data =>
-            {                
-                console.log("deleted session");
-            } );
+    isactive(index){
+      return this.is_selecting && index == this.searchlist_index;
+    },
+    handleKeydown (e) {
 
-        },
+    	switch (e.keyCode) {     
+        case 13:
+          this.selectAdres(this.searchlist_index);         
+          break;
+        case 38:
+          if(this.searchlist_index == 0) break;     
+          this.searchlist_index--;        
+          break;         
+         case 40: 
+          if(this.searchlist_index == this.zoekresultaten.length-1) break;
+          this.searchlist_index++;
+          this.is_selecting = true;          
+          break;
+        case 33: 
+          this.searchlist_index = 0;
+          break;
+        case 34: 
+          this.searchlist_index = this.zoekresultaten.length-1;
+          break;
+
+      }
+    },
+    selectAdres(index){
+          this.zoektext = this.zoekresultaten[index].omschrijving;  
+          this.selected_adres = this.zoekresultaten[index];
+    }
+    
  },
 
   components: {    
@@ -624,6 +658,14 @@ export default {
 </script>
 
 <style scoped>
+
+.btnHasSession{
+  margin-top: 60px;
+  margin-bottom: 60px;
+  margin-left: 20px;
+  margin-right: 20px;
+
+}
 
 .noaccess{
   margin-top: 80px;
@@ -766,6 +808,11 @@ margin-top:26px;
     animation-duration: 0.4s;
     animation-fill-mode: forwards;      
  }
+
+ .listitem{
+   font-size: 14px;
+   height: 42px;
+  }
 
  @keyframes shadow_in {
   from {box-shadow: 0 0 0px 0px #B3D2F3;}

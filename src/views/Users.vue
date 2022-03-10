@@ -16,7 +16,7 @@
               <b-td>{{user.PartitionKey}}</b-td>
               <b-td>{{user.RowKey}}</b-td>
               <b-td>{{user.IsActive}}</b-td>
-              <b-td><a href="#" @click="copyText(user)">Kopieer invite tekst</a></b-td>
+              <b-td><a href="#" v-b-popover="{content:'gekopieerd', variant:'info'}" @click="copyText(user)">Kopieer invite tekst</a></b-td>
               
             </b-tr>
           </b-thead>
@@ -90,28 +90,21 @@ export default {
 
           try {
           
-          var content = `<div>Beste ${user.PartitionKey}</div>
-          <p>
-            <div>Hierbij je activatie code</div>          
-          </p>
+            var content = `<div>Beste ${user.PartitionKey},</div><br>
+              <div>Hierbij je activatie code:</div><br>
+              <div><b>${user.RowKey}<div></b><br>
+              <div>Ga naar de volgende site en voer de code in:</div>
+              <div><a href="https://t3dstorage.z6.web.core.windows.net/#/activate">https://t3dstorage.z6.web.core.windows.net/#/activate</a></div><br>
+              <div>Met vriendelijke groet,</div>
+              <div>Team T3D</div>
+              `; 
+              
+            const blob = new Blob([content], { type: "text/html" });
+            const richTextInput = new ClipboardItem({ "text/html": blob });
+            await navigator.clipboard.write([richTextInput]);
 
-          <p>
-            <b>${user.RowKey}</b>
-          </p>
+            setTimeout(() => this.$root.$emit('bv::hide::popover'), 1500);
 
-          <div>Ga naar de volgende site en voer de code in</div>
-          <p>
-            <a href="https://t3dstorage.z6.web.core.windows.net/#/activate">https://t3dstorage.z6.web.core.windows.net/#/activate</a>
-          </p>
-
-          <img src="https://cataas.com/cat/says/welcome%20to%20T3D?width=300" >
-          `; 
-                    
-          const blob = new Blob([content], { type: "text/html" });
-          const richTextInput = new ClipboardItem({ "text/html": blob });
-          await navigator.clipboard.write([richTextInput]);
-
-            //await navigator.clipboard.writeText(this.$refs.panel.innerHTML);            
           } catch($e) {
             alert('Er ging iets mis bij het kopieren naar klembord');
           }
