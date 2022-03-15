@@ -569,22 +569,22 @@ export default {
         localStorage.sessionId = uuid.v1();
         this.sessionId = localStorage.sessionId;
 
-        Session.$_session_id = localStorage.sessionId;
-        Session.$_street = this.street;
-        Session.$_city = this.city;
-        Session.$_huisnummer = this.huisnummer;
-        Session.$_huisnummertoevoeging = this.huisnummertoevoeging;
-        Session.$_postcode = this.postcode;
-        Session.$_hasfile = this.hasfile != "DrawMode";
-        Session["$_rd_position.x"] = this.bagcoordinates[0];
-        Session["$_rd_position.y"] = this.bagcoordinates[1];
-        Session.$_bag_id = this.bagids[0];
-        Session.$_blob_id = this.bim.blobId;
-        Session.$_model_id = this.bim.currentModelId;
-        Session.$_model_version_id = this.bim.currentVersionId;
-        Session.$_date = `${date.getDate()} ${month} ${date.getFullYear()}`;
-        Session.$_ismonument = this.ismonument;
-        Session.$_isbeschermd = this.isbeschermd;
+        Session.instance.HTMLInitSaveData.SessionId = localStorage.sessionId;
+        Session.instance.HTMLInitSaveData.Street = this.street;
+        Session.instance.HTMLInitSaveData.City = this.city;
+        Session.instance.HTMLInitSaveData.HouseNumber = this.huisnummer;
+        Session.instance.HTMLInitSaveData.HouseNumberAddition = this.huisnummertoevoeging;
+        Session.instance.HTMLInitSaveData.ZipCode = this.postcode;
+        Session.instance.HTMLInitSaveData.HasFile = this.hasfile != "DrawMode";
+        Session.instance.HTMLInitSaveData.RDPosition.x = this.bagcoordinates[0];
+        Session.instance.HTMLInitSaveData.RDPosition.y = this.bagcoordinates[1];
+        Session.instance.HTMLInitSaveData.BagId = this.bagids[0];
+        Session.instance.HTMLInitSaveData.BlobId = this.bim.blobId;
+        Session.instance.HTMLInitSaveData.ModelId = this.bim.currentModelId;
+        Session.instance.HTMLInitSaveData.ModelVersionId = this.bim.currentVersionId;
+        Session.instance.HTMLInitSaveData.Date = `${date.getDate()} ${month} ${date.getFullYear()}`;
+        Session.instance.HTMLInitSaveData.IsMonument = this.ismonument;
+        Session.instance.HTMLInitSaveData.IsBeschermd = this.isbeschermd;
         
       //update session server
       this.UpdateSession();

@@ -1,18 +1,26 @@
 {
-    "$_session_id": "",
-    "$_street": "",
-    "$_city": "",
-    "$_huisnummer": "",
-    "$_huisnummertoevoeging": "",
-    "$_postcode": "",
-    "$_hasfile": false,
-    "$_rd_position.x": 0,
-    "$_rd_position.y": 0,
-    "$_bag_id": "",
-    "$_blob_id": "",
-    "$_model_id": "",
-    "$_model_version_id": "",
-    "$_date": null,
-    "$_is_user_feedback": false,    
-    "$_has_submitted": false
+	"HTMLInitSaveData": {
+		"instance": {
+			"SessionId": "",
+			"Street": "",
+			"City": "",
+			"HouseNumber": "",
+            "HouseNumberAddition": "",
+			"ZipCode": "",
+			"HasFile": false,
+			"RDPosition": {
+				"x": 0,
+				"y": 0
+			},
+			"BagId": "",
+            "BlobId": "",
+			"ModelId": "",
+			"ModelVersionId": "",
+			"Date": "",
+			"IsUserFeedback": false,
+			"HasSubmitted": false,
+			"IsMonument": false,
+			"IsBeschermd": false
+		}
+	}
 }
