@@ -569,27 +569,27 @@ export default {
         localStorage.sessionId = uuid.v1();
         this.sessionId = localStorage.sessionId;
 
-        Session.instance.HTMLInitSaveData.SessionId = localStorage.sessionId;
-        Session.instance.HTMLInitSaveData.Street = this.street;
-        Session.instance.HTMLInitSaveData.City = this.city;
-        Session.instance.HTMLInitSaveData.HouseNumber = this.huisnummer;
-        Session.instance.HTMLInitSaveData.HouseNumberAddition = this.huisnummertoevoeging;
-        Session.instance.HTMLInitSaveData.ZipCode = this.postcode;
-        Session.instance.HTMLInitSaveData.HasFile = this.hasfile != "DrawMode";
-        Session.instance.HTMLInitSaveData.RDPosition.x = this.bagcoordinates[0];
-        Session.instance.HTMLInitSaveData.RDPosition.y = this.bagcoordinates[1];
-        Session.instance.HTMLInitSaveData.BagId = this.bagids[0];
-        Session.instance.HTMLInitSaveData.BlobId = this.bim.blobId;
-        Session.instance.HTMLInitSaveData.ModelId = this.bim.currentModelId;
-        Session.instance.HTMLInitSaveData.ModelVersionId = this.bim.currentVersionId;
-        Session.instance.HTMLInitSaveData.Date = `${date.getDate()} ${month} ${date.getFullYear()}`;
-        Session.instance.HTMLInitSaveData.IsMonument = this.ismonument;
-        Session.instance.HTMLInitSaveData.IsBeschermd = this.isbeschermd;
-        
-      //update session server
-      this.UpdateSession();
+        Session.HTMLInitSaveData.instance.SessionId = localStorage.sessionId;
+        Session.HTMLInitSaveData.instance.Street = this.street;
+        Session.HTMLInitSaveData.instance.City = this.city;
+        Session.HTMLInitSaveData.instance.HouseNumber = this.huisnummer;
+        Session.HTMLInitSaveData.instance.HouseNumberAddition = this.huisnummertoevoeging;
+        Session.HTMLInitSaveData.instance.ZipCode = this.postcode;
+        Session.HTMLInitSaveData.instance.HasFile = this.hasfile != "DrawMode";
+        Session.HTMLInitSaveData.instance.RDPosition.x = this.bagcoordinates[0];
+        Session.HTMLInitSaveData.instance.RDPosition.y = this.bagcoordinates[1];
+        Session.HTMLInitSaveData.instance.BagId = this.bagids[0];
+        Session.HTMLInitSaveData.instance.BlobId = this.bim.blobId;
+        Session.HTMLInitSaveData.instance.ModelId = this.bim.currentModelId;
+        Session.HTMLInitSaveData.instance.ModelVersionId = this.bim.currentVersionId;
+        Session.HTMLInitSaveData.instance.Date = `${date.getDate()} ${month} ${date.getFullYear()}`;
+        Session.HTMLInitSaveData.instance.IsMonument = this.ismonument;
+        Session.HTMLInitSaveData.instance.IsBeschermd = this.isbeschermd;
 
-      this.OpenSession();
+      //update session server
+        this.UpdateSession();
+
+        this.OpenSession();
     },
     OpenSession(){
       window.open(
