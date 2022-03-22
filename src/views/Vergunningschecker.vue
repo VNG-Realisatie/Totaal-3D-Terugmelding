@@ -598,8 +598,11 @@ export default {
       );
     },
     UpdateSession(){
-      var url = `${Config.backend_url_base}/upload/${Session.$_session_id}_html`;
+      var url = `${Config.backend_url_base}/upload/${Session.HTMLInitSaveData.instance.SessionId}_html`;
       
+      //console.log(url);
+      //console.log(Session);
+
       var requestOptions = {
                 method: "PUT",
                  body: JSON.stringify(Session)
@@ -608,8 +611,8 @@ export default {
             .then(response => response.text())        
             .then(data =>
             {     
-              console.log(data);                
-            } );
+              console.log(`${url}:${data}`);
+            });
     },
     isactive(index){
       return this.is_selecting && index == this.searchlist_index;
