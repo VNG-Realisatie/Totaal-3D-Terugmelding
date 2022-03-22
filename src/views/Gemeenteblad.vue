@@ -2,12 +2,12 @@
 
 <b-container class="content">
 
-  <div class="aanvragen" v-for="item in pagedItems" v-bind:key="item.$_session_id">
+  <div class="aanvragen" v-for="item in pagedItems" v-bind:key="item.SessionId">
 
     <img src="images/icoon_externe_link.png" class="linkimg" alt="">
 
-    <span @click="opensession(item.$_session_id)">Aanvraag omgevingsvergunning {{item.$_street}} {{item.$_huisnummer}}, {{item.$_postcode}} {{item.$_city}} </span>    
-    <div class="datum">{{item.$_date}}</div>
+    <span @click="opensession(item.SessionId)">Aanvraag omgevingsvergunning {{item.Street}} {{item.HouseNumber}}, {{item.Zipcode}} {{item.City}} </span>    
+    <div class="datum">{{item.Date}}</div>
   </div>
 
 <b-pagination
@@ -43,9 +43,12 @@ export default {
       var submitted = [];
 
       for (let i = 0; i < this.aanvragen.length; i++) {
-        if (this.aanvragen[i].$_has_submitted) {
-          submitted.push(this.aanvragen[i]);
-         }
+
+        let savedata = this.aanvragen[i].HTMLInitSaveData;
+        if(savedata != null && savedata.instance != null && savedata.instance.HasSubmitted){
+          submitted.push(savedata.instance);
+        }
+
       }
       return submitted;
     }
@@ -76,8 +79,7 @@ export default {
             .then(response => response.json())
             .then(data =>
             {               
-                this.aanvragen = data;
-                console.log(this.aanvragen);                            
+                this.aanvragen = data;                                       
             } );
         },
         getsession(idstring){
