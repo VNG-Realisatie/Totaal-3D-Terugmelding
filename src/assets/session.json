@@ -20,7 +20,8 @@
 			"IsUserFeedback": false,
 			"HasSubmitted": false,
 			"IsMonument": false,
-			"IsBeschermd": false
+			"IsBeschermd": false,
+			"SnapToWall": false
 		}
 	}
 }

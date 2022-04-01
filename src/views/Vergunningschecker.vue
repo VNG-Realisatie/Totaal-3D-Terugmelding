@@ -86,14 +86,20 @@
     </b-row>
 
     <b-row v-if="step==2">
-        <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
         
+        <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
+            <div class="formheader">Wat voor een type bouwwerk ontbreekt in de huidige situatie?</div>
+            <b-form-group class="alignleft topmargin20">
+              <b-form-radio v-model="snapToWall" name="snap-radios" value="snap">Een aanbouw of uitbouw (vast aan de gevel)</b-form-radio>
+              <b-form-radio v-model="snapToWall" name="snap-radios" value="noSnap">Een bijgebouw (los van het hoofdgebouw)</b-form-radio>
+            </b-form-group>
+
             <div class="formheader">Heeft u een bestand van een 3D model van de uitbouw?</div>
             
             <div class="formlines topmargin10">Om de vergunning te kunnen beoordelen hebben we een 3D tekening van de uitbouw nodig.</div>
 
             <b-form-group class="alignleft topmargin20">
-              
+            
             <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
 
             <b-form-file   
@@ -236,19 +242,13 @@ export default {
         blobId:null
       },
       build_options: [      
-        {value: "3d", text: 'laatste build (3.7.2)'},
-        {value: "v3.7.1", text: 'v3.7.1'},
-        {value: "v3.3.1", text: 'v3.3.1'},
-        {value: "v2.24.1", text: 'v2.24.1'},
-        // {value: "v2.8.3", text: 'v2.8.3'},
-        // {value: "wmsprojector", text: 'feature WMS projector'}
+        {value: "3d", text: 'laatste build'}        
       ],
       selected_build: "3d",
       searchlist_index:-1,
       is_selecting:false,
-      selected_adres:null
-      
-
+      selected_adres:null,
+      snapToWall:""
     }
   },
   beforeMount () {
@@ -268,6 +268,9 @@ export default {
     isBimMode:function(){
       return this.hasfile == 'BimMode';
     },
+    // isSnapToWall:function(){
+    //   return this.snapToWall == "snap";
+    // },
     postcodeState:function(){
         if(this.postcode.length != 6) return null;        
         return true;
@@ -585,6 +588,7 @@ export default {
         Session.HTMLInitSaveData.instance.Date = `${date.getDate()} ${month} ${date.getFullYear()}`;
         Session.HTMLInitSaveData.instance.IsMonument = this.ismonument;
         Session.HTMLInitSaveData.instance.IsBeschermd = this.isbeschermd;
+        Session.HTMLInitSaveData.instance.SnapToWall = this.snapToWall == "snap";
 
       //update session server
         this.UpdateSession();
