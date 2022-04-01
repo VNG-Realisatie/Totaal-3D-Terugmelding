@@ -196,8 +196,7 @@ export default {
   data: function () {
     return {
       sessionId:null,
-      step: 1,
-      viewer_base_url: "https://t3dstorage.z6.web.core.windows.net",      
+      step: 1,    
       postcode: "",
       huisnummerinvoer: "",
       huisnummer: "",
@@ -344,7 +343,7 @@ export default {
   },
  methods: {
     laadAdresRedir: function(xy,id) {      
-      window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;
+      window.location.href = `${Config.frontend_url_base}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
       this.zoekAdres(`${postcode} ${nummer}`, true);
@@ -597,7 +596,7 @@ export default {
     },
     OpenSession(){
       window.open(
-        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${this.sessionId}`,
+        `${Config.frontend_url_base}/${this.selected_build}/?sessionId=${this.sessionId}`,
         '_blank'
       );
     },
