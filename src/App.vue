@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-
     <div>
       <b-navbar toggleable="lg" >
         <b-navbar-brand href="#">            
@@ -37,8 +36,6 @@
    
     <router-view/>
 
-
-
 <div id="footer">
 
 <b-container>
@@ -52,14 +49,12 @@
 </b-container>
 
 </div>
-  
-
-    
 
   </div>
 </template>
 
 <script>
+
 export default {
   name: 'App',
   data: function () {
@@ -73,7 +68,7 @@ export default {
       this.$root.authenticated = true;
       this.$root.user = localStorage.user;
       this.$root.authToken = localStorage.authToken;
-    })  
+    });
     
   },
   mounted:function(){   

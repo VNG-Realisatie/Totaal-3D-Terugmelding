@@ -27,8 +27,6 @@
 
 <script>
 
-import Config from '@/assets/config.json';
-
 export default {
   name: 'UserFeedBack',
   mounted:function(){   
@@ -61,7 +59,7 @@ export default {
                 }            
             };
 
-            fetch(`${Config.backend_url_base}/getuserfeedback/${filename}`, requestOptions)            
+            fetch(`${shared.backend_base}/getuserfeedback/${filename}`, requestOptions)            
             .then(response => response.json())
             .then(data =>
             {
@@ -72,7 +70,7 @@ export default {
 
         },
         getFeedbackUrl(feedbackFileName){            
-            return `${Config.frontend_url_base}/3d/?sessionId=${feedbackFileName}&isuserfeedback=true&iseditmode=false`;
+            return `${shared.frontend_base}/3d/?sessionId=${feedbackFileName}&isuserfeedback=true&iseditmode=false`;
         }
     }
 

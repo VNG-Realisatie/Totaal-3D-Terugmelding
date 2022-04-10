@@ -55,7 +55,7 @@
 <script>
 
 import axios from 'axios';
-import Config from '@/assets/config.json';
+import shared from '../shared'
 
 export default {
   name: 'BimServerTest',
@@ -235,7 +235,7 @@ export default {
         addBim(){
             //console.log(this.file);
 
-            var url = `${Config.backend_url_base}/uploadbim/${this.file.name}`;
+            var url = `${shared.backend_base}/uploadbim/${this.file.name}`;
 
             var formdata=  new FormData();
             formdata.append("version", this.file, this.file.name );

@@ -170,11 +170,9 @@
 
 import Session from '@/assets/session.json';
 import Months from '@/assets/months.json';
-import Config from '@/assets/config.json';
-
+import shared from '../shared'
 import { uuid } from 'vue-uuid'; // uuid object is also exported to things
                                    // outside Vue instance.
-
 
 // @ is an alias to /src
 import { ModelObj } from 'vue-3d-model'
@@ -343,7 +341,7 @@ export default {
   },
  methods: {
     laadAdresRedir: function(xy,id) {      
-      window.location.href = `${Config.frontend_url_base}?position=${xy}&id=${id}`;
+      window.location.href = `${shared.frontend_base}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
       this.zoekAdres(`${postcode} ${nummer}`, true);
@@ -487,7 +485,7 @@ export default {
     addBim(){
       this.bim.isUploading = true;
 
-      var url = `${Config.backend_url_base}/uploadbim/${this.bim.file.name}`;
+      var url = `${shared.backend_base}/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -523,7 +521,7 @@ export default {
     },
     checkVersion(modelId, versionId){
 
-      var url = `${Config.backend_url_base}/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `${shared.backend_base}/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",        
@@ -596,12 +594,12 @@ export default {
     },
     OpenSession(){
       window.open(
-        `${Config.frontend_url_base}/${this.selected_build}/?sessionId=${this.sessionId}`,
+        `${shared.frontend_base}/${this.selected_build}/?sessionId=${this.sessionId}`,
         '_blank'
       );
     },
     UpdateSession(){
-      var url = `${Config.backend_url_base}/upload/${Session.HTMLInitSaveData.instance.SessionId}_html`;
+      var url = `${shared.backend_base}/upload/${Session.HTMLInitSaveData.instance.SessionId}_html`;
       
       //console.log(url);
       //console.log(Session);
