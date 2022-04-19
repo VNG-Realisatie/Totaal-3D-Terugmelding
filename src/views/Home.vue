@@ -24,9 +24,9 @@ Deze technische demo is een eerste werkend prototype uit het programma T3D van d
 
 <b-row class="buttons">
     <b-col class="linkcard">
-      <h2>Demo dynamische vergunningschecker</h2>
+      <h2>Demo terugmelden</h2>
       <div>Een gebruiker kan in een 3D model toetsen of het gewenste ontwerp van een uitbouw valt binnen de regelgeving van de omgevingswet. In deze demo zijn vier regels geautomatiseerd en te toetsen via een in te tekenen uitbouw of in te laden 3D tekening.</div>
-      <b-button href="#/vergunningschecker" class="button-link">Start Vergunningschecker</b-button>  
+      <b-button href="#/terugmelden" class="button-link">Start Vergunningschecker</b-button>  
     </b-col>
 
     <b-col class="linkcard">

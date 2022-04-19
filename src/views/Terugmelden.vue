@@ -17,7 +17,9 @@
        
     <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
 
-    <div class="header">Uitbouw plaatsen</div>
+    
+    <div v-if="found_address" class="header">Bouwwerk plaatsen</div>
+    <div v-else class="header">Nieuwe melding</div>
 
     <b-row v-if="step==1">
       <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">

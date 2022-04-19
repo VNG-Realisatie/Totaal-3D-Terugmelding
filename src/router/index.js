@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Vergunningschecker from '../views/Vergunningschecker.vue'
+import Vergunningschecker from '../views/Terugmelden.vue'
 import Gemeenteblad from '../views/Gemeenteblad.vue'
 import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
@@ -20,8 +20,8 @@ const routes = [
     component: Home
   },
   {
-    path: '/vergunningschecker',
-    name: 'Vergunningschecker',
+    path: '/terugmelden',
+    name: 'Terugmelden',
     component: Vergunningschecker
   },
   {
