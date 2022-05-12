@@ -24,9 +24,9 @@ Deze technische demo is een eerste werkend prototype uit het programma T3D van d
 
 <b-row class="buttons">
     <b-col class="linkcard">
-      <h2>Demo terugmelden</h2>
+      <h2>Demo Vergunningschecker</h2>
       <div>Een gebruiker kan in een 3D model toetsen of het gewenste ontwerp van een uitbouw valt binnen de regelgeving van de omgevingswet. In deze demo zijn vier regels geautomatiseerd en te toetsen via een in te tekenen uitbouw of in te laden 3D tekening.</div>
-      <b-button href="#/terugmelden" class="button-link">Start Vergunningschecker</b-button>  
+      <b-button href="/vergunningschecker#/vergunningschecker" class="button-link">Start Vergunningschecker</b-button>  
     </b-col>
 
     <b-col class="linkcard">
@@ -43,6 +43,9 @@ Deze technische demo is een eerste werkend prototype uit het programma T3D van d
 <p>
 Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlening 3D bouwaanvragen gebruikt kunnen worden als input voor de 3D registratie.
 </p>
+
+<p>Momenteel zijn de we mogelijkheden van 3D bij het Terugmelden van fouten in de BAG en BGT aan het onderzoeken.</p>
+<p>Bekijk daarvoor deze <a  href="#/terugmelden">demo.</a></p>
 
 
   <b-row class="team">
