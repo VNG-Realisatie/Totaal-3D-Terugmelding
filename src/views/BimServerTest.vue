@@ -259,7 +259,7 @@ export default {
             } );
         },
         testBimApi(){
-            var url = `http://localhost:7071/api/uploadbim`;
+            var url = `${shared.backend_base}/uploadbim`;
             axios.get(url)
             .then(response =>
             {
@@ -267,9 +267,7 @@ export default {
             } );
         },
         blobTest(){
-            //console.log(this.file);
-
-            var url = `http://localhost:7071/api/upload/blobtest`;
+            var url = `${shared.backend_base}/upload/blobtest`;
 
             var requestOptions = {
                 method: "PUT",                
