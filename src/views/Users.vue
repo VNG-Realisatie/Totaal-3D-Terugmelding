@@ -32,7 +32,7 @@
 
 <script>
 
-import Config from '@/assets/config.json';
+import shared from '../shared'
 
 export default {
   name: 'AuthTest',
@@ -70,7 +70,7 @@ export default {
                 }            
             };
 
-            fetch(`${Config.backend_url_base}/getusers`, requestOptions)                        
+            fetch(`${shared.backend_base}/getusers`, requestOptions)                        
             .then(response => {
               if(response.status ==200){
                 response.json().then(data =>

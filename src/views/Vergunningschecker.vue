@@ -164,7 +164,7 @@
 
 import Session from '@/assets/session.json';
 import Months from '@/assets/months.json';
-import Config from '@/assets/config.json';
+import shared from '../shared'
 
 import { uuid } from 'vue-uuid'; // uuid object is also exported to things
                                    // outside Vue instance.
@@ -341,7 +341,7 @@ export default {
   },
  methods: {
     laadAdresRedir: function(xy,id) {      
-      window.location.href = `${this.viewer_base_url}?position=${xy}&id=${id}`;
+      window.location.href = `${shared.frontend_base}?position=${xy}&id=${id}`;
     },
     laadAdres: function(postcode,nummer) {      
       this.zoekAdres(`${postcode} ${nummer}`, true);
@@ -485,7 +485,7 @@ export default {
     addBim(){
       this.bim.isUploading = true;
 
-      var url = `${Config.backend_url_base}/uploadbim/${this.bim.file.name}`;
+      var url = `${shared.backend_base}/uploadbim/${this.bim.file.name}`;
       
       var formdata=  new FormData();
       formdata.append("version", this.bim.file, this.bim.file.name );
@@ -521,7 +521,7 @@ export default {
     },
     checkVersion(modelId, versionId){
 
-      var url = `${Config.backend_url_base}/getbimversionstatus/${this.bim.currentModelId}`;
+      var url = `${shared.backend_base}/getbimversionstatus/${this.bim.currentModelId}`;
 
       var requestOptions = {
         method: "GET",        
@@ -575,7 +575,7 @@ export default {
         Session.HTMLInitSaveData.instance.HouseNumber = this.huisnummer;
         Session.HTMLInitSaveData.instance.HouseNumberAddition = this.huisnummertoevoeging;
         Session.HTMLInitSaveData.instance.ZipCode = this.postcode;
-        Session.HTMLInitSaveData.instance.HasFile = this.hasfile != "DrawMode";
+        Session.HTMLInitSaveData.instance.HasFile = thishared.backend_bases.hasfile != "DrawMode";
         Session.HTMLInitSaveData.instance.RDPosition.x = this.bagcoordinates[0];
         Session.HTMLInitSaveData.instance.RDPosition.y = this.bagcoordinates[1];
         Session.HTMLInitSaveData.instance.BagId = this.bagids[0];
@@ -593,12 +593,12 @@ export default {
     },
     OpenSession(){
       window.open(
-        `${this.viewer_base_url}/${this.selected_build}/?sessionId=${this.sessionId}`,
+        `${shared.frontend_base}/${this.selected_build}/?sessionId=${this.sessionId}`,
         '_blank'
       );
     },
     UpdateSession(){
-      var url = `${Config.backend_url_base}/upload/${Session.HTMLInitSaveData.instance.SessionId}_html`;
+      var url = `${shared.backend_base}/upload/${Session.HTMLInitSaveData.instance.SessionId}_html`;
       
       //console.log(url);
       //console.log(Session);

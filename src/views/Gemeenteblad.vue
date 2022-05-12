@@ -24,7 +24,7 @@
 
 <script>
 
-import Config from '@/assets/config.json';
+import shared from '../shared'
 
 export default {
   name: 'Gemeenteblad',
@@ -75,7 +75,7 @@ export default {
                 }            
             };
 
-            fetch(`${Config.backend_url_base}/getsessionlist`, requestOptions)
+            fetch(`${shared.backend_base}/getsessionlist`, requestOptions)
             .then(response => response.json())
             .then(data =>
             {               
@@ -89,7 +89,7 @@ export default {
 
             var id = idstring.replace('.json', '');
 
-            fetch(`${Config.backend_url_base}/api/download/${id}_html`, requestOptions) 
+            fetch(`${shared.backend_base}/api/download/${id}_html`, requestOptions) 
             .then(response => response.json())        
             .then(data =>
             {     
@@ -98,7 +98,7 @@ export default {
 
         },
         opensession(sessionid){
-          window.location=`${Config.frontend_url_base}/3d/?sessionId=${sessionid}`;
+          window.location=`${shared.frontend_base}/3d/?sessionId=${sessionid}`;
         }
   }
 }

@@ -30,7 +30,7 @@
 
 <script>
 
-import Config from '@/assets/config.json';
+import shared from '../shared'
 
 export default {
   name: 'AuthTest',
@@ -58,7 +58,7 @@ export default {
                 body: JSON.stringify({  "authToken" : this.activateCode.trim()  })     
             };
 
-            fetch(`${Config.backend_url_base}/activate`, requestOptions)            
+            fetch(`${shared.backend_base}/activate`, requestOptions)            
             .then(response => {
                   if(response.status ==200){
                     response.json().then(data =>

@@ -1,4 +1,0 @@
-{
-    "backend_url_base": "https://t3dbackend.azurewebsites.net/api",
-    "frontend_url_base": "https://t3dstorage.z6.web.core.windows.net"
-}
