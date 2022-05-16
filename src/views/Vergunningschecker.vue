@@ -575,7 +575,7 @@ export default {
         Session.HTMLInitSaveData.instance.HouseNumber = this.huisnummer;
         Session.HTMLInitSaveData.instance.HouseNumberAddition = this.huisnummertoevoeging;
         Session.HTMLInitSaveData.instance.ZipCode = this.postcode;
-        Session.HTMLInitSaveData.instance.HasFile = thishared.backend_bases.hasfile != "DrawMode";
+        Session.HTMLInitSaveData.instance.HasFile = this.hasfile != "DrawMode";
         Session.HTMLInitSaveData.instance.RDPosition.x = this.bagcoordinates[0];
         Session.HTMLInitSaveData.instance.RDPosition.y = this.bagcoordinates[1];
         Session.HTMLInitSaveData.instance.BagId = this.bagids[0];
@@ -593,7 +593,7 @@ export default {
     },
     OpenSession(){
       window.open(
-        `${shared.frontend_base}/${this.selected_build}/?sessionId=${this.sessionId}`,
+        `${shared.frontend_base}/?sessionId=${this.sessionId}`,
         '_blank'
       );
     },
