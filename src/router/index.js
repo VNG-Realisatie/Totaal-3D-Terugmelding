@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Vergunningschecker from '../views/Terugmelden.vue'
+import Sketchup2CityJson from '../views/Sketchup2CityJson.vue'
 import Gemeenteblad from '../views/Gemeenteblad.vue'
 import BimServerTest from '../views/BimServerTest.vue'
 import UserFeedBack from '../views/UserFeedBack.vue'
@@ -23,6 +24,11 @@ const routes = [
     path: '/terugmelden',
     name: 'Terugmelden',
     component: Vergunningschecker
+  },
+  {
+    path: '/sketchup2cityjson',
+    name: 'Sketchup2CityJson',
+    component: Sketchup2CityJson
   },
   {
     path: '/bevindingen',
