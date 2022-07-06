@@ -9,10 +9,7 @@
 
   <div v-if="!hasSession">
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
-        <b-dropdown-item @click="laadAdres('3583JE', '79')">Stadhouderslaan 79 Utrecht</b-dropdown-item>
-        <b-dropdown-item @click="laadAdres('3523RR', '15')">Hertestraat 15 Utrecht</b-dropdown-item>
-        <b-dropdown-item @click="laadAdres('3524KX', '5')">Catalonië 5 Utrecht</b-dropdown-item>
-        <!-- <b-dropdown-item @click="laadAdres('1015DT', '235')">Prinsengracht 235 Amsterdam</b-dropdown-item> -->
+        <b-dropdown-item @click="laadAdres('2522WV', '83')">Johan Gramstraat 83 's-Gravenhage'</b-dropdown-item>        
     </b-dropdown>
        
     <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
