@@ -9,7 +9,9 @@
 
   <div v-if="!hasSession">
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
-        <b-dropdown-item @click="laadAdres('2522WV', '83')">Johan Gramstraat 83 's-Gravenhage'</b-dropdown-item>        
+        <b-dropdown-item @click="laadAdres('2522WV', '83')">Johan Gramstraat 83 's-Gravenhage'</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('2522SC', '61')">Oudemansstraat 61 's-Gravenhage'</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('2522PD', '1')">Trembleystraat 1 's-Gravenhage'</b-dropdown-item>
     </b-dropdown>
        
     <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
@@ -28,6 +30,13 @@
           </b-list-group>
 
         </div>
+
+<div></div>
+
+        <div v-if="zoektext == ''" class="alignleft">Deze proefopstelling werkt alleen in één gebied in Den Haag. Demo-adressen zijn bovenin te vinden,
+onder “Laad adres”.</div><br/>
+
+<b-img v-if="zoektext == ''" src="images/proefopstelling.png" width=800 fluid alt="Responsive image"></b-img>
   
         <div class="status">
 
@@ -305,8 +314,8 @@ export default {
   watch: {
     zoektext: function(val, oldval){
 
- this.found_address = false;
- this.searchlist_index = -1;
+        this.found_address = false;
+        this.searchlist_index = -1;
 
         var selected = false;
         for(var i= 0; i < this.zoekresultaten.length ;  i++){
@@ -326,6 +335,7 @@ export default {
         }
         else{
           this.found_address = false;
+          this.zoekresultaten = [];
         }
     }
   },
