@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <div>
+
       <b-navbar toggleable="lg" >
         <b-navbar-brand href="#">            
           <router-link to="/"><img id="logo" src="images/amsterdam_logo.png"/></router-link>        
@@ -16,15 +17,15 @@
             <!-- <b-nav-item href="#">Mijn Amsterdam</b-nav-item>
             <router-link to="/">Login</router-link> -->
 
-<b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="$root.user" class="m-md-2">
-<!-- <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="user" class="m-md-2"> -->
-    <b-dropdown-item href="#/userfeedback">User Feedback</b-dropdown-item>
-    <b-dropdown-item href="#/users">Users</b-dropdown-item>
-    <b-dropdown-item href="#/bevindingen">Bevindingen Blog</b-dropdown-item>
-    <b-dropdown-divider></b-dropdown-divider>
-    <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
-    <!-- <b-dropdown-item disabled>Disabled action</b-dropdown-item> -->
-  </b-dropdown>
+            <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="$root.user" class="m-md-2">
+            <!-- <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="user" class="m-md-2"> -->
+                <b-dropdown-item href="#/userfeedback">User Feedback</b-dropdown-item>
+                <b-dropdown-item href="#/users">Users</b-dropdown-item>
+                <b-dropdown-item href="#/bevindingen">Bevindingen Blog</b-dropdown-item>
+                <b-dropdown-divider></b-dropdown-divider>
+                <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
+                <!-- <b-dropdown-item disabled>Disabled action</b-dropdown-item> -->
+            </b-dropdown>
 
           </b-navbar-nav>
         </b-collapse>
@@ -34,7 +35,7 @@
 
     <hr>
    
-    <router-view/>
+    <router-view class="main"></router-view>
 
 <div id="footer">
 
@@ -146,6 +147,7 @@ export default {
   src: local("AvenirUltLt"),
    url(./fonts/avenir/AvenirNextLTPro-UltLt.ttf) format("truetype");
 }
+
 
 .header{
   font-family: AvenirBold;

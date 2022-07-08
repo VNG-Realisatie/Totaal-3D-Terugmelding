@@ -4,48 +4,37 @@
 
 
 
-<h1>Bekijk het bouwplan van de buren op een 3D kaart</h1>
+<h1 class="fronttext">Win 3D-modellen in om de digitial twin accuraat te krijgen</h1>
 
 
-<p>
-Stel dat bekendmakingen van vergunningsaanvragen in 3D te zien zijn. Je ziet dat de buren een omgevingsvergunning hebben aangevraagd voor een aanbouw. Je wilt dan graag weten welk effect deze geplande uitbouw op jouw leefomgeving heeft en welke schaduwwerking daarvan uit gaat.
+<p class="fronttext">
+Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen beproeft binnen het project T3D van de VNG. Deze projectpagina geeft toegang tot de drie verschillende proefopstellingen en linkt naar de website van de VNG waarop onderzoeksresultaten te vinden zijn
 </p>
 
-<img src="images/plaatje_uitbouw.png" >
 
-<p>
-In het programma Totaal Driedimensionaal (T3D) van de VNG is dit één van de vraagstukken die onderzocht is. Het doel is om uiteindelijk een complete driedimensionale informatieketen te realiseren waarin het mogelijk is om op een efficiënte en transparante wijze een 3D registratie te kunnen opzetten èn beheren. Op deze website is een demonstratie te zien van twee onderdelen van het onderzoek:
-een vergunningschecker en een bekendmaking in een gemeenteblad in 3D. 
-</p>
-
-<p>
-Deze technische demo is een eerste werkend prototype uit het programma T3D van de samenwerkende Gemeenten Amsterdam, Rotterdam en Den Haag. Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlening 3D bouwaanvragen gebruikt kunnen worden als input voor de 3D registratie. 
-</p>
 
 <b-row class="buttons">
+    
     <b-col class="linkcard">
-      <h2>Demo Vergunningschecker</h2>
-      <div>Een gebruiker kan in een 3D model toetsen of het gewenste ontwerp van een uitbouw valt binnen de regelgeving van de omgevingswet. In deze demo zijn vier regels geautomatiseerd en te toetsen via een in te tekenen uitbouw of in te laden 3D tekening.</div>
-      <b-button href="/vergunningschecker#/vergunningschecker" class="button-link">Start Vergunningschecker</b-button>  
+      <h2>Terugmelden</h2>
+      <div>Klopt er iets niet aan de 3D BAG? Geef dit aan en doe een mutatieverzoek.</div>
+      <b-button href="#/gemeenteblad" class="button-link">Start Terugmelden</b-button>
     </b-col>
 
     <b-col class="linkcard">
-      <h2>Demo 3D Gemeenteblad</h2>
-      <div>Ingetekende modellen in de ‘demo vergunningschecker’ kunnen ter inzage gepresenteerd worden aan omwonenden en na realisatie van de bouw worden toegevoegd in de landelijke 3D registratie conform het CityJSON datamodel.</div>
+      <h2>Vergunnings-checker</h2>
+      <div>Benieuwd naar wat er vergunningsvrij aangebouwd mag worden?</div>
+      <b-button href="/vergunningschecker#/vergunningschecker" class="button-link">Start Vergunningscheck</b-button>  
+    </b-col>
+
+    <b-col class="linkcard">
+      <h2>Gemeenteblad</h2>
+      <div>Bekijk het bouwplan van de buren op een 3D kaart en ervaar de impact.</div>
       <b-button href="#/gemeenteblad" class="button-link">Open gemeenteblad</b-button>
     </b-col>
+
+
 </b-row>
-
-<p>
-Deze technische demo is een eerste werkend prototype uit het programma T3D van de samenwerkende Gemeenten Amsterdam, Rotterdam en Den Haag.
-</p>
-
-<p>
-Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlening 3D bouwaanvragen gebruikt kunnen worden als input voor de 3D registratie.
-</p>
-
-<p>Momenteel zijn de we mogelijkheden van 3D bij het Terugmelden van fouten in de BAG en BGT aan het onderzoeken.</p>
-<p>Bekijk daarvoor deze <a  href="#/terugmelden">demo.</a></p>
 
 
   <b-row class="team">
@@ -64,11 +53,29 @@ Amsterdam richt zich op het spoor gebruik en kijkt hoe vanuit Vergunningverlenin
         </b-row>
     </b-col>
 
-    <b-col  class="linkcard">
+    <b-col  class="linkcard links">
+      
       <h2>Contact</h2>
       <strong>Alex Peters</strong>
       <div>Projectleider T3D</div>
       <div class="email">alex.peters@amsterdam.nl</div>
+
+      <div class="spacer"></div>
+      <div><strong>Project website VNG</strong></div>
+      <a href="https://hub.alkem.io/digileefomgeving/challenges/t3d/dashboard">Alkemio</a>
+
+      <div class="spacer"></div>
+      <div><strong>3D Amsterdam</strong></div>
+      <a href="https://3d.amsterdam.nl/">3d.amsterdam.nl</a>
+
+      
+      <div class="spacer"></div>
+      <div><strong>Github</strong></div>
+      <div><a href="https://github.com/VNG-Realisatie/Totaal-3D">Github Web</a></div>
+      <div><a href="https://github.com/Amsterdam/3DAmsterdam/tree/develop_t3d">Github Unity</a></div>
+      <div><a href="https://CloudCompetenceCenter@dev.azure.com/CloudCompetenceCenter/Totaal3Dimensionaal/_git/Totaal3Dimensionaal">Github Backend</a></div>
+
+
     </b-col>
   </b-row>
 
@@ -116,6 +123,11 @@ h1{
   margin-right: 100px;
   font-family: AvenirBold;
   font-size: 56px;
+  
+}
+
+.fronttext{
+color:#fff;
 }
 
 h2{
@@ -134,11 +146,17 @@ p{
   text-align: left;
   font-family: AvenirMedium;
   font-size: 20px;
+  background-image: url("/images/header_uitbouw_groot_donker_3d_model.png");
+  background-repeat:no-repeat;
+  background-size:contain;
+  padding-top:40px;  
 }
 
 .buttons{
  background-color: #ff9100;
  padding: 40px;
+
+ 
 }
 
 .linkcard{
@@ -146,8 +164,8 @@ p{
   font-size: 16px;
   width: 50%;
   padding: 20px;
-  margin-right:20px;
-  margin-left:20px;  
+  margin-right:10px;
+  margin-left:10px;  
 }
 
 .avatar{
@@ -165,15 +183,20 @@ p{
   margin-bottom:10px;  
 }
 
-.email{
-  color: darkcyan;
+.email, .links a, .links a:visited{
+  color: rgb(118, 142, 158);
+  /* color: darkcyan; */
 }
+
 
 .button-link{
   margin-top:40px;
   background-color: #01489A;
 }
 
+.spacer{
+margin-top:10px;
+}
 
 </style>
 

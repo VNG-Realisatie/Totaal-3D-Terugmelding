@@ -17,7 +17,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Totaal 3D Amsterdam',
+    name: 'Project T3D - team Amsterdam',
     component: Home
   },
   {
