@@ -18,7 +18,7 @@ Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen be
     <b-col class="linkcard">
       <h2>Terugmelden</h2>
       <div>Klopt er iets niet aan de 3D BAG? Geef dit aan en doe een mutatieverzoek.</div>
-      <b-button href="#/gemeenteblad" class="button-link">Start Terugmelden</b-button>
+      <b-button href="#/terugmelden" class="button-link">Start Terugmelden</b-button>
     </b-col>
 
     <b-col class="linkcard">
@@ -154,9 +154,7 @@ p{
 
 .buttons{
  background-color: #ff9100;
- padding: 40px;
-
- 
+ padding: 40px; 
 }
 
 .linkcard{
