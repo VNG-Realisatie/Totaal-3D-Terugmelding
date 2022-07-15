@@ -2,39 +2,34 @@
 
 <b-container class="content">
 
+  <div class="header">
+    <h1 class="fronttext">Win 3D-modellen in om de digitial twin accuraat te krijgen</h1>
 
+    <p class="fronttext">
+    Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen beproeft binnen het project T3D van de VNG. Deze projectpagina geeft toegang tot de drie verschillende proefopstellingen en linkt naar de website van de VNG waarop onderzoeksresultaten te vinden zijn.
+    </p>
+  </div>
 
-<h1 class="fronttext">Win 3D-modellen in om de digitial twin accuraat te krijgen</h1>
+  <b-row class="buttons">    
+      <b-col class="linkcard">
+        <h2>Terugmelden</h2>
+        <div>Klopt er iets niet aan de 3D BAG? Geef dit aan en doe een mutatieverzoek.</div>
+        <b-button href="#/terugmelden" class="button-link">Start Terugmelden</b-button>
+      </b-col>
 
+      <b-col class="linkcard">
+        <h2>Vergunnings-checker</h2>
+        <div>Benieuwd naar wat er vergunningsvrij aangebouwd mag worden?</div>
+        <b-button href="/vergunningschecker#/vergunningschecker" class="button-link">Start Vergunningscheck</b-button>  
+      </b-col>
 
-<p class="fronttext">
-Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen beproeft binnen het project T3D van de VNG. Deze projectpagina geeft toegang tot de drie verschillende proefopstellingen en linkt naar de website van de VNG waarop onderzoeksresultaten te vinden zijn
-</p>
+      <b-col class="linkcard">
+        <h2>Gemeenteblad</h2>
+        <div>Bekijk het bouwplan van de buren op een 3D kaart en ervaar de impact.</div>
+        <b-button href="#/gemeenteblad" class="button-link">Open gemeenteblad</b-button>
+      </b-col>
+  </b-row>
 
-
-
-<b-row class="buttons">
-    
-    <b-col class="linkcard">
-      <h2>Terugmelden</h2>
-      <div>Klopt er iets niet aan de 3D BAG? Geef dit aan en doe een mutatieverzoek.</div>
-      <b-button href="#/terugmelden" class="button-link">Start Terugmelden</b-button>
-    </b-col>
-
-    <b-col class="linkcard">
-      <h2>Vergunnings-checker</h2>
-      <div>Benieuwd naar wat er vergunningsvrij aangebouwd mag worden?</div>
-      <b-button href="/vergunningschecker#/vergunningschecker" class="button-link">Start Vergunningscheck</b-button>  
-    </b-col>
-
-    <b-col class="linkcard">
-      <h2>Gemeenteblad</h2>
-      <div>Bekijk het bouwplan van de buren op een 3D kaart en ervaar de impact.</div>
-      <b-button href="#/gemeenteblad" class="button-link">Open gemeenteblad</b-button>
-    </b-col>
-
-
-</b-row>
 
 
   <b-row class="team">
@@ -145,12 +140,19 @@ p{
 .content{
   text-align: left;
   font-family: AvenirMedium;
-  font-size: 20px;
+  font-size: 20px;  ;  
+}
+
+.header{
   background-image: url("/images/header_uitbouw_groot_donker_3d_model.png");
   background-repeat:no-repeat;
-  background-size:contain;
-  padding-top:40px;  
+  background-size:cover;
+  padding-top: 40px;
+  padding-bottom: 10px;
+  margin-right: -15px;
+  margin-left: -15px;
 }
+
 
 .buttons{
  background-color: #ff9100;

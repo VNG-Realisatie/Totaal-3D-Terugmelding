@@ -21,7 +21,8 @@
 			"HasSubmitted": false,
 			"IsMonument": false,
 			"IsBeschermd": false,
-			"SnapToWall": false
+			"SnapToWall": false,
+			"Add3DModel":true
 		}
 	}
 }

@@ -14,10 +14,8 @@
         <b-dropdown-item @click="laadAdres('2522PD', '1')">Trembleystraat 1 's-Gravenhage'</b-dropdown-item>
     </b-dropdown>
        
-    <b-form-select v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
-
+    <b-form-select style="margin-bottom:20px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
     
-    <div v-if="found_address" class="header">Bouwwerk plaatsen</div>
     <div v-else class="header">Nieuwe melding</div>
 
     <b-row v-if="step==1">
@@ -95,20 +93,37 @@ onder “Laad adres”.</div><br/>
 
     <b-row v-if="step==2">
         
-        <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
-            <div class="formheader">Wat voor een type bouwwerk ontbreekt in de huidige situatie?</div>
-            <b-form-group class="alignleft topmargin20">
-              <b-form-radio v-model="snapToWall" name="snap-radios" value="snap">Een aanbouw of uitbouw (vast aan de gevel)</b-form-radio>
-              <b-form-radio v-model="snapToWall" name="snap-radios" value="noSnap">Een bijgebouw (los van het hoofdgebouw)</b-form-radio>
+        <b-col v-bind:class="{ 
+                      entrycontainer: !isbeschermd, 
+                      'ismonument': isbeschermd, 
+                      'hasfile': hasfile == 'BimMode' && bim.file == null,
+                      'hasfileSelected': hasfile == 'BimMode' && bim.file != null, 
+                      'nofile': hasfile == 'DrawMode',
+                      'no3dmodel': add3dmodel == 'nee'
+                      }">
+                      
+            
+            <div class="formheader">Wilt u bij uw terugmelding een 3D model toevoegen?</div>
+            <b-form-group class="alignleft">
+              <b-form-radio v-model="add3dmodel" name="snap-radios" value="nee">Nee</b-form-radio>
+              <b-form-radio v-model="add3dmodel" name="snap-radios" value="ja">Ja</b-form-radio>              
             </b-form-group>
 
-            <div class="formheader">Heeft u een bestand van een 3D model van de uitbouw?</div>
-            
-            <div class="formlines topmargin10">Om de vergunning te kunnen beoordelen hebben we een 3D tekening van de uitbouw nodig.</div>
+<div v-if="add3dmodel == 'ja'">
 
-            <b-form-group class="alignleft topmargin20">
+           
+            <div class="formheader">Over welk type bouwwerk wilt u een terugmelding doen?</div>
+            <b-form-group class="alignleft ">
+              <b-form-radio v-model="snapToWall" name="snap-radios" value="noSnap">Een bijgebouw (los van het hoofdgebouw) toevoegen</b-form-radio>
+              <b-form-radio v-model="snapToWall" name="snap-radios" value="snap">Een aanbouw of uitbouw toevoegen (vast aan de gevel)</b-form-radio>              
+            </b-form-group>
+
+            <div class="formheader">Heeft u een bestand van een 3D model?</div>
+            <b-form-group class="alignleft">
+              <b-form-radio v-model="hasfile" name="some-radios" value="DrawMode">Nee ik heb geen 3D bestand, ik wil deze intekenen</b-form-radio>
+              <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja ik kan een BIM of Sketchup bestand uploaden</b-form-radio>
             
-            <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja, ik heb een bestand van mijn 3D ontwerp</b-form-radio>
+            </b-form-group>
 
             <b-form-file   
               @input="onFile"          
@@ -146,22 +161,26 @@ onder “Laad adres”.</div><br/>
 
 
         <div v-if="isBimMode && bim.file == null" class="topmargin40" style="text-align:left">
-          <div>Hier zijn een aantal voorbeeld IFC bestanden</div>
+          <div class="bold">3D-testmodellen (.IFC) van uitbouwen, vast aan het hoofdgebouw</div>
           <b-list-group>
-            <b-list-group-item button @click="downloadModel('ASP9 - Bestaand - Nieuw.ifc')">ASP9 - Bestaand - Nieuw.ifc</b-list-group-item>
-            <b-list-group-item button @click="downloadModel('ASP9 - Nieuw.ifc')">ASP9 - Nieuw.ifc</b-list-group-item>            
-          </b-list-group>      
+            <b-list-group-item button @click="downloadModel('Uitbouw -  in lengte.ifc')">Uitbouw -  in lengte.ifc</b-list-group-item>
+            <b-list-group-item button @click="downloadModel('Uitbouw - in breedte_dakterras.ifc')">Uitbouw - in breedte_dakterras.ifc</b-list-group-item>            
+            <b-list-group-item button @click="downloadModel('Uitbouw - over twee verdiepingen.ifc')">Uitbouw - over twee verdiepingen.ifc</b-list-group-item>            
+          </b-list-group>  
+          
+          <div class="bold topmargin20">3D-testmodellen (.IFC) van losstaande bouwwerken</div>
+            <b-list-group>
+              <b-list-group-item button @click="downloadModel('Bijgebouw - kas.ifc')">Bijgebouw - kas.ifc</b-list-group-item>
+              <b-list-group-item button @click="downloadModel('Bijgebouw - carport met schuur.ifc')">Bijgebouw - carport met schuur.ifc</b-list-group-item>            
+              <b-list-group-item button @click="downloadModel('Bijgebouw - kamer.ifc')">Bijgebouw - kamer.ifc</b-list-group-item>            
+          </b-list-group>
+
         </div>
 
-        <b-form-radio 
-          v-model="hasfile" 
-          class="topmargin20" 
-          name="some-radios" 
-          value="DrawMode">
-          Nee, ik heb geen bestand van een 3D ontwerp</b-form-radio>
-        </b-form-group>
+</div>
 
-          <p v-if="hasfile == 'DrawMode' || (isBimMode && bim.isUploaded && bim.conversionStatus == 'DONE') " class="bekijk">
+          <p v-if="hasfile == 'DrawMode' || (isBimMode && bim.isUploaded && bim.conversionStatus == 'DONE') || add3dmodel=='nee' " 
+            class="bekijk">
             <b-button @click="SaveSession()" variant="danger">{{gaverderTekst}}</b-button>
           </p>
         
@@ -234,6 +253,7 @@ export default {
       zoekresultaten:[],
       lastadres: "",
       found_address: false,
+      add3dmodel: false,
       bim:{
         file:null,
         progressValue:0,
@@ -268,6 +288,7 @@ export default {
     },
     gaverderTekst:function(){
       if(this.isBimMode) return "Bekijk de uitbouw in de 3D omgeving";
+      else if( this.add3dmodel == "nee" ) return "Ga naar de 3D omgeving";
       else return "Start ontwerp uitbouw in 3D omgeving";
     },
     isBimMode:function(){
@@ -561,7 +582,8 @@ export default {
     downloadModel(filename){
       
         const link = document.createElement('a');      
-        link.href = `https://opslagt3d.z6.web.core.windows.net/bim_modellen/${filename}`;
+        link.href = `${shared.frontend_base}/bim_modellen/${filename}`;
+
         link.download = filename;        
         link.click();      
     },
@@ -595,6 +617,7 @@ export default {
         Session.HTMLInitSaveData.instance.IsMonument = this.ismonument;
         Session.HTMLInitSaveData.instance.IsBeschermd = this.isbeschermd;
         Session.HTMLInitSaveData.instance.SnapToWall = this.snapToWall == "snap";
+        Session.HTMLInitSaveData.instance.Add3DModel = this.add3dmodel == "ja";
 
       //update session server
         this.UpdateSession();
@@ -699,8 +722,8 @@ a:visited, a:link {
 
 .bekijk{
   position: absolute;
-  bottom: 60px;
-  right: 100px;
+  bottom: 20px;
+  right: 40px;
 }
 
 .foundaddress_header{
@@ -749,7 +772,23 @@ margin-top:26px;
 
 .entrycontainer{
   background-color: #eee;
-  height:520px;
+  /* height:520px; */
+}
+
+.hasfile{
+    height:790px;
+}
+
+.hasfileSelected{
+    height:460px;
+}
+
+.nofile{
+    height:400px;
+}
+
+.no3dmodel{
+  height: 220px;
 }
 
 .ismonument{
