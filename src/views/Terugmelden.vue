@@ -105,8 +105,8 @@ onder “Laad adres”.</div><br/>
             
             <div class="formheader">Wilt u bij uw terugmelding een 3D model toevoegen?</div>
             <b-form-group class="alignleft">
-              <b-form-radio v-model="add3dmodel" name="snap-radios" value="nee">Nee</b-form-radio>
-              <b-form-radio v-model="add3dmodel" name="snap-radios" value="ja">Ja</b-form-radio>              
+              <b-form-radio v-model="add3dmodel" name="snap-radios" value="nee">Nee, ik geef in de 3D kaart met een annotatie aan wat niet correct is.</b-form-radio>
+              <b-form-radio v-model="add3dmodel" name="snap-radios" value="ja">Ja, ik voeg een 3D model toe van de juiste situatie.</b-form-radio>              
             </b-form-group>
 
 <div v-if="add3dmodel == 'ja'">
