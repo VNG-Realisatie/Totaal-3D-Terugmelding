@@ -15,8 +15,18 @@
     </b-dropdown>
        
     <b-form-select style="margin-bottom:20px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
+
+    
+
     
     <div v-else class="header">Nieuwe melding</div>
+
+      <div v-if="found_address" class="backupcityjson">
+        <b-button class="backupbutton" @click="downloadCityJson()" >download cityjson</b-button>  
+        <b-button class="backupbutton" @click="backupCityJson()" >backup cityjson</b-button>  
+        <b-button class="backupbutton" @click="restoreCityJson()" >restore cityjson</b-button>
+      </div>
+    
 
     <b-row v-if="step==1">
       <b-col v-bind:class="{ entrycontainer: !isbeschermd, 'ismonument': isbeschermd }">
@@ -677,6 +687,31 @@ export default {
     selectAdres(index){
           this.zoektext = this.zoekresultaten[index].omschrijving;  
           this.selected_adres = this.zoekresultaten[index];
+    },
+    downloadCityJson(){
+      var url = `${shared.backend_base}/getbagcityjson/${this.bagids[0]}`;
+
+      const link = document.createElement('a');      
+      link.href = url;
+
+      link.download = `${this.bagids[0]}.ifc`;
+      link.click();  
+    },
+    backupCityJson(){
+
+      fetch(`${shared.backend_base}/backupcityjson/${this.bagids[0]}`)
+        .then(response => response.json())
+        .then(data => {
+          alert(data.Status);
+        });
+      
+    },
+    restoreCityJson(){  
+      fetch(`${shared.backend_base}/restorecityjson/${this.bagids[0]}`)
+        .then(response => response.json())
+        .then(data => {
+          alert(data.Status);
+        });
     }
     
  },
@@ -874,6 +909,16 @@ margin-top:26px;
  @keyframes shadow_out {
   from {box-shadow: 0 0 0px 2px #B3D2F3;}
   to {box-shadow: 0 0 0px 0px #B3D2F3;}
+}
+
+.backupcityjson{
+  text-align: left;
+  margin-top:-20px;
+  margin-bottom:10px;
+}
+
+.backupbutton{
+  margin-right: 10px;
 }
 
  
