@@ -10,8 +10,8 @@
   <div v-if="!hasSession">
     <b-dropdown v-if="step==1" id="dropdown-1" text="Laad adres" class="m-md-2">
         <b-dropdown-item @click="laadAdres('2522WV', '83')">Johan Gramstraat 83 's-Gravenhage'</b-dropdown-item>
-        <b-dropdown-item @click="laadAdres('2522SC', '61')">Oudemansstraat 61 's-Gravenhage'</b-dropdown-item>
-        <b-dropdown-item @click="laadAdres('2522PD', '1')">Trembleystraat 1 's-Gravenhage'</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('2522SC', '61A')">Oudemansstraat 61A 's-Gravenhage'</b-dropdown-item>
+        <b-dropdown-item @click="laadAdres('2522PD', '13')">Trembleystraat 13 's-Gravenhage'</b-dropdown-item>
     </b-dropdown>
        
     <b-form-select style="margin-bottom:20px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
@@ -703,14 +703,18 @@ export default {
         .then(response => response.json())
         .then(data => {
           alert(data.Status);
+        }).catch(err => {
+          alert("error backup cityjson");
         });
-      
     },
     restoreCityJson(){  
       fetch(`${shared.backend_base}/restorecityjson/${this.bagids[0]}`)
         .then(response => response.json())
         .then(data => {
           alert(data.Status);
+        })    
+        .catch( err => {
+          alert("error restore cityjson");
         });
     }
     
