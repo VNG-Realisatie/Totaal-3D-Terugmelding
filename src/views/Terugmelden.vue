@@ -113,10 +113,12 @@ onder “Laad adres”.</div><br/>
                       }">
                       
             
+          <div>{{add3dmodel}} </div>
+
             <div class="formheader">Wilt u bij uw terugmelding een 3D model toevoegen?</div>
             <b-form-group class="alignleft">
-              <b-form-radio v-model="add3dmodel" name="snap-radios" value="nee">Nee, ik geef in de 3D kaart met een annotatie aan wat niet correct is.</b-form-radio>
-              <b-form-radio v-model="add3dmodel" name="snap-radios" value="ja">Ja, ik voeg een 3D model toe van de juiste situatie.</b-form-radio>              
+              <b-form-radio v-model="add3dmodel" name="radio-add3dmodel" value="nee">Nee, ik geef in de 3D kaart met een annotatie aan wat niet correct is.</b-form-radio>
+              <b-form-radio v-model="add3dmodel" name="radio-add3dmodel" value="ja">Ja, ik voeg een 3D model toe van de juiste situatie.</b-form-radio>              
             </b-form-group>
 
 <div v-if="add3dmodel == 'ja'">
@@ -124,14 +126,14 @@ onder “Laad adres”.</div><br/>
            
             <div class="formheader">Over welk type bouwwerk wilt u een terugmelding doen?</div>
             <b-form-group class="alignleft ">
-              <b-form-radio v-model="snapToWall" name="snap-radios" value="noSnap">Een bijgebouw (los van het hoofdgebouw) toevoegen</b-form-radio>
-              <b-form-radio v-model="snapToWall" name="snap-radios" value="snap">Een aanbouw of uitbouw toevoegen (vast aan de gevel)</b-form-radio>              
+              <b-form-radio v-model="snapToWall" name="radio-snapToWall" value="noSnap">Een bijgebouw (los van het hoofdgebouw) toevoegen</b-form-radio>
+              <b-form-radio v-model="snapToWall" name="radio-snapToWall" value="snap">Een aanbouw of uitbouw toevoegen (vast aan de gevel)</b-form-radio>              
             </b-form-group>
 
             <div class="formheader">Heeft u een bestand van een 3D model?</div>
             <b-form-group class="alignleft">
-              <b-form-radio v-model="hasfile" name="some-radios" value="DrawMode">Nee ik heb geen 3D bestand, ik wil deze intekenen</b-form-radio>
-              <b-form-radio v-model="hasfile" name="some-radios" value="BimMode">Ja ik kan een BIM of Sketchup bestand uploaden</b-form-radio>
+              <b-form-radio v-model="hasfile" name="radio-hasfile" value="DrawMode">Nee ik heb geen 3D bestand, ik wil deze intekenen</b-form-radio>
+              <b-form-radio v-model="hasfile" name="radio-hasfile" value="BimMode">Ja ik kan een BIM of Sketchup bestand uploaden</b-form-radio>
             
             </b-form-group>
 
