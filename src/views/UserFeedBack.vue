@@ -27,6 +27,8 @@
 
 <script>
 
+import shared from '../shared'
+
 export default {
   name: 'UserFeedBack',
   mounted:function(){   

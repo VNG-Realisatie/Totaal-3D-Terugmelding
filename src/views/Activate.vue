@@ -3,7 +3,7 @@
 <b-container class="content">
 
   <div v-if="!isActivated">
-      <p>Activeer je T3D beheer pagina, voer de code die je gekregen hebt</p>
+      <p>Activeer je T3D beheer pagina met de code die je gekregen hebt</p>
 
       <p>
         <b-input v-model="activateCode"></b-input>
