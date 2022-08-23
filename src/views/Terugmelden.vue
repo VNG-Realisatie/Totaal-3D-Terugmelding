@@ -15,16 +15,13 @@
     </b-dropdown>
        
     <b-form-select style="margin-bottom:20px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
-
-    
-
     
     <div v-else class="header">Nieuwe melding</div>
 
       <div v-if="found_address" class="backupcityjson">
-        <b-button class="backupbutton" @click="downloadCityJson()" >download cityjson</b-button>  
-        <b-button class="backupbutton" @click="backupCityJson()" >backup cityjson</b-button>  
-        <b-button class="backupbutton" @click="restoreCityJson()" >restore cityjson</b-button>
+        <b-button v-b-tooltip.hover title="Download the CityJson van dit adres" class="backupbutton" @click="downloadCityJson()" >download cityjson</b-button>  
+        <b-button v-b-tooltip.hover title="Backup de CityJson van dit adres" class="backupbutton" @click="backupCityJson()" >backup cityjson</b-button>  
+        <b-button v-b-tooltip.hover title="Zet de CityJson weer terug van de gemaakte backup" class="backupbutton" @click="restoreCityJson()" >restore cityjson</b-button>
       </div>
     
 

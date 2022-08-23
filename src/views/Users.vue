@@ -94,7 +94,7 @@ export default {
               <div>Hierbij je activatie code:</div><br>
               <div><b>${user.RowKey}<div></b><br>
               <div>Ga naar de volgende site en voer de code in:</div>
-              <div><a href="https://t3dstorage.z6.web.core.windows.net/#/activate">https://t3dstorage.z6.web.core.windows.net/#/activate</a></div><br>
+              <div><a href="${shared.frontend_base}/#/activate">${shared.frontend_base}/#/activate</a></div><br>
               <div>Met vriendelijke groet,</div>
               <div>Team T3D</div>
               `; 
