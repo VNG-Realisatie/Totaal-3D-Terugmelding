@@ -18,15 +18,14 @@
             <router-link v-if="!$root.authenticated" to="/Activate">Login</router-link> 
 
             <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="$root.user" class="m-md-2">
-            <!-- <b-dropdown v-if="$root.authenticated" id="dropdown-1" :text="user" class="m-md-2"> -->
                 <b-dropdown-item href="#/userfeedback">User Feedback</b-dropdown-item>
                 <b-dropdown-item href="#/users">Users</b-dropdown-item>
                 <b-dropdown-item href="#/bevindingen">Bevindingen Blog</b-dropdown-item>
                 <b-dropdown-item href="#/terugmelden">Terugmelden</b-dropdown-item>                
                 <b-dropdown-item href="#/gemeenteblad">Gemeenteblad</b-dropdown-item>
+                <b-dropdown-item href="#/sketchup2cityjson">Sketchup to CityJson converter</b-dropdown-item>
                 <b-dropdown-divider></b-dropdown-divider>
                 <b-dropdown-item @click="logout()">Logout</b-dropdown-item>
-                <!-- <b-dropdown-item disabled>Disabled action</b-dropdown-item> -->
             </b-dropdown>
 
           </b-navbar-nav>
