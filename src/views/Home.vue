@@ -3,7 +3,7 @@
 <b-container class="content">
 
   <div class="header">
-    <h1 class="fronttext">Win 3D-modellen in om de digitial twin accuraat te krijgen</h1>
+    <h1 class="fronttext">Win 3D-modellen in om de digital twin accuraat te krijgen</h1>
 
     <p class="fronttext">
     Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen beproeft binnen het project T3D van de VNG. Deze projectpagina geeft toegang tot de drie verschillende proefopstellingen en linkt naar de website van de VNG waarop onderzoeksresultaten te vinden zijn.
