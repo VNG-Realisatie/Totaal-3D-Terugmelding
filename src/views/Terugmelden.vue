@@ -14,7 +14,7 @@
         <b-dropdown-item @click="laadAdres('2522PD', '13')">Trembleystraat 13 's-Gravenhage'</b-dropdown-item>
     </b-dropdown>
        
-    <b-form-select style="margin-bottom:20px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
+    <b-form-select style="margin-bottom:30px" v-if="step==2" v-model="selected_build" :options="build_options"></b-form-select>
     
     <div v-else class="header">Nieuwe melding</div>
 
@@ -276,7 +276,8 @@ export default {
         blobId:null
       },
       build_options: [      
-        {value: "3d", text: 'laatste build'}        
+        {value: "3d", text: 'laatste build'},
+        {value: "separated", text: 'losgekoppelde build'}        
       ],
       selected_build: "3d",
       searchlist_index:-1,
