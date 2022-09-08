@@ -11,6 +11,7 @@ public class StartState : State
 
     public override int GetDesiredStateIndex()
     {
+        return 2;
         if (ServiceLocator.GetService<T3DInit>().HTMLData == null)
             return 0;
 
@@ -39,15 +40,14 @@ public class StartState : State
             RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed &&
             RestrictionChecker.ActivePerceel.IsLoaded
         );
-
-        if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
-        {
-            var visualizer = ServiceLocator.GetService<CityJsonVisualiser>();
-            visualizer.VisualizeCityJson();
-            yield return new WaitUntil(() =>
-                visualizer.HasLoaded
-            );
-        }
+        //if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
+        //{
+        //    var visualizer = ServiceLocator.GetService<CityJsonVisualiser>();
+        //    visualizer.VisualizeCityJson();
+        //    yield return new WaitUntil(() =>
+        //        visualizer.HasLoaded
+        //    );
+        //}
 
         GoToNextState();
     }

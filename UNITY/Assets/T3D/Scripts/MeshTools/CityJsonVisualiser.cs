@@ -43,7 +43,6 @@ public class CityJsonVisualiser : MonoBehaviour, IUniqueService
     private void Awake()
     {
         uitbouw = GetComponentInChildren<UploadedUitbouw>(true);
-        uitbouw.gameObject.SetActive(false);
     }
 
     void OnEnable()
@@ -71,22 +70,14 @@ public class CityJsonVisualiser : MonoBehaviour, IUniqueService
     public void VisualizeCityJson()
     {
         StartCoroutine(ParseCityJson(useTestJSON));
-        //EnableUploadedModel(true);
-    }
-
-    public void EnableUploadedModel(bool enable)
-    {
-        uitbouw.gameObject.SetActive(enable);
-        uitbouw.GetComponent<UitbouwMovement>().enabled = enable;
-        uitbouw.GetComponent<UitbouwMeasurement>().enabled = enable;
     }
 
     private IEnumerator ParseCityJson(bool useTestJson)
     {
-        yield return new WaitUntil(() => cityJson != string.Empty);
-
         if (useTestJSON)
             cityJson = testJSON.text;
+
+        yield return new WaitUntil(() => cityJson != string.Empty);
 
         var meshFilter = uitbouw.MeshFilter;
         var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
