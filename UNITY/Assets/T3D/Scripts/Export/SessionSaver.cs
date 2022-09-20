@@ -51,9 +51,10 @@ public static class SessionSaver
         //SessionId = "fd387d20-0835-11ed-b7de-dbf64ddb94ff"; //new export with sketchup testfile, no snap
         //SessionId = "9924a050-0ce2-11ed-b2e1-6fd693bef9a8";//new export with sketchup testfile, with snap
         //SessionId = "e5f0dc50-13d6-11ed-aa77-8595e0614b2f"; //annotation only
-        SessionId = "5c0827e0-13ff-11ed-be89-71de1e5c51ce"; //teken uitbouw
+        //SessionId = "5c0827e0-13ff-11ed-be89-71de1e5c51ce"; //teken uitbouw
         //SessionId = "1a21dab0-2485-11ed-a576-bd18e2523c39"; //uploaded uitbouw
-        //SessionId = "1311e590-2ac4-11ed-892b-5df1149f6052";
+        SessionId = "fd2904f0-3826-11ed-b70f-659561678c08";
+        //SessionId = "47378610-3800-11ed-8b40-1dfc4f581116"; //Amsterdam, buiten testgebied
 
 #else
         SessionId = Application.absoluteURL.GetUrlParamValue("sessionId");
