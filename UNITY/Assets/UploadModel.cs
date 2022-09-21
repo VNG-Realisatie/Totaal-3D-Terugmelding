@@ -18,7 +18,8 @@ namespace WebGLFileUploaderExample
     public class UploadModel : MonoBehaviour
     {
         private int x, y, w, h;
-        private bool isVisible;
+        private bool htmlIsVisible;
+        private bool unityIsVisible => gameObject.activeInHierarchy;
         // Use this for initialization
         void Start()
         {
@@ -35,13 +36,13 @@ namespace WebGLFileUploaderExample
 #endif
             )
             {
-                isVisible = WebGLFileUploadManager.Show(false);
+                htmlIsVisible = WebGLFileUploadManager.Show(false);
                 WebGLFileUploadManager.SetDescription("Select image files (.png|.jpg|.gif)");
 
             }
             else
             {
-                isVisible = WebGLFileUploadManager.Show(true);
+                htmlIsVisible = WebGLFileUploadManager.Show(true);
                 WebGLFileUploadManager.SetDescription("Drop image files (.png|.jpg|.gif) here");
             }
             WebGLFileUploadManager.SetImageEncodeSetting(true);
@@ -113,13 +114,14 @@ namespace WebGLFileUploaderExample
         {
             //WebGLFileUploadManager.Show(false, !WebGLFileUploadManager.IsOverlay);
             RecalculatePositionAndSize();
-            isVisible = WebGLFileUploadManager.Show(false, true, x, y, w, h);
+            htmlIsVisible = WebGLFileUploadManager.Show(false, true, x, y, w, h);
             WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
         }
 
         private void RecalculatePositionAndSize()
         {
             var r = GetComponent<RectTransform>();
+            var canvas = r.GetComponentInParent<Canvas>();
 
             //set anchor and pivot to left top, as this is where the HTML button is anchored
             r.anchorMin = new Vector2(0, 1);
@@ -129,8 +131,8 @@ namespace WebGLFileUploaderExample
             x = (int)transform.position.x;
             y = (int)transform.position.y;
 
-            w = (int)r.sizeDelta.x;
-            h = (int)r.sizeDelta.y;
+            w = (int)(r.sizeDelta.x * canvas.scaleFactor);
+            h = (int)(r.sizeDelta.y * canvas.scaleFactor);
         }
 
         public void SetX(string input)
@@ -152,10 +154,24 @@ namespace WebGLFileUploaderExample
 
         private void Update()
         {
-            if (isVisible)
+            UpdateHTMLButtonVisibility();
+
+            if (htmlIsVisible)
             {
                 RecalculatePositionAndSize();
                 WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
+            }
+        }
+
+        private void UpdateHTMLButtonVisibility()
+        {
+            if (htmlIsVisible && !unityIsVisible)
+            {
+                WebGLFileUploadManager.Hide();
+            }
+            else if (!htmlIsVisible && unityIsVisible)
+            {
+                htmlIsVisible = WebGLFileUploadManager.Show(false);
             }
         }
     }
