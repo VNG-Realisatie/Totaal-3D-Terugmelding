@@ -666,7 +666,7 @@
 
             var html = '<label for="file_input" id="file_input_button">' +
                 '    <div id="file_input_description">' + Unity_FileUploadManager.descriptionStr + '</div>' +
-                '    <input type="file" id="file_input" name="files[]" style="display:none;" multiple />' +
+                '    <input type="file" id="file_input" name="files[]" style="display:none;"  />' +
                 '</label>';
             fileUploaderElem.innerHTML = html;
 
