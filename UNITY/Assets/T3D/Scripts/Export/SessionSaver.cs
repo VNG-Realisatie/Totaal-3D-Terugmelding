@@ -55,6 +55,7 @@ public static class SessionSaver
         //SessionId = "1a21dab0-2485-11ed-a576-bd18e2523c39"; //uploaded uitbouw
         SessionId = "fd2904f0-3826-11ed-b70f-659561678c08";
         //SessionId = "47378610-3800-11ed-8b40-1dfc4f581116"; //Amsterdam, buiten testgebied
+        SessionId = "ae9ea0b0-39a2-11ed-9ac3-37031d3b8fbb";
 
 #else
         SessionId = Application.absoluteURL.GetUrlParamValue("sessionId");

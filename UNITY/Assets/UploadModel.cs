@@ -5,6 +5,8 @@ using WebGLFileUploader;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System;
+using Netherlands3D;
+using UnityEngine.Networking;
 
 #if UNITY_5_3 || UNITY_5_3_OR_NEWER
 using UnityEngine.SceneManagement;
@@ -46,7 +48,8 @@ namespace WebGLFileUploaderExample
                 WebGLFileUploadManager.SetDescription("Drop image files (.png|.jpg|.gif) here");
             }
             WebGLFileUploadManager.SetImageEncodeSetting(true);
-            WebGLFileUploadManager.SetAllowedFileName("\\.(png|jpe?g|gif)$");
+            //WebGLFileUploadManager.SetAllowedFileName("\\.(png|jpe?g|gif)$");
+            WebGLFileUploadManager.SetAllowedFileName("\\.(skp|ifc|json)$"); // todo: allow only 1 file
             WebGLFileUploadManager.SetImageShrinkingSize(1280, 960);
             WebGLFileUploadManager.onFileUploaded += OnFileUploaded;
 
@@ -82,16 +85,46 @@ namespace WebGLFileUploaderExample
                 if (file.isSuccess)
                 {
                     Debug.Log("file.filePath: " + file.filePath + " exists:" + File.Exists(file.filePath));
+                    var extension = Path.GetExtension(file.filePath);
+                    Debug.Log("file extension: " + extension);
+                    if (extension == ".skp")
+                    {
+                        var url = Config.activeConfiguration.T3DAzureFunctionURL + "sketchup2cityjson/";
+                        StartCoroutine(ProcessFileConversion(url, file.filePath));
+                    }
+                    else if (extension == ".ifc")
+                    {
+                        var url = Config.activeConfiguration.T3DAzureFunctionURL + "UploadBim/";
+                        StartCoroutine(ProcessFileConversion(url, file.filePath));
+                    }
 
                     //Texture2D texture = new Texture2D(2, 2);
-                    byte[] byteArray = File.ReadAllBytes(file.filePath);
                     //texture.LoadImage(byteArray);
                     //gameObject.GetComponent<Renderer>().material.mainTexture = texture;
 
-                    Debug.Log("File.ReadAllBytes:byte[].Length: " + byteArray.Length);
+                    //Debug.Log("File.ReadAllBytes:byte[].Length: " + byteArray.Length);
 
                     break;
                 }
+            }
+        }
+
+        private IEnumerator ProcessFileConversion(string url, string filePath)
+        {
+            byte[] byteArray = File.ReadAllBytes(filePath);
+            UnityWebRequest req = UnityWebRequest.Put(url, byteArray);
+            Debug.Log("sending webRequest to " + url);
+            yield return req.SendWebRequest();
+            Debug.Log("sent webRequest");
+
+            if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
+            {
+                ErrorService.GoToErrorPage(req.error);
+            }
+            else
+            {
+                Debug.Log("request success");
+                print(req.downloadHandler.text);
             }
         }
 
