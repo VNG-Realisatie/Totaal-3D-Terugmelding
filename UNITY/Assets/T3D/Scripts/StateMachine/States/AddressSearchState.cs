@@ -13,17 +13,25 @@ public class AddressSearchState : State
     private JSONNode searchResults;
     [SerializeField]
     private GameObject resultButtonsParent;
-    private Button[] resultSuggestionButtons;
+    private AddressSuggestionButton[] resultSuggestionButtons;
+    private JSONNode selectedAddress;
 
     protected override void Awake()
     {
         base.Awake();
-        resultSuggestionButtons = resultButtonsParent.GetComponentsInChildren<Button>();
+        resultSuggestionButtons = resultButtonsParent.GetComponentsInChildren<AddressSuggestionButton>();
     }
 
     private void OnEnable()
     {
         inputField.onValueChanged.AddListener(InputFieldValueChanged);
+    }
+
+    public void SetAddress(JSONNode node)
+    {
+        selectedAddress = node;
+        inputField.text = node["omschrijving"];
+        print("selected: " + node.ToString());
     }
 
     private void OnDisable()
@@ -41,7 +49,6 @@ public class AddressSearchState : State
 
     private IEnumerator SearchAddress(string input)
     {
-        print(input);
         var uri = @"https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen/zoek?zoek=" + input + @"&page=1&pageSize=" + resultSuggestionButtons.Length;
         var uwr = UnityWebRequest.Get(uri);
         uwr.SetRequestHeader("X-Api-Key", "l772bb9814e5584919b36a91077cdacea7");
@@ -68,14 +75,20 @@ public class AddressSearchState : State
         }
         else
         {
+            if (searchResults["_embedded"]["zoekresultaten"].Count == 1)
+            {
+                resultButtonsParent.SetActive(false);
+                inputField.SetTextWithoutNotify(searchResults["_embedded"]["zoekresultaten"][0]["omschrijving"].ToString());
+
+                return;
+            }
+
             resultButtonsParent.SetActive(true);
             for (int i = 0; i < resultSuggestionButtons.Length; i++)
             {
                 var r = searchResults["_embedded"]["zoekresultaten"][i];
                 resultSuggestionButtons[i].gameObject.SetActive(r != null);
-                if (r != null)
-                    resultSuggestionButtons[i].GetComponentInChildren<Text>().text = r["omschrijving"];
-                print(r.ToString());
+                resultSuggestionButtons[i].SetAddressNode(r);
             }
         }
     }
