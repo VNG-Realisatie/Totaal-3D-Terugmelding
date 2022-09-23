@@ -9,25 +9,25 @@ using UnityEngine;
 [KeepSaveDataOnReset]
 public class HTMLInitSaveData : SaveDataContainer
 {
-    public string SessionId;
-    public string Street;
-    public string City;
-    public string HouseNumber;
-    public string HouseNumberAddition;
-    public string ZipCode;
-    public bool HasFile;
-    public Vector3RD RDPosition;
-    public string BagId;
-    public string BlobId;
-    public string ModelId;
-    public string ModelVersionId;
-    public string Date;
-    public bool IsUserFeedback;
-    public bool HasSubmitted;
-    public bool IsMonument;
-    public bool IsBeschermd;
-    public bool SnapToWall;
-    public bool Add3DModel;    
+    public string SessionId; //todo
+    public string Street; //SelectedAddressPanel
+    public string City; //SelectedAddressPanel
+    public string HouseNumber; //SelectedAddressPanel
+    public string HouseNumberAddition; //SelectedAddressPanel
+    public string ZipCode; //SelectedAddressPanel
+    public bool HasFile; //SelectOptionState
+    public Vector3RD RDPosition; //todo
+    public string BagId; //SelectedAddressPanel
+    public string BlobId; //todo
+    public string ModelId; //todo
+    public string ModelVersionId;//todo
+    public string Date; //SubmitRequestState
+    public bool IsUserFeedback; //todo
+    public bool HasSubmitted; //SubmitRequestState
+    public bool IsMonument; //todo
+    public bool IsBeschermd; //todo
+    public bool SnapToWall; //SelectOptionState
+    public bool Add3DModel; //SelectOptionState
 }
 
 public class T3DInit : MonoBehaviour, IUniqueService

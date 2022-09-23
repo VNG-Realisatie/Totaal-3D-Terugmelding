@@ -31,10 +31,10 @@ public class AddressSuggestionButton : MonoBehaviour
 
     private void ChooseAddress()
     {
-        state.SetAddress(addressNode);
+        state.RequestExtensiveAddressInfo(addressNode);
     }
 
-    public void SetAddressNode(JSONNode node)
+    public void SetSimpleAddressNode(JSONNode node)
     {
         buttonText.text = node["omschrijving"];
         addressNode = node;
