@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ConvertCoordinates;
 using Netherlands3D.Cameras;
 using Netherlands3D.InputHandler;
+using Netherlands3D.Interface;
 using Netherlands3D.T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -80,6 +81,7 @@ public class FirstPersonCamera : MonoBehaviour, ICameraControls
         HandleFirstPersonKeyboard();
     }
 
+
     private IEnumerator SetCameraStartPosition()
     {
         //wait until Ground level and building center are known, and  the active uitbouw exists
@@ -94,13 +96,22 @@ public class FirstPersonCamera : MonoBehaviour, ICameraControls
             yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActiveUitbouw != null);
             dir = RestrictionChecker.ActiveUitbouw.CenterPoint - RestrictionChecker.ActiveBuilding.BuildingCenter;
         }
-
+        dir.y = 0;
         dir.Normalize();
 
-        var newpos = CameraTargetPoint + (dir * firstPersonCameraDistance);
-        transform.position = new Vector3(newpos.x, transform.position.y, newpos.z);
-       
+        transform.position = CameraTargetPoint + dir * 50;
+        
         transform.LookAt(CameraTargetPoint);
+
+        var screenCenter = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        if (Physics.Raycast(screenCenter,out RaycastHit hit, Mathf.Infinity, LayerMask.GetMask("Uitbouw", "ActiveSelection") ))
+        {            
+            var hitpoint = hit.point;
+
+            transform.position = hit.point + dir * firstPersonCameraDistance;
+            SetNormalizedCameraHeight(RestrictionChecker.ActiveBuilding.GroundLevel);
+        }
     }
 
     private void HandleFirstPersonKeyboard()
