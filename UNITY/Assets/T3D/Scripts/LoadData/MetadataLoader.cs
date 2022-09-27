@@ -213,6 +213,7 @@ namespace Netherlands3D.T3D.Uitbouw
                 yield return uwr.SendWebRequest();
                 if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
                 {
+                    Debug.LogError(uwr.error);
                 }
                 else
                 {

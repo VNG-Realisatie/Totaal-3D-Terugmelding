@@ -97,7 +97,7 @@ public static class SessionSaver
     private static void Loader_LoadingCompleted(bool loadSucceeded)
     {
         Debug.Log("loaded session: " + SessionId);
-        ServiceLocator.GetService<T3DInit>().LoadBuilding();
+        //ServiceLocator.GetService<T3DInit>().LoadBuilding();
         Loader.LoadingCompleted -= Loader_LoadingCompleted;
     }
 

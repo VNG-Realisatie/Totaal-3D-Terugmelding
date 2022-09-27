@@ -16,22 +16,25 @@ public class HTMLInitSaveData : SaveDataContainer
     public string HouseNumberAddition; //SelectedAddressPanel
     public string ZipCode; //SelectedAddressPanel
     public bool HasFile; //SelectOptionState
-    public Vector3RD RDPosition; //todo
-    public string BagId; //SelectedAddressPanel
+    public Vector3RD RDPosition; //AddressSearchState
+    public string BagId; //AddressSearchState
     public string BlobId; //todo
     public string ModelId; //todo
     public string ModelVersionId;//todo
     public string Date; //SubmitRequestState
     public bool IsUserFeedback; //todo
     public bool HasSubmitted; //SubmitRequestState
-    public bool IsMonument; //todo
-    public bool IsBeschermd; //todo
+    public bool IsMonument; //AddressSearchState
+    public bool IsBeschermd; //AddressSearchState
     public bool SnapToWall; //SelectOptionState
     public bool Add3DModel; //SelectOptionState
 }
 
 public class T3DInit : MonoBehaviour, IUniqueService
 {
+    public const string X_API_KEY = "l772bb9814e5584919b36a91077cdacea7";
+    public const string ACCEPT_CRS = "epsg:28992";
+
     public bool IsEditMode { get; private set; } = true;
    
     public HTMLInitSaveData HTMLData = null;
