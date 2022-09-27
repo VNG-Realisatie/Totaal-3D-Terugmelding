@@ -61,12 +61,12 @@ public class T3DInit : MonoBehaviour, IUniqueService
     public void LoadBuilding()
     {
         //wait until the end of the frame and then load the building. this is needed to ensure all SaveableVariables are correctly loaded before using them.
-        StartCoroutine(GoToBuildingAtEndOfFrame());
-    }
+    //    StartCoroutine(GoToBuildingAtEndOfFrame());
+    //}
 
-    private IEnumerator GoToBuildingAtEndOfFrame()
-    {
-        yield return null; //wait a frame
+    //private IEnumerator GoToBuildingAtEndOfFrame()
+    //{
+    //    yield return null; //wait a frame
 
         //set relative center to cameraposition to avoid floating point precision issues
         Config.activeConfiguration.RelativeCenterRD = new Vector2RD(HTMLData.RDPosition.x, HTMLData.RDPosition.y);

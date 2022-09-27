@@ -65,6 +65,14 @@ namespace Netherlands3D.T3D.Uitbouw
             IsLoaded = true;
         }
 
+        public void ResetPerceel()
+        {
+            SetPerceelActive(false);
+            SetTerrainActive(false);
+            SetPerceelOutlineActive(false);
+            IsLoaded = false;
+        }
+
         void GenerateMeshFromPerceel(List<Vector2[]> perceel)
         {
             Mesh mesh = new Mesh();

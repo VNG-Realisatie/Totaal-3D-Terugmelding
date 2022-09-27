@@ -96,7 +96,6 @@ public class SelectedAddressPanel : MonoBehaviour
 
     public void FormatExtraInfoText(string bouwjaar, string perceelOppervlakte, bool isMonument, bool isBeschermd)
     {
-        print(bouwjaar + "\t" + perceelOppervlakte + "\t" + isMonument + "\t" + isBeschermd); 
         text.text = mainInfoText;
         if (bouwjaar != string.Empty)
         {
@@ -116,6 +115,5 @@ public class SelectedAddressPanel : MonoBehaviour
         {
             text.text = text.text + isBeschermdText + "\n";
         }
-        print(text.text);
     }
 }

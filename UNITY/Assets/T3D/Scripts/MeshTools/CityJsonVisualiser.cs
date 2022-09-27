@@ -119,9 +119,9 @@ public class CityJsonVisualiser : MonoBehaviour, IUniqueService
         HasLoaded = true;
     }
 
-    public static void AddExtensionNodes(JSONNode cityjsonNode)
+    public static void AddExtensionNodes(JSONNode cityJsonNode)
     {
-        foreach (var node in cityjsonNode)
+        foreach (var node in cityJsonNode)
         {
             if (definedNodes.Contains(node.Key))
                 continue;
@@ -130,10 +130,21 @@ public class CityJsonVisualiser : MonoBehaviour, IUniqueService
         }
     }
 
-    public static JSONObject GetAttributes(JSONNode cityjsonNode)
+    public static void RemoveExtensionNodes(JSONNode cityJsonNode)
+    {
+        foreach (var node in cityJsonNode)
+        {
+            if (definedNodes.Contains(node.Key))
+                continue;
+
+            CityJSONFormatter.RemoveExtensionNode(node.Key);
+        }
+    }
+
+    public static JSONObject GetAttributes(JSONNode cityJsonNode)
     {
         var attributesNode = new JSONObject();
-        foreach (KeyValuePair<string, JSONNode> co in cityjsonNode)
+        foreach (KeyValuePair<string, JSONNode> co in cityJsonNode)
         {
             var attributes = co.Value["attributes"];
             foreach (var attr in attributes)

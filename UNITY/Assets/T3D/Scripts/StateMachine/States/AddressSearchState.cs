@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ConvertCoordinates;
+using Netherlands3D.T3D.Uitbouw;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -22,6 +23,9 @@ public class AddressSearchState : State
     [SerializeField]
     private SelectedAddressPanel selectedAddressPanel;
 
+    [SerializeField]
+    private Button nextButton;
+
     protected override void Awake()
     {
         base.Awake();
@@ -31,6 +35,11 @@ public class AddressSearchState : State
     private void OnEnable()
     {
         inputField.onValueChanged.AddListener(InputFieldValueChanged);
+    }
+
+    private void Update()
+    {
+        nextButton.interactable = RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActivePerceel.IsLoaded;
     }
 
     private IEnumerator GetAddress(string uri)
@@ -86,6 +95,8 @@ public class AddressSearchState : State
     private void InputFieldValueChanged(string newString)
     {
         DeselectAddress();
+        RestrictionChecker.ActiveBuilding.ResetBuilding();
+        RestrictionChecker.ActivePerceel.ResetPerceel();
         if (newString != string.Empty)
         {
             StartCoroutine(SearchAddress(newString));
@@ -200,7 +211,6 @@ public class AddressSearchState : State
     {
         var bbox = $"{ position.x - 0.5},{ position.y - 0.5},{ position.x + 0.5},{ position.y + 0.5}";
         var uri = $"https://services.rce.geovoorziening.nl/rce/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=rce:ArcheologicalMonuments&STARTINDEX=0&COUNT=1&SRSNAME=EPSG:28992&BBOX={bbox}&outputFormat=json";
-        print(uri);
         var uwr = UnityWebRequest.Get(uri);
 
         yield return uwr.SendWebRequest();
@@ -211,7 +221,6 @@ public class AddressSearchState : State
         }
         else
         {
-            print(uwr.downloadHandler.text);
             var node = JSONNode.Parse(uwr.downloadHandler.text);
             var isBeschermd = node["features"].Count > 0;
             var data = ServiceLocator.GetService<T3DInit>().HTMLData;
