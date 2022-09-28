@@ -37,7 +37,6 @@ public static class SessionSaver
                 SessionExists = false;
             }
         }
-
         /*        
         #if UNITY_EDITOR
                     //if (SessionId == null)
@@ -86,14 +85,8 @@ public static class SessionSaver
 
     private static void SceneManager_sceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene != ErrorService.ErrorScene && SessionExists)
+        if (scene != ErrorService.ErrorScene)
             LoadSaveData(); //This data also includes essential information like bagId, so always load the data
-        if (!SessionExists)
-        {
-            Debug.Log("not loading session data for session " + SessionId +", writing session from Unity");
-            Saver.ExportSaveData(SessionId);
-            ServiceLocator.GetService<JsonSessionSaver>().EnableAutoSave(true); //enable autosave
-        }
     }
 
     public static void ClearAllSaveData()
@@ -120,7 +113,18 @@ public static class SessionSaver
 
     private static void Loader_LoadingCompleted(bool loadSucceeded)
     {
-        Debug.Log("loaded session: " + SessionId);
+        if (loadSucceeded)
+        {
+            Debug.Log("loaded session: " + SessionId);
+        }
+        else
+        {
+            Debug.Log("loading session data for session " + SessionId + " failed, writing session from Unity");
+            ServiceLocator.GetService<T3DInit>().HTMLData.SessionId = SessionId;
+            Saver.ExportSaveData(SessionId);
+            ServiceLocator.GetService<JsonSessionSaver>().EnableAutoSave(true); //enable autosave
+            SessionExists = false;
+        }
         //ServiceLocator.GetService<T3DInit>().LoadBuilding();
         Loader.LoadingCompleted -= Loader_LoadingCompleted;
     }

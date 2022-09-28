@@ -57,7 +57,9 @@ public class JSONSessionLoader : MonoBehaviour, IUniqueService//, IDataLoader
             yield return uwr.SendWebRequest();
             if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
             {
-                ErrorService.GoToErrorPage("Could not load session data. " + uwr.error);
+                //ErrorService.GoToErrorPage("Could not load session data. " + uwr.error);
+                Debug.Log("cannot download session, starting new session instead");
+                LoadingCompleted?.Invoke(false);
             }
             else
             {
