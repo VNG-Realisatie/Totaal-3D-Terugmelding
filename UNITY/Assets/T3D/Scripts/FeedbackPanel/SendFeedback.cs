@@ -60,8 +60,10 @@ public class SendFeedback : MonoBehaviour
 
     public void ExportSaveData(string fileName)
     {
+        ServiceLocator.GetService<T3DInit>().HTMLData.IsUserFeedback = true;
         string saveData = SessionSaver.Saver.SerializeSaveableContainers();
         Debug.Log("Saving data: " + saveData);
+        ServiceLocator.GetService<T3DInit>().HTMLData.IsUserFeedback = false;
 
         if (uploadCoroutine == null)
         {

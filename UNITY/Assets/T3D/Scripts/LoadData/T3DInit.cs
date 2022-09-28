@@ -9,7 +9,7 @@ using UnityEngine;
 [KeepSaveDataOnReset]
 public class HTMLInitSaveData : SaveDataContainer
 {
-    public string SessionId; //todo
+    public string SessionId; //SessionSaver
     public string Street; //SelectedAddressPanel
     public string City; //SelectedAddressPanel
     public string HouseNumber; //SelectedAddressPanel
@@ -22,7 +22,7 @@ public class HTMLInitSaveData : SaveDataContainer
     public string ModelId; //todo
     public string ModelVersionId;//todo
     public string Date; //SubmitRequestState
-    public bool IsUserFeedback; //todo
+    public bool IsUserFeedback; //SendFeedback
     public bool HasSubmitted; //SubmitRequestState
     public bool IsMonument; //AddressSearchState
     public bool IsBeschermd; //AddressSearchState
