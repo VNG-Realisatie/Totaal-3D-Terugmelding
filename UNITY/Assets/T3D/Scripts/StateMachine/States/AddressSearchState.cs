@@ -42,6 +42,32 @@ public class AddressSearchState : State
         nextButton.interactable = RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActivePerceel.IsLoaded;
     }
 
+    public override void StateLoadedAction()
+    {
+        var json = ServiceLocator.GetService<T3DInit>().HTMLData.simpleAddressJson;
+        if (json != string.Empty)
+        {
+            RequestExtensiveAddressInfo(JSON.Parse(json));
+        }
+    }
+
+    protected override void LoadSavedState()
+    {
+        StateLoadedAction();
+        var stateSaver = GetComponentInParent<StateSaver>();
+        var savedState = stateSaver.GetState(stateSaver.ActiveStateIndex);
+        if (ActiveState != savedState)
+        {
+            StartCoroutine(GoToNextStateWhenAllRequiredDataIsLoaded());
+        }
+    }
+
+    private IEnumerator GoToNextStateWhenAllRequiredDataIsLoaded()
+    {
+        yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActivePerceel.IsLoaded);
+        EndState();
+    }
+
     private IEnumerator GetAddress(string uri)
     {
         //var uri = @"https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/adressen?zoekresultaatIdentificatie=" + id;
@@ -73,6 +99,13 @@ public class AddressSearchState : State
 
     public void RequestExtensiveAddressInfo(JSONNode node)
     {
+        var simpleAddress = node.ToString();
+
+        if (simpleAddress != ServiceLocator.GetService<T3DInit>().HTMLData.simpleAddressJson)
+            SessionSaver.LoadPreviousSession = false;
+
+        ServiceLocator.GetService<T3DInit>().HTMLData.simpleAddressJson = simpleAddress;
+
         //selectedAddress = node;
         inputField.SetTextWithoutNotify(node["omschrijving"]);
         resultButtonsParent.transform.parent.gameObject.SetActive(false);
@@ -85,6 +118,7 @@ public class AddressSearchState : State
     {
         backgroundImage.SetActive(true);
         selectedAddressPanel.gameObject.SetActive(false);
+        ServiceLocator.GetService<T3DInit>().HTMLData.simpleAddressJson = string.Empty;
     }
 
     private void OnDisable()

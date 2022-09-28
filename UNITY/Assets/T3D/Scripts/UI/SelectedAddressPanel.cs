@@ -63,9 +63,6 @@ public class SelectedAddressPanel : MonoBehaviour
         //"Bouwjaar: {0}\n" +
         //"PerceelOppervlakte: {1}m²";
 
-        //todo: request and set RDPosition in HTMLData, re-enable loading building. request and set monument/beschermdstatus
-        //ServiceLocator.GetService<T3DInit>().LoadBuilding();
-
         //todo: only enable next button when building and perceel are loaded
         //RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed &&
         //RestrictionChecker.ActivePerceel.IsLoaded

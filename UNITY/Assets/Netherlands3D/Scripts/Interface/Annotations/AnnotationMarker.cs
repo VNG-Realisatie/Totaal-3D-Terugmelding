@@ -74,4 +74,10 @@ public class AnnotationMarker : MeasurePoint
         idLabelImage.color = imageColor;
         idLabelText.color = textColor;
     }
+
+    public void ShowMarker(bool show)
+    {
+        idLabel.gameObject.SetActive(show);
+        gameObject.SetActive(show);
+    }
 }

@@ -28,6 +28,8 @@ public class HTMLInitSaveData : SaveDataContainer
     public bool IsBeschermd; //AddressSearchState
     public bool SnapToWall; //SelectOptionState
     public bool Add3DModel; //SelectOptionState
+
+    public string simpleAddressJson; //AddressSearchState
 }
 
 public class T3DInit : MonoBehaviour, IUniqueService

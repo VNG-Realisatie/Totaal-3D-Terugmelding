@@ -95,7 +95,7 @@ public class State : MonoBehaviour
         EndState(GetDesiredState());
     }
 
-    public void GoToPreviousState()
+    public virtual void GoToPreviousState()
     {
         gameObject.SetActive(false);
         StateCompletedAction();
