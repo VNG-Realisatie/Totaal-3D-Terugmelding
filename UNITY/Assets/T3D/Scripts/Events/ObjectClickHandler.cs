@@ -80,7 +80,6 @@ public class ObjectClickHandler : MonoBehaviour
             Ray ray = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var raycastHit, Mathf.Infinity, layerMask))
             {
-                print(raycastHit.collider);
                 if (clickColliders.Contains(raycastHit.collider))
                 {
                     hit = raycastHit;

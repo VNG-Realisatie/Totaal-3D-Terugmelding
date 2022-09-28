@@ -63,7 +63,6 @@ public class AnnotationMarker : MeasurePoint
         {
             imageColor.a = 0.3f;
             textColor.a = 0.3f;
-            print(hit.collider.gameObject.name);
         }
         else
         {
