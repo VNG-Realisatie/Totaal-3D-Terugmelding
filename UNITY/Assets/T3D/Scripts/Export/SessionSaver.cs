@@ -29,6 +29,8 @@ public static class SessionSaver
             if (TryGetSessionID(out string id))
             {
                 SessionId = id;
+                URLModifier.SetSessionIdInURL(SessionId);
+                PlayerPrefs.SetString("sessionId", SessionId);
                 SessionExists = true;
             }
             else
@@ -157,11 +159,12 @@ public static class SessionSaver
     {
         id = string.Empty;
         //first try to get session id from url
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         id = Application.absoluteURL.GetUrlParamValue("sessionId");
-        if(id != string.Empty)
+        if(!string.IsNullOrEmpty(id))
         {
-            Debug.Log("got id from url: " + id);
+            Debug.Log("got id from url: {" + id + "}");
             return true;
         }
 #endif
@@ -180,8 +183,8 @@ public static class SessionSaver
 
     private static void GenerateSessionID()
     {
-        Debug.Log("Session id not found, generating new session");
         SessionId = Guid.NewGuid().ToString();
+        Debug.Log("Session id not found, generating new session: " + SessionId);
         URLModifier.SetSessionIdInURL(SessionId);
         PlayerPrefs.SetString("sessionId", SessionId);
     }

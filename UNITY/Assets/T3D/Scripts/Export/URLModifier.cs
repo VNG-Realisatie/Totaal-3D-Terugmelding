@@ -10,7 +10,6 @@ public static class URLModifier
     public static void SetSessionIdInURL(string sessionId)
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-
         Unity_URLModifier_SetSessionIdInURL(sessionId);
 #else
         Debug.Log("setting ID in session URL only works in a WebGL build");
