@@ -229,7 +229,7 @@ public class AddressSearchState : State
         }
         else
         {
-            print(uwr.downloadHandler.text);
+            //print(uwr.downloadHandler.text);
             var node = JSONNode.Parse(uwr.downloadHandler.text);
             var isMonument = node["features"].Count > 0;
             var data = ServiceLocator.GetService<T3DInit>().HTMLData;
