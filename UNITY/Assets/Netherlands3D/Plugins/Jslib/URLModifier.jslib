@@ -1,6 +1,7 @@
 mergeInto(LibraryManager.library, {
-    Unity_URLModifier_SetSessionIdInURL : function(string sessionId)
+    Unity_URLModifier_SetSessionIdInURL: function(sessionId)
     {
-        window.history.pushState({"sessionID": sessionId},"","?sessionId="+sessionId);
+        console.log(sessionId);
+        window.history.pushState({"sessionId": sessionId},"","?sessionId="+sessionId);
     }
 });

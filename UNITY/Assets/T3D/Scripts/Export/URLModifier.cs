@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -15,6 +16,7 @@ public static class URLModifier
         Debug.Log("setting ID in session URL only works in a WebGL build");
 #endif
     }
+
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
     private static extern void Unity_URLModifier_SetSessionIdInURL(string sessionId);
