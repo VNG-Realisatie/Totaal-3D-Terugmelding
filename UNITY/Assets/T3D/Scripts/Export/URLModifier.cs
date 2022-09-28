@@ -17,6 +17,6 @@ public static class URLModifier
     }
 #if UNITY_WEBGL && !UNITY_EDITOR
     [DllImport("__Internal")]
-    private static extern void Unity_URLModifier_SetSessionIdInURL(string sessionID);
+    private static extern void Unity_URLModifier_SetSessionIdInURL(string sessionId);
 #endif
 }
