@@ -45,7 +45,7 @@ public class AddressSearchState : State
     public override void StateLoadedAction()
     {
         var json = ServiceLocator.GetService<T3DInit>().HTMLData.simpleAddressJson;
-        if (json != string.Empty)
+        if (!string.IsNullOrEmpty(json))
         {
             RequestExtensiveAddressInfo(JSON.Parse(json));
         }

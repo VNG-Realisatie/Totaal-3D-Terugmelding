@@ -36,7 +36,7 @@ public class StartState : State
         //wait until all data is loaded to avoid timing issues in later steps
 
         yield return new WaitUntil(() =>
-            SessionSaver.HasLoaded
+            SessionSaver.HasLoaded || !SessionSaver.SessionExists
             //&&
             //RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed &&
             //RestrictionChecker.ActivePerceel.IsLoaded
