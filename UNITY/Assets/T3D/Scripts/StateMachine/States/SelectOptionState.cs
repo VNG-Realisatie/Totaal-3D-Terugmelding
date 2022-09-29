@@ -14,14 +14,14 @@ public class SelectOptionState : State
     private GameObject modelSettingsPanel, uploadPanel, notSupportedPanel;
     [SerializeField]
     private Button nextButton;
-    private CityJsonVisualiser visualiser;
+    private UploadedUitbouwVisualiser visualiser;
     [SerializeField]
     private GameObject visibilityPanel;
 
     protected override void Awake()
     {
         base.Awake();
-        visualiser = ServiceLocator.GetService<CityJsonVisualiser>();
+        visualiser = ServiceLocator.GetService<UploadedUitbouwVisualiser>();
     }
 
     private void Update()
@@ -106,10 +106,9 @@ public class SelectOptionState : State
     {
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         {
-            var visualizer = ServiceLocator.GetService<CityJsonVisualiser>();
-            visualizer.VisualizeCityJson();
+            visualiser.VisualizeCityJson();
             yield return new WaitUntil(() =>
-                visualizer.HasLoaded
+                visualiser.HasLoaded
             );
         }
         EndState();
