@@ -237,6 +237,8 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
 
     void DeleteLine(int index)
     {
+        if (index == lines.Count - 1)
+            firstPoint = null; //set that there is no longer an active first point if the unfinished last line was deleted
         Destroy(lines[index]);
         lines.RemoveAt(index);
         measureLines.RemoveAt(index);
