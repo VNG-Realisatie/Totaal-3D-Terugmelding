@@ -303,7 +303,7 @@ namespace Netherlands3D.T3D.Uitbouw
 
             if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
             {
-                var visualiser = ServiceLocator.GetService<CityJsonVisualiser>();
+                var visualiser = ServiceLocator.GetService<UploadedUitbouwVisualiser>();
                 //obj.VisualizeCityJson();
                 //obj.EnableUploadedModel(true);
                 Uitbouw = visualiser.GetComponentInChildren<UitbouwBase>(true);
