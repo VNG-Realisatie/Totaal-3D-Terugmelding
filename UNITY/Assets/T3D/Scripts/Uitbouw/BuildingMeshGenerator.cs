@@ -48,6 +48,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
         private void BuildingMeshGenerator_CityJsonBagReceived(string cityJson)
         {
+            //HandleTextFile.WriteString("sourceBuilding.json", cityJson);
+
             StartCoroutine(ParseBuildingCityJson(cityJson));
         }
 
@@ -57,6 +59,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
             cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
             var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+            parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+            verts = cityJsonModel.vertices;
             var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
@@ -67,6 +71,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
             if (activeMesh)
                 ProcessMesh(activeMesh);
+
+            test = true;
         }
 
         private void ProcessMesh(Mesh mesh)
@@ -139,5 +145,37 @@ namespace Netherlands3D.T3D.Uitbouw
             AbsoluteBuildingCorners = q.ToArray();
         }
 
+        bool test = false;
+        Dictionary<CityObjectIdentifier, Mesh> parsedMeshes = new Dictionary<CityObjectIdentifier, Mesh>();
+        List<Vector3Double> verts;
+        List<Vector3> unityVerts => GetVerts(verts, true);
+        private void OnDrawGizmos()
+        {
+            if (test)
+            {
+                foreach (var pair in parsedMeshes)
+                {
+                    print(pair.Key.Node.ToString());
+                }
+                Gizmos.color = Color.red;
+                foreach (var v in unityVerts)
+                {
+                    //var unity_vert = new Vector3((float)v.x, (float)v.y, (float)v.z);
+                    Gizmos.DrawSphere(v, .2f);
+                }
+            }
+        }
+
+        private List<Vector3> GetVerts(List<Vector3Double> vertices, bool flipYZ)
+        {
+            if (flipYZ)
+            {
+                return vertices.Select(o => new Vector3((float)o.x, (float)o.z, (float)o.y)).ToList();
+            }
+            else
+            {
+                return vertices.Select(o => new Vector3((float)o.x, (float)o.y, (float)o.z)).ToList();
+            }
+        }
     }
 }
