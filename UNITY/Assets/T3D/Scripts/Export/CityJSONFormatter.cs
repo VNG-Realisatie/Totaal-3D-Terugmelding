@@ -202,4 +202,10 @@ public static class CityJSONFormatter
         else
             extensionNodes.Add(key, node);
     }
+
+    public static void RemoveExtensionNode(string key)
+    {
+        if (extensionNodes.ContainsKey(key))
+            extensionNodes.Remove(key);
+    }
 }

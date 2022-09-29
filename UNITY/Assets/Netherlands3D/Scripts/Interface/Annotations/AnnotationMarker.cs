@@ -63,7 +63,6 @@ public class AnnotationMarker : MeasurePoint
         {
             imageColor.a = 0.3f;
             textColor.a = 0.3f;
-            print(hit.collider.gameObject.name);
         }
         else
         {
@@ -73,5 +72,11 @@ public class AnnotationMarker : MeasurePoint
 
         idLabelImage.color = imageColor;
         idLabelText.color = textColor;
+    }
+
+    public void ShowMarker(bool show)
+    {
+        idLabel.gameObject.SetActive(show);
+        gameObject.SetActive(show);
     }
 }

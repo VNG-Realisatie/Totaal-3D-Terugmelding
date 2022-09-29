@@ -17,7 +17,7 @@ public class StartState : State
 
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel == false) return 2;
 
-        return ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall ? 0 : 1; 
+        return ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall ? 0 : 1;
     }
 
     public override void StateEnteredAction()
@@ -36,9 +36,10 @@ public class StartState : State
         //wait until all data is loaded to avoid timing issues in later steps
 
         yield return new WaitUntil(() =>
-            SessionSaver.HasLoaded &&
-            RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed &&
-            RestrictionChecker.ActivePerceel.IsLoaded
+            SessionSaver.HasLoaded || !SessionSaver.SessionExists
+            //&&
+            //RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed &&
+            //RestrictionChecker.ActivePerceel.IsLoaded
         );
         //if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         //{

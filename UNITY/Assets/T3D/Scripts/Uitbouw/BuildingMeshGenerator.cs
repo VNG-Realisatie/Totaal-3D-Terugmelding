@@ -28,6 +28,8 @@ namespace Netherlands3D.T3D.Uitbouw
         public delegate void BuildingDataProcessedEventHandler(BuildingMeshGenerator building);
         public event BuildingDataProcessedEventHandler BuildingDataProcessed;
 
+        private CityJsonModel cityJsonModel;
+
         private void Awake()
         {
             SelectedWall = GetComponentInChildren<WallSelector>();
@@ -53,7 +55,7 @@ namespace Netherlands3D.T3D.Uitbouw
         {
             yield return new WaitUntil(() => RestrictionChecker.ActivePerceel.IsLoaded); //needed because perceelRadius is needed
 
-            var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
+            cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
             var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
             var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
@@ -69,8 +71,7 @@ namespace Netherlands3D.T3D.Uitbouw
 
         private void ProcessMesh(Mesh mesh)
         {
-
-            var col = gameObject.AddComponent<MeshCollider>();
+            var col = GetComponent<MeshCollider>();
             BuildingCenter = col.bounds.center;
             GroundLevel = BuildingCenter.y - col.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + col.bounds.extents.y;
@@ -79,6 +80,14 @@ namespace Netherlands3D.T3D.Uitbouw
 
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes
             BuildingDataIsProcessed = true;
+        }
+
+        public void ResetBuilding()
+        {
+            if (BuildingDataIsProcessed)
+                CityJsonVisualiser.RemoveExtensionNodes(cityJsonModel.cityjsonNode);
+
+            BuildingDataIsProcessed = false;
         }
 
         private void Loader_LoadingCompleted(bool loadSucceeded)

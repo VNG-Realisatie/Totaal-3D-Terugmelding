@@ -33,6 +33,12 @@ public class AnnotationState : State
         AnnotationUIs = new List<AnnotationUI>(); //ensure the static list is emptied whenever the scene is reset
     }
 
+    public override void GoToPreviousState()
+    {
+        base.GoToPreviousState();
+        DisplayAnnotations(false);
+    }
+
     public override int GetDesiredStateIndex()
     {
         return 3;
@@ -48,6 +54,15 @@ public class AnnotationState : State
     {
         if (SessionSaver.LoadPreviousSession)
             LoadSavedAnnotations();
+    }
+
+    public override void StateEnteredAction()
+    {
+        base.StateEnteredAction();
+        if (!SessionSaver.LoadPreviousSession)
+            RemoveAllAnnotations();
+
+        DisplayAnnotations(true);
     }
 
     private void LoadSavedAnnotations()
@@ -96,7 +111,7 @@ public class AnnotationState : State
         annotationMarkers[ActiveSelectedId].SetSelectedColor(false);
 
         var selectedAnnotation = AnnotationUIs[id];
-        var selectedMarker= annotationMarkers[id];
+        var selectedMarker = annotationMarkers[id];
 
         if (!selectedAnnotation.IsOpen)
             selectedAnnotation.ToggleAnnotation();
@@ -123,6 +138,14 @@ public class AnnotationState : State
         SelectAnnotation(id);
         //RecalculeteContentHeight();
         //scroll.SetSelectedChild(id);
+    }
+
+    public void RemoveAllAnnotations()
+    {
+        for (int i = AnnotationUIs.Count-1; i >= 0; i--)//go backwards to avoid collection modified errors
+        {
+            RemoveAnnotation(i);
+        }
     }
 
     public void RemoveAnnotation(int id)
@@ -157,7 +180,15 @@ public class AnnotationState : State
         foreach (var ann in AnnotationUIs)
         {
             height += ann.GetComponent<RectTransform>().sizeDelta.y;
-        }       
-        annotationParent.sizeDelta = new Vector2(annotationParent.sizeDelta.x, AnnotationUIs.Count > 0 ? height : 0);        
+        }
+        annotationParent.sizeDelta = new Vector2(annotationParent.sizeDelta.x, AnnotationUIs.Count > 0 ? height : 0);
+    }
+
+    public void DisplayAnnotations(bool show)
+    {
+        foreach (var marker in annotationMarkers)
+        {
+            marker.ShowMarker(show);
+        }
     }
 }
