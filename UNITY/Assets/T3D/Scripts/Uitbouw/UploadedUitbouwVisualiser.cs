@@ -45,20 +45,21 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     private void OnBimCityJsonReceived(string cityJson)
     {
+        Debug.Log("OnBimCityJsonReceived");
         this.cityJson = cityJson;
+
+        VisualizeCityJson();
     }
 
     public void VisualizeCityJson()
     {
-        StartCoroutine(ParseCityJson(useTestJSON));
+        ParseCityJson(useTestJSON);
     }
 
-    private IEnumerator ParseCityJson(bool useTestJson)
+    private void ParseCityJson(bool useTestJson)
     {
         if (useTestJSON)
             cityJson = testJSON.text;
-
-        yield return new WaitUntil(() => cityJson != string.Empty);
 
         var meshFilter = uitbouw.MeshFilter;
         var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);

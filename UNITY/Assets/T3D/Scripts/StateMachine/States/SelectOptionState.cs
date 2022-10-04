@@ -66,7 +66,8 @@ public class SelectOptionState : State
         {
             //if (uploadedModelToggle.isOn)
             //    LoadModel();
-            StartCoroutine(LoadModelAndGoToNextState());
+            //StartCoroutine(LoadModelAndGoToNextState());
+            LoadModelAndGoToNextState();
         }
     }
 
@@ -102,14 +103,14 @@ public class SelectOptionState : State
         visualiser.VisualizeCityJson();
     }
 
-    public IEnumerator LoadModelAndGoToNextState()
+    public void LoadModelAndGoToNextState()
     {
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         {
             visualiser.VisualizeCityJson();
-            yield return new WaitUntil(() =>
-                visualiser.HasLoaded
-            );
+            //yield return new WaitUntil(() =>
+            //    visualiser.HasLoaded
+            //);
         }
         EndState();
     }

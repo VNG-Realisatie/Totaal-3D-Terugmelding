@@ -179,7 +179,9 @@ namespace Netherlands3D.T3D.Uitbouw
             }
         }
 
-        IEnumerator GetBimCityJson()
+
+
+            public IEnumerator GetBimCityJson()
         {
             yield return null;
 
@@ -199,6 +201,7 @@ namespace Netherlands3D.T3D.Uitbouw
             }
             else
             {
+                Debug.Log("-------BimCityJsonReceived");
                 BimCityJsonReceived?.Invoke(req.downloadHandler.text);
             }
         }
