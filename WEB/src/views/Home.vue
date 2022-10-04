@@ -14,7 +14,8 @@
       <b-col class="linkcard">
         <h2>Terugmelden</h2>
         <div>Klopt er iets niet aan de 3D BAG? Geef dit aan en doe een mutatieverzoek.</div>
-        <b-button href="#/terugmelden" class="button-link">Start Terugmelden</b-button>
+        <!-- <b-button href="#/terugmelden" class="button-link">Start Terugmelden</b-button> -->
+        <b-button @click="OpenSession()" class="button-link">Start Terugmelden</b-button>
       </b-col>
 
       <b-col class="linkcard">
@@ -84,6 +85,7 @@
 <script>
 
 import team from '@/assets/team.json'
+import shared from '../shared'
 
 export default {
   name: 'Home',
@@ -104,6 +106,14 @@ export default {
   mounted:function(){
   },
  methods: {   
+
+  OpenSession(){
+      window.open(
+        `${shared.frontend_base}/3d/`,
+        '_blank'
+      );
+    }
+
  },
 
   components: {    
