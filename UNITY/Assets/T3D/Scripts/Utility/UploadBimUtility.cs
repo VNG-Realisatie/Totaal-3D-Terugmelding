@@ -1,3 +1,5 @@
+using Netherlands3D;
+using Netherlands3D.T3D.Uitbouw;
 using SimpleJSON;
 using System;
 using System.Collections;
@@ -10,8 +12,8 @@ using UnityEngine.Networking;
 public class UploadBimUtility 
 {
 
-    public static async Task<string> UploadFile(string url, string filePath)
-    {        
+    public static IEnumerator UploadFile(CoString result, CoBool status, string url, string filePath)
+    {
         List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
 
         FileInfo finfo = new FileInfo(filePath);
@@ -22,70 +24,14 @@ public class UploadBimUtility
         UnityWebRequest req = UnityWebRequest.Post(url, formData);
         req.method = "PUT";
 
-        req.SendWebRequest();
+        yield return req.SendWebRequest();
 
-        while (!req.isDone)
-        {
-            await Task.Yield();
-        }
+        status.val = req.result == UnityWebRequest.Result.Success;
+        result.val = status.val ? req.downloadHandler.text : req.error;
 
-        if (req.result != UnityWebRequest.Result.Success)
-        {
-            return req.error;            
-        }
-        else
-        {
-            return req.downloadHandler.text;            
-        }
     }
 
-    public static async Task<string> AsyncGet()
-    {        
-        string url = "https://api.thecatapi.com/v1/images/search?limit=10";
-
-        UnityWebRequest req = UnityWebRequest.Get(url);
-        req.SendWebRequest();
-        while (!req.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (req.result != UnityWebRequest.Result.Success)
-        {         
-            return req.error;
-        }
-        else
-        {            
-            return req.downloadHandler.text;
-        }
-    }
-
-    public static async Task<string> AsyncPost()
-    {
-        string url = "http://localhost:7071/api/TestPost";
-
-        var json = @"{""name"": ""Trab""}";
-        Debug.Log(json);
-
-        UnityWebRequest req = UnityWebRequest.Put(url, json);
-        req.SetRequestHeader("Content-Type", "application/json");
-        req.SendWebRequest();
-        while (!req.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (req.result != UnityWebRequest.Result.Success)
-        {
-            return req.error;
-        }
-        else
-        {
-            return req.downloadHandler.text;
-        }
-    }
-
-    public static IEnumerator CheckBimVersion(string url, Action successCallback, Action<string> errorCallback)
+    public static IEnumerator CheckBimVersion(string url, CoString result, CoBool success)
     {
         int retryCount = 0;
 
@@ -101,11 +47,12 @@ public class UploadBimUtility
             else
             {
                 var json = JSON.Parse(req.downloadHandler.text);
-                var status = json["conversions"]["cityjson"];
+                var conversionStatus = json["conversions"]["cityjson"];
 
-                if (status == "DONE")
+                if (conversionStatus == "DONE")
                 {
-                    successCallback.Invoke();
+                    result.val = "DONE";
+                    success.val = true;
                     yield break;
                 }
 
@@ -114,9 +61,32 @@ public class UploadBimUtility
             }
 
         }
+        result.val = $"max retry exceeded on {url} ";
+    }
+    
+    public static IEnumerator GetBimCityJson(CoString result, CoBool success)
+    {
+        yield return null;
 
-        errorCallback?.Invoke($"max retry exceeded on {url} ");
+        var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimcityjson/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
+        var urlSketchup = Config.activeConfiguration.T3DAzureFunctionURL + $"api/downloadcityjson/{ServiceLocator.GetService<T3DInit>().HTMLData.BlobId}";
 
+        var requestUrl = !string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.ModelId) ? urlIfc : urlSketchup;
+
+        UnityWebRequest req = UnityWebRequest.Get(requestUrl);
+
+        req.SetRequestHeader("Content-Type", "application/json");
+
+        yield return req.SendWebRequest();
+        if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
+        {
+            result.val = req.error;            
+        }
+        else
+        {
+            result.val = req.downloadHandler.text;
+            success.val = true;                        
+        }
     }
 
 

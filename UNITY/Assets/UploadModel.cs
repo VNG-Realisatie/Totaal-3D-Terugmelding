@@ -75,10 +75,12 @@ namespace WebGLFileUploaderExample
         /// <summary>
         /// Raises the file uploaded event.
         /// </summary>
-        /// <param name="result">Uploaded file infos.</param>
-        private void OnFileUploaded(UploadedFileInfo[] result)
+        /// <param name="files">Uploaded file infos.</param>
+        private void OnFileUploaded(UploadedFileInfo[] files)
         {
-            if (result.Length == 0)
+
+
+            if (files.Length == 0)
             {
                 Debug.Log("File upload Error!");
                 debugText.text = "File upload Error!";
@@ -87,10 +89,10 @@ namespace WebGLFileUploaderExample
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
 
-                Debug.Log("File upload success! (result.Length: " + result.Length + ")");
-                debugText.text = "File upload success!(result.Length: " + result.Length + ")";
+                Debug.Log("File upload success! (result.Length: " + files.Length + ")");
+                debugText.text = "File upload success!(result.Length: " + files.Length + ")";
 
-                UploadedFileInfo file = result[0];
+                UploadedFileInfo file = files[0];
                 if (file.isSuccess)
                 {
                     Debug.Log("file.filePath: " + file.filePath + " exists:" + File.Exists(file.filePath));
@@ -98,46 +100,54 @@ namespace WebGLFileUploaderExample
 
                     var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(file.name)}";
 
-                    UploadFileAsync(url, file.filePath);                 
+                    StartCoroutine(UploadAndCheck(url, file.filePath));
+                 
                 }
             }
         }
 
-        async void UploadFileAsync(string url, string filePath)
+        IEnumerator UploadAndCheck(string url, string filePath)
         {
-            var result = await UploadBimUtility.UploadFile(url, filePath);
+            CoString result = new CoString();
+            CoBool success = new CoBool();
+
+            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, url, filePath));
+
             debugText.text = result;
 
-            var jsonResult = JSON.Parse(result);
-
-            FileInfo finfo = new FileInfo(filePath);
-            if (finfo.Extension.ToLower() == "skp")
-            {                
-                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
-            }
-            else
-            {                
-                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+            //IFC file has been successfully uploaded, now poll the conversion status
+            if (success)
+            {
                 var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
+                yield return StartCoroutine( UploadBimUtility.CheckBimVersion(urlIfc, result, success ));
 
-                StartCoroutine(UploadBimUtility.CheckBimVersion(urlIfc, SuccessCallback, ErrorCallback));
+                debugText.text = result;
 
-                
+                //IFC file has been successfully converted to CityJson, now lets get the CityJson
+                if (success)
+                {
+                    yield return StartCoroutine(UploadBimUtility.GetBimCityJson(result, success));
+
+                    //The CityJson has been downloaded, now lets visualize it
+                    if (success)
+                    {
+                        Debug.Log("-------BimCityJsonReceived");
+                        ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
+                    }
+                    else
+                    {
+                        debugText.text = result;
+                        ErrorService.GoToErrorPage(result);
+                    }
+
+
+                }
+
+
             }
-            
+
         }
 
-
-        void SuccessCallback()
-        {
-            debugText.text = "conversion status: DONE, loading CityJson...";
-            StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetBimCityJson());
-        }
-
-        void ErrorCallback(string result)
-        {
-            debugText.text = result;
-        }
 
 
 
@@ -228,16 +238,6 @@ namespace WebGLFileUploaderExample
             }
         }
 
-        public void TestConvert()
-        {
-            string filepath = @"E:\T3D\Data\IFC\ASP9 - Nieuw.ifc";
-            FileInfo finfo = new FileInfo(filepath);            
-            var url = ($"https://t3d-o-functions.azurewebsites.net/api/uploadbim/{Uri.EscapeDataString(finfo.Name)}");
-
-            UploadFileAsync(url, filepath);
-            
-        }
-
         private void UpdateHTMLButtonVisibility()
         {
             if (htmlIsVisible && !unityIsVisible)
@@ -249,5 +249,8 @@ namespace WebGLFileUploaderExample
                 htmlIsVisible = WebGLFileUploadManager.Show(false);
             }
         }
+
+        
+
     }
 }

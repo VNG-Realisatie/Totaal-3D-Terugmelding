@@ -82,8 +82,7 @@ namespace Netherlands3D.T3D.Uitbouw
         public delegate void BuildingOutlineLoadedEventHandler(object source, BuildingOutlineEventArgs args);
         public event BuildingOutlineLoadedEventHandler BuildingOutlineLoaded;
 
-        public delegate void BimCityJsonEventHandler(string cityJson);
-        public event BimCityJsonEventHandler BimCityJsonReceived;
+
 
         public delegate void CityJsonBagEventHandler(string cityJson);
         public event CityJsonBagEventHandler CityJsonBagReceived;
@@ -115,7 +114,7 @@ namespace Netherlands3D.T3D.Uitbouw
         {
             if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile && (!string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.ModelId) || !string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.BlobId)))
             {
-                StartCoroutine(GetBimCityJson());
+                //StartCoroutine(GetBimCityJson());
             }
 
             StartCoroutine(GetPerceelData(position));
@@ -176,33 +175,6 @@ namespace Netherlands3D.T3D.Uitbouw
             {
                 var json = JSON.Parse(req.downloadHandler.text);
                 ProcessPerceelData(json);
-            }
-        }
-
-
-
-            public IEnumerator GetBimCityJson()
-        {
-            yield return null;
-
-            var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimcityjson/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
-            var urlSketchup = Config.activeConfiguration.T3DAzureFunctionURL + $"api/downloadcityjson/{ServiceLocator.GetService<T3DInit>().HTMLData.BlobId}";
-
-            var requestUrl = !string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.ModelId) ? urlIfc : urlSketchup;
-
-            UnityWebRequest req = UnityWebRequest.Get(requestUrl);
-
-            req.SetRequestHeader("Content-Type", "application/json");
-
-            yield return req.SendWebRequest();
-            if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
-            {
-                ErrorService.GoToErrorPage(req.error);
-            }
-            else
-            {
-                Debug.Log("-------BimCityJsonReceived");
-                BimCityJsonReceived?.Invoke(req.downloadHandler.text);
             }
         }
 

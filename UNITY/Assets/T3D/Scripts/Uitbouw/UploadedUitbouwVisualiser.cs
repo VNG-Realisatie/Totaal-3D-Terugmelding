@@ -28,13 +28,13 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     void OnEnable()
     {
-        ServiceLocator.GetService<MetadataLoader>().BimCityJsonReceived += OnBimCityJsonReceived;
+        ServiceLocator.GetService<Events>().BimCityJsonReceived += OnBimCityJsonReceived;
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += OnPerceelDataLoaded;
     }
 
     void OnDisable()
     {
-        ServiceLocator.GetService<MetadataLoader>().BimCityJsonReceived -= OnBimCityJsonReceived;
+        ServiceLocator.GetService<Events>().BimCityJsonReceived -= OnBimCityJsonReceived;
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded -= OnPerceelDataLoaded;
     }
 
@@ -95,6 +95,8 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         //uitbouw.MeshFilter.transform.localPosition = depthOffset + heightOffset;
 
         uitbouw.InitializeUserMovementAxes();
+
+        uitbouw.gameObject.transform.parent.gameObject.SetActive(true);
 
         HasLoaded = true;
     }

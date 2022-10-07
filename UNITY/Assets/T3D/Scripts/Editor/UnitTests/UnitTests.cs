@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -12,38 +13,52 @@ using UnityEngine.TestTools;
 using WebGLFileUploaderExample;
 
 
-
 public class UnitTests
 {
-    [Test]
-    public void TestPass()
+    public static async Task<string> AsyncGet()
     {
-        Assert.That(true);
+        string url = "https://api.thecatapi.com/v1/images/search?limit=10";
+
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        req.SendWebRequest();
+        while (!req.isDone)
+        {
+            await Task.Yield();
+        }
+
+        if (req.result != UnityWebRequest.Result.Success)
+        {
+            return req.error;
+        }
+        else
+        {
+            return req.downloadHandler.text;
+        }
     }
 
-    [UnityTest]
-    public IEnumerator TestUpload()
+    public static async Task<string> AsyncPost()
     {
-        yield return Run().AsCoroutine();
+        string url = "http://localhost:7071/api/TestPost";
 
-        async Task Run()
+        var json = @"{""name"": ""Trab""}";
+        Debug.Log(json);
+
+        UnityWebRequest req = UnityWebRequest.Put(url, json);
+        req.SetRequestHeader("Content-Type", "application/json");
+        req.SendWebRequest();
+        while (!req.isDone)
         {
-            string filepath = @"E:\T3D\Data\IFC\ASP9 - Nieuw.ifc";
-            FileInfo finfo = new FileInfo(filepath);            
-            //var url = ($"http://localhost:7071/api/uploadbim/{Uri.EscapeDataString(finfo.Name)}");            
-            var url = ($"https://t3d-o-functions.azurewebsites.net/api/uploadbim/{Uri.EscapeDataString(finfo.Name)}");
+            await Task.Yield();
+        }
 
-            var result = await UploadBimUtility.UploadFile(url, filepath);
-            Debug.Log(result);
-
-            var json = JSON.Parse(result);
-            var modeId = json["modelId"];
-
-            var urlCheckVersion = ($"https://t3d-o-functions.azurewebsites.net/api/getbimversionstatus/{modeId}");
-
-            //UploadBimUtility.CheckBimVersion(urlCheckVersion, () => { }, (string result) => { });
-
-        }        
+        if (req.result != UnityWebRequest.Result.Success)
+        {
+            return req.error;
+        }
+        else
+        {
+            return req.downloadHandler.text;
+        }
     }
 
     [UnityTest]
@@ -53,7 +68,7 @@ public class UnitTests
 
         async Task Run()
         {
-            var result = await UploadBimUtility.AsyncGet();
+            var result = await AsyncGet();
             Debug.Log(result);
         }
     }
@@ -65,7 +80,7 @@ public class UnitTests
 
         async Task Run()
         {
-            var result = await UploadBimUtility.AsyncPost();
+            var result = await AsyncPost();
             Debug.Log(result);
         }
     }
