@@ -144,63 +144,7 @@ namespace T3D.LoadData
                     AddVerticesWithCenterOffset(cityjsonNode["vertices"], new Vector3Double(centerx, centery, centerz), centerWorld);
                 }
             }
-
-            //now load all the vertices with the scaler and offset applied
-
-            /*
-            foreach (JSONNode node in cityjsonNode["vertices"])
-            {
-                var rd = new Vector3RD(
-                        node[0].AsDouble * transformScale.x + transformOffset.x,
-                        node[1].AsDouble * transformScale.y + transformOffset.y,
-                        node[2].AsDouble * transformScale.z + transformOffset.z
-                );
-
-                if (IsValidRD(rd))
-                {
-                    if (checkDistanceFromCenter)
-                    {
-                        var center = Netherlands3D.Config.activeConfiguration.RelativeCenterRD;
-                        var check_x = Math.Abs(rd.x - center.x);
-                        var check_y = Math.Abs(rd.y - center.y);
-
-                        var perceelRadius = RestrictionChecker.ActivePerceel.Radius;
-
-                        if (check_x > perceelRadius || check_y > perceelRadius)
-                        {
-                            var vertCoordinates = new Vector3Double(rd.x - centerx, rd.z + centerWorld.z, rd.y - centery);
-                            vertices.Add(vertCoordinates);
-                        }
-                        else
-                        {
-                            AddRDToVertices(rd);
-                        }
-                    }
-                    else
-                    {
-                        AddRDToVertices(rd);
-                    }
-                }
-                else //is it WGS84 or is it Unity coordinate
-                {
-                    Vector3WGS wgs = new Vector3WGS(rd.x, rd.y, rd.z);
-
-                    if (IsValidWGS84(wgs))
-                    {
-                        var unityCoordinates = CoordConvert.WGS84toUnity(wgs);
-                        var vertCoordinates = new Vector3Double(unityCoordinates.x, unityCoordinates.z, unityCoordinates.y);
-                        vertices.Add(vertCoordinates);
-                    }
-                    else
-                    {
-                        //var posRd = new Vector3RD(centerWorld.x + rd.x - centerx, centerWorld.y + rd.y - centery, centerWorld.z + rd.z);
-                        var vertCoordinates = new Vector3Double(rd.x - centerx, rd.z + centerWorld.z, rd.y - centery);
-                        vertices.Add(vertCoordinates);
-                    }
-                }
-            }
-            */
-
+                      
             //get textureVertices
             foreach (JSONNode node in cityjsonNode["appearance"]["vertices-texture"])
             {
