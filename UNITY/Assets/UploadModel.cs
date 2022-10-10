@@ -11,6 +11,7 @@ using System.Web;
 using System.Threading.Tasks;
 using SimpleJSON;
 using Netherlands3D.T3D.Uitbouw;
+using UnityEditor;
 
 #if UNITY_5_3 || UNITY_5_3_OR_NEWER
 using UnityEngine.SceneManagement;
@@ -29,6 +30,7 @@ namespace WebGLFileUploaderExample
         // Use this for initialization
 
         public Text debugText;
+        public Slider slider;
 
         void Start()
         {
@@ -63,6 +65,11 @@ namespace WebGLFileUploaderExample
             ShowHTMLOverlayButton();
         }
 
+        private void UpdateSlider()
+        {
+            
+        }
+
         /// <summary>
         /// Raises the destroy event.
         /// </summary>
@@ -78,8 +85,6 @@ namespace WebGLFileUploaderExample
         /// <param name="files">Uploaded file infos.</param>
         private void OnFileUploaded(UploadedFileInfo[] files)
         {
-
-
             if (files.Length == 0)
             {
                 Debug.Log("File upload Error!");
@@ -106,45 +111,64 @@ namespace WebGLFileUploaderExample
             }
         }
 
+#if UNITY_EDITOR
+        public void UploadFromEditor()
+        {
+            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc");
+            FileInfo finfo = new FileInfo(path);
+
+            if (path.Length != 0)
+            {
+                var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString( finfo.Name )}";
+                StartCoroutine(UploadAndCheck(url, path));
+                
+            }
+        }
+#endif
+
         IEnumerator UploadAndCheck(string url, string filePath)
         {
             CoString result = new CoString();
             CoBool success = new CoBool();
 
-            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, url, filePath));
-
+            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, slider, url, filePath));
+            
             debugText.text = result;
+            if (success == false) yield break;
+            
+            var jsonResult = JSON.Parse(result);
 
-            //IFC file has been successfully uploaded, now poll the conversion status
+            if (filePath.ToLower().EndsWith(".skp"))
+            {
+                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
+            }
+            else
+            {
+                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+
+                var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
+                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(urlIfc, result, success));
+                debugText.text = result;
+            }
+
+            //the file has been successfully converted to CityJson, now lets get the CityJson
             if (success)
             {
-                var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
-                yield return StartCoroutine( UploadBimUtility.CheckBimVersion(urlIfc, result, success ));
+                yield return StartCoroutine(UploadBimUtility.GetBimCityJson(result, success));
 
-                debugText.text = result;
-
-                //IFC file has been successfully converted to CityJson, now lets get the CityJson
+                //The CityJson has been downloaded, now lets visualize it
                 if (success)
                 {
-                    yield return StartCoroutine(UploadBimUtility.GetBimCityJson(result, success));
-
-                    //The CityJson has been downloaded, now lets visualize it
-                    if (success)
-                    {
-                        Debug.Log("-------BimCityJsonReceived");
-                        ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
-                    }
-                    else
-                    {
-                        debugText.text = result;
-                        ErrorService.GoToErrorPage(result);
-                    }
-
-
+                    Debug.Log("-------BimCityJsonReceived");
+                    ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
                 }
-
-
+                else
+                {
+                    debugText.text = result;
+                    ErrorService.GoToErrorPage(result);
+                }
             }
+            
 
         }
 

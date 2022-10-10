@@ -48,13 +48,14 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         Debug.Log("OnBimCityJsonReceived");
         this.cityJson = cityJson;
 
-        VisualizeCityJson();
+        ParseCityJson(useTestJSON);
+        //VisualizeCityJson();
     }
 
-    public void VisualizeCityJson()
-    {
-        ParseCityJson(useTestJSON);
-    }
+    //public void VisualizeCityJson()
+    //{
+       
+    //}
 
     private void ParseCityJson(bool useTestJson)
     {

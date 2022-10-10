@@ -8,11 +8,12 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class UploadBimUtility 
 {
 
-    public static IEnumerator UploadFile(CoString result, CoBool status, string url, string filePath)
+    public static IEnumerator UploadFile(CoString result, CoBool status, Slider slider, string url, string filePath)
     {
         List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
 
@@ -22,9 +23,16 @@ public class UploadBimUtility
         formData.Add(new MultipartFormFileSection(data, finfo.Name));
 
         UnityWebRequest req = UnityWebRequest.Post(url, formData);
+
         req.method = "PUT";
 
-        yield return req.SendWebRequest();
+        req.SendWebRequest();
+
+        while (!req.isDone)
+        {
+            slider.value = req.uploadProgress;            
+            yield return null;
+        }
 
         status.val = req.result == UnityWebRequest.Result.Success;
         result.val = status.val ? req.downloadHandler.text : req.error;
