@@ -254,7 +254,30 @@ public class CityJSONToCityObject : CityObject
         return attributes;
     }
 
-    public void SetNodes(Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices)
+    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(GameObject gameObject, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
+    {
+        //var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+
+        Dictionary<string, CityJSONToCityObject> cityObjects = new Dictionary<string, CityJSONToCityObject>();
+        foreach (var geometryKey in meshes.Keys)
+        {
+            if (!cityObjects.Keys.Contains(geometryKey.Key))
+            {
+                var obj = gameObject.AddComponent<CityJSONToCityObject>();
+                obj.Type = geometryKey.Type;
+                obj.includeSemantics = includeSemantics;
+                obj.isMainBuilding = isMainBuilding; //base.Start is called in SetNodes so no need to force update SetID here
+                cityObjects.Add(geometryKey.Key, obj);
+                var correspondingMeshes = meshes.Where(m => m.Key.Key == geometryKey.Key).ToDictionary(dict => dict.Key, dict => dict.Value);
+
+                cityObjects[geometryKey.Key].SetNodes(correspondingMeshes, attributes, combinedVertices);
+            }
+        }
+
+        return cityObjects;
+    }
+
+    private void SetNodes(Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices)
     {
         this.geometryNodes = meshes;
         this.attributes = attributes;

@@ -100,9 +100,9 @@ namespace T3D.Uitbouw
         public abstract CitySurface[] GetSurfaces();
 
         [SerializeField]
-        private bool includeSemantics;
+        protected bool includeSemantics;
         [SerializeField]
-        private bool isMainBuilding;
+        protected bool isMainBuilding;
         protected MeshFilter meshFilter;
 
         private void OnEnable()

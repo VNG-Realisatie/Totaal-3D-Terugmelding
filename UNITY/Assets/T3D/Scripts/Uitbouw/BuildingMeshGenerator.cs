@@ -59,15 +59,28 @@ namespace Netherlands3D.T3D.Uitbouw
 
             cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
             var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            verts = cityJsonModel.vertices;
+                parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+                verts = cityJsonModel.vertices;
             var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
 
-            var cityObject = GetComponent<CityJSONToCityObject>();
-            cityObject.SetNodes(meshes, attributes, cityJsonModel.vertices);
-            var activeMesh = cityObject.SetMeshActive(2); //todo: not hardcode the active lod
+
+            var objects = CityJSONToCityObject.CreateCityObjects(gameObject, meshes, attributes, cityJsonModel.vertices, true, true);
+            //var cityObject = GetComponent<CityJSONToCityObject>();
+            //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
+
+            var activeLod = 2;
+            var buildingMeshes = new List<Mesh>();
+            foreach (var obj in objects)
+            {
+                var mesh = obj.Value.SetMeshActive(activeLod);
+                if (mesh != null)
+                    buildingMeshes.Add(mesh);
+            }
+
+            var activeMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes, transform.localToWorldMatrix);
+            //var activeMesh = cityObject.SetMeshActive(2); //todo: not hardcode the active lod
 
             if (activeMesh)
                 ProcessMesh(activeMesh);

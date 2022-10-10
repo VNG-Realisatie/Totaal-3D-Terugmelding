@@ -17,10 +17,12 @@ public struct CityObjectIdentifier
     public JSONNode Node;
     public int Lod;
     public bool FlipYZ;
+    public CityObjectType Type;
 
-    public CityObjectIdentifier(string key, JSONNode node, int lod, bool flipYZ)
+    public CityObjectIdentifier(string key, CityObjectType type, JSONNode node, int lod, bool flipYZ)
     {
         Key = key;
+        Type = type;
         Lod = lod;
         Node = node;
         FlipYZ = flipYZ;
