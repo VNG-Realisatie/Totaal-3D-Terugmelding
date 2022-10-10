@@ -30,6 +30,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
         private CityJsonModel cityJsonModel;
 
+        public int ActiveLod = 2;
+
         private void Awake()
         {
             SelectedWall = GetComponentInChildren<WallSelector>();
@@ -59,8 +61,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
             cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
             var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-                parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-                verts = cityJsonModel.vertices;
+            parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+            verts = cityJsonModel.vertices;
             var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
@@ -70,16 +72,16 @@ namespace Netherlands3D.T3D.Uitbouw
             //var cityObject = GetComponent<CityJSONToCityObject>();
             //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
 
-            var activeLod = 2;
             var buildingMeshes = new List<Mesh>();
             foreach (var obj in objects)
             {
-                var mesh = obj.Value.SetMeshActive(activeLod);
-                if (mesh != null)
+                var mesh = obj.Value.SetMeshActive(ActiveLod);
+                //if (mesh != null)
                     buildingMeshes.Add(mesh);
             }
 
             var activeMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes, transform.localToWorldMatrix);
+            //GetComponent<MeshFilter>().mesh = activeMesh;
             //var activeMesh = cityObject.SetMeshActive(2); //todo: not hardcode the active lod
 
             if (activeMesh)
@@ -90,10 +92,10 @@ namespace Netherlands3D.T3D.Uitbouw
 
         private void ProcessMesh(Mesh mesh)
         {
-            var col = GetComponent<MeshCollider>();
-            BuildingCenter = col.bounds.center;
-            GroundLevel = BuildingCenter.y - col.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
-            HeightLevel = BuildingCenter.y + col.bounds.extents.y;
+            //var col = GetComponent<MeshCollider>();
+            BuildingCenter = mesh.bounds.center;
+            GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
+            HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
             RoofEdgePlanes = ProcessRoofEdges(mesh);
 
@@ -158,6 +160,9 @@ namespace Netherlands3D.T3D.Uitbouw
             AbsoluteBuildingCorners = q.ToArray();
         }
 
+        /// <summary>
+        /// delete everything below this when bugfixing is complete
+        /// </summary>
         bool test = false;
         Dictionary<CityObjectIdentifier, Mesh> parsedMeshes = new Dictionary<CityObjectIdentifier, Mesh>();
         List<Vector3Double> verts;
@@ -166,9 +171,23 @@ namespace Netherlands3D.T3D.Uitbouw
         {
             if (test)
             {
-                foreach (var pair in parsedMeshes)
+                Gizmos.color = Color.blue;
+                var pair = parsedMeshes.FirstOrDefault(x => x.Key.Lod == ActiveLod);
+                var mesh = pair.Value;
+
+                for (int i = 0; i < mesh.triangles.Length; i += 3)
                 {
-                    print(pair.Key.Node.ToString());
+                    //mesh = GetComponent<MeshFilter>().mesh;
+
+                    //print(pair.Key.Node.ToString());
+
+                    var index1 = mesh.triangles[i];
+                    var index2 = mesh.triangles[i + 1];
+                    var index3 = mesh.triangles[i + 2];
+                    Gizmos.DrawLine(mesh.vertices[index1], mesh.vertices[index2]);
+                    Gizmos.DrawLine(mesh.vertices[index2], mesh.vertices[index3]);
+                    Gizmos.DrawLine(mesh.vertices[index3], mesh.vertices[index1]);
+
                 }
                 Gizmos.color = Color.red;
                 foreach (var v in unityVerts)

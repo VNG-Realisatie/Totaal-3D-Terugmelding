@@ -254,7 +254,7 @@ public class CityJSONToCityObject : CityObject
         return attributes;
     }
 
-    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(GameObject gameObject, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
+    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(GameObject parentObject, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
     {
         //var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
 
@@ -263,11 +263,14 @@ public class CityJSONToCityObject : CityObject
         {
             if (!cityObjects.Keys.Contains(geometryKey.Key))
             {
-                var obj = gameObject.AddComponent<CityJSONToCityObject>();
-                obj.Type = geometryKey.Type;
-                obj.includeSemantics = includeSemantics;
-                obj.isMainBuilding = isMainBuilding; //base.Start is called in SetNodes so no need to force update SetID here
-                cityObjects.Add(geometryKey.Key, obj);
+                var obj = Instantiate(Resources.Load("CityObjectMesh"), parentObject.transform, true) as GameObject;
+                obj.name = geometryKey.Key;
+
+                var co = obj.GetComponent<CityJSONToCityObject>();
+                co.Type = geometryKey.Type;
+                co.includeSemantics = includeSemantics;
+                co.isMainBuilding = isMainBuilding; //base.Start is called in SetNodes so no need to force update SetID here
+                cityObjects.Add(geometryKey.Key, co);
                 var correspondingMeshes = meshes.Where(m => m.Key.Key == geometryKey.Key).ToDictionary(dict => dict.Key, dict => dict.Value);
 
                 cityObjects[geometryKey.Key].SetNodes(correspondingMeshes, attributes, combinedVertices);

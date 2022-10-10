@@ -76,14 +76,14 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
             uitbouw.AddCityObject(obj.Value);
             obj.Value.SetMeshActive(highestLod);
         }
-        var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponents<CityObject>();
+        var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
         var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
         uitbouw.ReparentToMainBuilding(mainBuilding);
 
         //meshFilter.mesh = combinedMesh;
         //uitbouw.GetComponentInChildren<MeshCollider>().sharedMesh = meshFilter.mesh;
 
-        uitbouw.SetMeshFilter(uitbouw.MeshFilter);
+        uitbouw.SetMeshFilter(uitbouw.MeshFilter); //todo: this does not work with new parsing method and multiple child meshes
 
         //center mesh
         var offset = uitbouw.MeshFilter.mesh.bounds.center;
