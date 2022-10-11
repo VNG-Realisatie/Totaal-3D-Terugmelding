@@ -26,7 +26,6 @@ public struct MeasureLine
 
 public class UitbouwFreeMeasurement : DistanceMeasurement
 {
-    [SerializeField]
     private SelectableMesh[] mySelectableMeshes;
     private SelectableMesh[] otherSelectableMeshes;
 

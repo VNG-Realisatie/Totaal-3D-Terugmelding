@@ -84,7 +84,6 @@ GameObject:
   - component: {fileID: 6641196300282613232}
   - component: {fileID: 8159273155836315771}
   - component: {fileID: 1652044654856456080}
-  - component: {fileID: 4773198678137506252}
   - component: {fileID: 3494823665210763266}
   - component: {fileID: 6691745721325876304}
   m_Layer: 20
@@ -183,24 +182,6 @@ MonoBehaviour:
   bakeKeys: []
   bakeValues: []
   isPlane: 0
---- !u!114 &4773198678137506252
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8007389617465903191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 502690ba42a1c45e7ba9abf6475ac756, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  vertexVisualizationPrefab: {fileID: 5969573748713340153, guid: a68368933e31644838fa22e3836c955e,
-    type: 3}
-  meshFilterOverride: {fileID: 0}
-  pointScale: 0.015
-  limitVerticesToGroundPlane: 1
-  vertexLimitTolerance: 0.1
 --- !u!114 &3494823665210763266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,8 +198,8 @@ MonoBehaviour:
   measurementLine: {fileID: 3551644316045364558, guid: 93001c4ebd7a94dd8ae18fc783d1e530,
     type: 3}
   numberOfLines: 0
-  mySelectableMesh: {fileID: 4773198678137506252}
-  cursorPointPrefab: {fileID: 0}
+  cursorPointPrefab: {fileID: 5969573748713340153, guid: 120a0abbd67a947478f328f9cd0ba310,
+    type: 3}
 --- !u!114 &6691745721325876304
 MonoBehaviour:
   m_ObjectHideFlags: 0
