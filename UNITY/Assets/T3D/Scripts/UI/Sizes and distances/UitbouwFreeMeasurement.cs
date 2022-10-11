@@ -130,7 +130,8 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
                 if (!validEnd)
                 {
                     line.LinePoints[1].PointScale = 0;
-                    Destroy(hoverPoint.gameObject);
+                    if (!isValidMeshPoint) //destroy the instantiated second (non-mesh) point
+                        Destroy(hoverPoint.gameObject);
                 }
                 firstPoint = null; //set that there is no longer an active first point
             }
