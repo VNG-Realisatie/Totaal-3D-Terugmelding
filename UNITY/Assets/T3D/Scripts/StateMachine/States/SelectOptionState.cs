@@ -66,7 +66,8 @@ public class SelectOptionState : State
         {
             //if (uploadedModelToggle.isOn)
             //    LoadModel();
-            StartCoroutine(LoadModelAndGoToNextState());
+            //StartCoroutine(LoadModelAndGoToNextState());
+            LoadModelAndGoToNextState();
         }
     }
 
@@ -96,22 +97,39 @@ public class SelectOptionState : State
             freePlaceToggle.isOn = true;
     }
 
-    //called by button in inspector
-    public void LoadModel()
-    {
-        visualiser.VisualizeCityJson();
-    }
+    ////called by button in inspector
+    //public void LoadModel()
+    //{
+    //    visualiser.VisualizeCityJson();
+    //}
 
-    public IEnumerator LoadModelAndGoToNextState()
+    public void LoadModelAndGoToNextState()
     {
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         {
-            visualiser.VisualizeCityJson();
-            yield return new WaitUntil(() =>
-                visualiser.HasLoaded
-            );
+            StartCoroutine(GetAndParseCityJson());
         }
-        EndState();
+        //EndState();
+    }
+
+    IEnumerator GetAndParseCityJson()
+    {
+        CoString result = new CoString();
+        CoBool success = new CoBool();
+        yield return StartCoroutine(UploadBimUtility.GetBimCityJson(result, success));
+
+        //The CityJson has been downloaded, now lets visualize it
+        if (success)
+        {
+            Debug.Log("-------BimCityJsonReceived");
+            ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
+            //EndState();
+        }
+        else
+        {         
+            ErrorService.GoToErrorPage(result);
+        }
+
     }
 
     public override void StateEnteredAction()

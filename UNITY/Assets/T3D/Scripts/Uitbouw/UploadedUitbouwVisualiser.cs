@@ -28,13 +28,13 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     void OnEnable()
     {
-        ServiceLocator.GetService<MetadataLoader>().BimCityJsonReceived += OnBimCityJsonReceived;
+        ServiceLocator.GetService<Events>().BimCityJsonReceived += OnBimCityJsonReceived;
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += OnPerceelDataLoaded;
     }
 
     void OnDisable()
     {
-        ServiceLocator.GetService<MetadataLoader>().BimCityJsonReceived -= OnBimCityJsonReceived;
+        ServiceLocator.GetService<Events>().BimCityJsonReceived -= OnBimCityJsonReceived;
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded -= OnPerceelDataLoaded;
     }
 
@@ -45,20 +45,22 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     private void OnBimCityJsonReceived(string cityJson)
     {
+        Debug.Log("OnBimCityJsonReceived");
         this.cityJson = cityJson;
+
+        ParseCityJson(useTestJSON);
+        //VisualizeCityJson();
     }
 
-    public void VisualizeCityJson()
-    {
-        StartCoroutine(ParseCityJson(useTestJSON));
-    }
+    //public void VisualizeCityJson()
+    //{
+       
+    //}
 
-    private IEnumerator ParseCityJson(bool useTestJson)
+    private void ParseCityJson(bool useTestJson)
     {
         if (useTestJSON)
             cityJson = testJSON.text;
-
-        yield return new WaitUntil(() => cityJson != string.Empty);
 
         var meshFilter = uitbouw.MeshFilter;
         var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
@@ -99,6 +101,8 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         //uitbouw.MeshFilter.transform.localPosition = depthOffset + heightOffset;
 
         uitbouw.InitializeUserMovementAxes();
+
+        uitbouw.gameObject.transform.parent.gameObject.SetActive(true);
 
         HasLoaded = true;
     }

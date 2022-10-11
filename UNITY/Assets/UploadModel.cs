@@ -7,6 +7,11 @@ using UnityEngine.UI;
 using System;
 using Netherlands3D;
 using UnityEngine.Networking;
+using System.Web;
+using System.Threading.Tasks;
+using SimpleJSON;
+using Netherlands3D.T3D.Uitbouw;
+using UnityEditor;
 
 #if UNITY_5_3 || UNITY_5_3_OR_NEWER
 using UnityEngine.SceneManagement;
@@ -23,6 +28,10 @@ namespace WebGLFileUploaderExample
         private bool htmlIsVisible;
         private bool unityIsVisible => gameObject.activeInHierarchy;
         // Use this for initialization
+
+        public Text debugText;
+        public Slider slider;
+
         void Start()
         {
             Debug.Log("WebGLFileUploadManager.getOS: " + WebGLFileUploadManager.getOS);
@@ -56,6 +65,11 @@ namespace WebGLFileUploaderExample
             ShowHTMLOverlayButton();
         }
 
+        private void UpdateSlider()
+        {
+            
+        }
+
         /// <summary>
         /// Raises the destroy event.
         /// </summary>
@@ -68,65 +82,117 @@ namespace WebGLFileUploaderExample
         /// <summary>
         /// Raises the file uploaded event.
         /// </summary>
-        /// <param name="result">Uploaded file infos.</param>
-        private void OnFileUploaded(UploadedFileInfo[] result)
+        /// <param name="files">Uploaded file infos.</param>
+        private void OnFileUploaded(UploadedFileInfo[] files)
         {
-            if (result.Length == 0)
+            if (files.Length == 0)
             {
                 Debug.Log("File upload Error!");
+                debugText.text = "File upload Error!";
             }
-            else
+            else                        
             {
-                Debug.Log("File upload success! (result.Length: " + result.Length + ")");
-            }
+                ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
 
-            foreach (UploadedFileInfo file in result)
-            {
+                Debug.Log("File upload success! (result.Length: " + files.Length + ")");
+                debugText.text = "File upload success!(result.Length: " + files.Length + ")";
+
+                UploadedFileInfo file = files[0];
                 if (file.isSuccess)
                 {
                     Debug.Log("file.filePath: " + file.filePath + " exists:" + File.Exists(file.filePath));
-                    var extension = Path.GetExtension(file.filePath);
-                    Debug.Log("file extension: " + extension);
-                    if (extension == ".skp")
-                    {
-                        var url = Config.activeConfiguration.T3DAzureFunctionURL + "sketchup2cityjson/";
-                        StartCoroutine(ProcessFileConversion(url, file.filePath));
-                    }
-                    else if (extension == ".ifc")
-                    {
-                        var url = Config.activeConfiguration.T3DAzureFunctionURL + "UploadBim/";
-                        StartCoroutine(ProcessFileConversion(url, file.filePath));
-                    }
+                    debugText.text = "file.filePath: " + file.filePath + " exists:" + File.Exists(file.filePath);
 
-                    //Texture2D texture = new Texture2D(2, 2);
-                    //texture.LoadImage(byteArray);
-                    //gameObject.GetComponent<Renderer>().material.mainTexture = texture;
+                    var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(file.name)}";
 
-                    //Debug.Log("File.ReadAllBytes:byte[].Length: " + byteArray.Length);
-
-                    break;
+                    StartCoroutine(UploadAndCheck(url, file.filePath));
+                 
                 }
             }
         }
 
-        private IEnumerator ProcessFileConversion(string url, string filePath)
+#if UNITY_EDITOR
+        public void UploadFromEditor()
         {
-            byte[] byteArray = File.ReadAllBytes(filePath);
-            UnityWebRequest req = UnityWebRequest.Put(url, byteArray);
-            Debug.Log("sending webRequest to " + url);
-            yield return req.SendWebRequest();
-            Debug.Log("sent webRequest");
+            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc");
+            FileInfo finfo = new FileInfo(path);
 
-            if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
+            if (path.Length != 0)
             {
-                ErrorService.GoToErrorPage(req.error);
+                var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString( finfo.Name )}";
+                StartCoroutine(UploadAndCheck(url, path));
+                
+            }
+        }
+#endif
+
+        IEnumerator UploadAndCheck(string url, string filePath)
+        {
+            CoString result = new CoString();
+            CoBool success = new CoBool();
+
+            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, slider, url, filePath));
+            
+            debugText.text = result;
+            if (success == false) yield break;
+            
+            var jsonResult = JSON.Parse(result);
+
+            if (filePath.ToLower().EndsWith(".skp"))
+            {
+                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
             }
             else
             {
-                Debug.Log("request success");
-                print(req.downloadHandler.text);
+                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+
+                var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
+                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(urlIfc, result, success));
+                debugText.text = result;
             }
+
+            //the file has been successfully converted to CityJson, now lets get the CityJson
+            if (success)
+            {
+                yield return StartCoroutine(UploadBimUtility.GetBimCityJson(result, success));
+
+                //The CityJson has been downloaded, now lets visualize it
+                if (success)
+                {
+                    Debug.Log("-------BimCityJsonReceived");
+                    ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
+                }
+                else
+                {
+                    debugText.text = result;
+                    ErrorService.GoToErrorPage(result);
+                }
+            }
+            
+
         }
+
+
+
+
+        //public IEnumerator ProcessFileConversion(string url, string filePath)
+        //{
+        //    byte[] byteArray = File.ReadAllBytes(filePath);
+        //    UnityWebRequest req = UnityWebRequest.Put(url, byteArray);
+        //    Debug.Log("sending webRequest to " + url);
+        //    yield return req.SendWebRequest();
+        //    Debug.Log("sent webRequest");
+
+        //    if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
+        //    {
+        //        ErrorService.GoToErrorPage(req.error);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log("request success");
+        //        print(req.downloadHandler.text);
+        //    }
+        //}
 
         /// <summary>
         /// Raises the back button click event.
@@ -207,5 +273,8 @@ namespace WebGLFileUploaderExample
                 htmlIsVisible = WebGLFileUploadManager.Show(false);
             }
         }
+
+        
+
     }
 }

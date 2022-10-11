@@ -35,7 +35,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     public void ExportSaveData(string sessionId)
     {
         string saveData = SerializeSaveableContainers();
-        print(saveData);
+      //  print(saveData);
 
         PlayerPrefs.SetString(sessionId, saveData);
 
