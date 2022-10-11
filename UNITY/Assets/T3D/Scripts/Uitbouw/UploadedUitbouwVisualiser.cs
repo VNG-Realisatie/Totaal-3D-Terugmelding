@@ -78,9 +78,9 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
             var mesh = obj.Value.SetMeshActive(highestLod);
             uitbouwMeshes.Add(mesh);
         }
-        var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
-        var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
-        uitbouw.ReparentToMainBuilding(mainBuilding);
+        //var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
+        //var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
+        uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
 
         var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
         uitbouw.SetCombinedMesh(combinedActiveMesh); 

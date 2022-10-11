@@ -13,7 +13,7 @@ namespace Netherlands3D.T3D.Uitbouw
             base.Start();
             var building = GetComponent<UitbouwBase>().ActiveBuilding;
             SetParents(new CityObject[] {
-                building.GetComponent<CityObject>()
+                building.MainCityObject
             });
         }
 

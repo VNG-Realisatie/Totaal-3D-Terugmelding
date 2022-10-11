@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ConvertCoordinates;
 using T3D.LoadData;
+using T3D.Uitbouw;
 
 namespace Netherlands3D.T3D.Uitbouw
 {
@@ -29,6 +30,7 @@ namespace Netherlands3D.T3D.Uitbouw
         public event BuildingDataProcessedEventHandler BuildingDataProcessed;
 
         private CityJsonModel cityJsonModel;
+        public CityObject MainCityObject { get; private set; }
 
         public int ActiveLod = 2;
 
@@ -69,6 +71,7 @@ namespace Netherlands3D.T3D.Uitbouw
 
 
             var objects = CityJSONToCityObject.CreateCityObjects(gameObject, meshes, attributes, cityJsonModel.vertices, true, true);
+            MainCityObject = objects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
             //var cityObject = GetComponent<CityJSONToCityObject>();
             //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
 
