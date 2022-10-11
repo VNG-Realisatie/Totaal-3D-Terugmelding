@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Netherlands3D.Cameras;
 using Netherlands3D.T3D;
 using Netherlands3D.T3D.Uitbouw;
@@ -26,7 +27,7 @@ public struct MeasureLine
 public class UitbouwFreeMeasurement : DistanceMeasurement
 {
     [SerializeField]
-    private SelectableMesh mySelectableMesh;
+    private SelectableMesh[] mySelectableMeshes;
     private SelectableMesh[] otherSelectableMeshes;
 
     private List<MeasureLine> measureLines = new List<MeasureLine>();
@@ -69,7 +70,8 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
     {
         //flip direction if points selected in wrong order
         var index = lines.IndexOf(source);
-        if (measureLines[index].End.GetComponentInParent<SelectableMesh>() == mySelectableMesh)
+        var lineMesh = measureLines[index].End.GetComponentInParent<SelectableMesh>();
+        if (mySelectableMeshes.Contains(lineMesh))
             delta *= -1;
         uitbouw.GetComponent<UitbouwMovement>().SetPosition(uitbouw.transform.position + direction * delta);
     }
@@ -148,17 +150,19 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
     private bool IsHoveringOverValidPoint(out MeasurePoint point)
     {
         point = null;
-        if (mySelectableMesh.ActivePoint)
+        var activePoint = GetActivePointFromMySelectableMeshes(out var activeMesh);
+
+        if (activePoint)
         {
-            mySelectableMesh.VisualizeActivePoint = true;
-            point = mySelectableMesh.ActivePoint;
+            activeMesh.VisualizeActivePoint = true;
+            point = activePoint;
             return true;
         }
         else
         {
+            //activeMesh.VisualizeActivePoint = true;
             foreach (var mesh in otherSelectableMeshes)
             {
-                mySelectableMesh.VisualizeActivePoint = true;
                 if (mesh.ActivePoint)
                 {
                     point = mesh.ActivePoint;
@@ -169,11 +173,28 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
         return false;
     }
 
+    private MeasurePoint GetActivePointFromMySelectableMeshes(out SelectableMesh activeMesh)
+    {
+        MeasurePoint activePoint = null;
+        activeMesh = null;
+        foreach (var m in mySelectableMeshes)
+        {
+            if (m.ActivePoint)
+            {
+                activePoint = m.ActivePoint;
+                activeMesh = m;
+            }
+        }
+
+        return activePoint;
+    }
+
     private bool IsHoveringOverValidSecondPoint(out MeasurePoint point)
     {
         point = null;
+        var myActivePoint = GetActivePointFromMySelectableMeshes(out var activeMesh);
         // if first point is part of uitbouwMesh: only check other meshes.
-        if (firstPoint.GetComponentInParent<SelectableMesh>() == mySelectableMesh)
+        if (activeMesh == firstPoint.GetComponentInParent<SelectableMesh>())
         {
             foreach (var otherMesh in otherSelectableMeshes)
             {
@@ -185,9 +206,9 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
             }
         }
         // else check only uitbouwMesh
-        else if (mySelectableMesh.ActivePoint)
+        else if (myActivePoint)
         {
-            point = mySelectableMesh.ActivePoint;
+            point = myActivePoint;
             return true;
         }
         return false;
@@ -218,12 +239,15 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
 
         if (measureToolActive)
         {
+            mySelectableMeshes = GetComponentsInChildren<SelectableMesh>();
+            print(mySelectableMeshes.Length);
             foreach (var mesh in otherSelectableMeshes)
             {
                 mesh.SelectVertices();
             }
 
-            mySelectableMesh.SelectVertices();
+            foreach (var m in mySelectableMeshes)
+                m.SelectVertices();
         }
         else
         {
@@ -231,8 +255,8 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
             {
                 mesh.DeselectVertices();
             }
-
-            mySelectableMesh.DeselectVertices();
+            foreach (var m in mySelectableMeshes)
+                m.DeselectVertices();
         }
     }
 
