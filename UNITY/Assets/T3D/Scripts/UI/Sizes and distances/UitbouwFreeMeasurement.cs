@@ -239,7 +239,6 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
         if (measureToolActive)
         {
             mySelectableMeshes = GetComponentsInChildren<SelectableMesh>();
-            print(mySelectableMeshes.Length);
             foreach (var mesh in otherSelectableMeshes)
             {
                 mesh.SelectVertices();
