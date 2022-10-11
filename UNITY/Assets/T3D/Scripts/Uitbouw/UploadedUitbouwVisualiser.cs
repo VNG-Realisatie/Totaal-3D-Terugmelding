@@ -71,19 +71,19 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         var highestLod = meshes.Keys.Max(k => k.Lod);
         print("Enabling the highest lod: " + highestLod);
         var cityObjects = CityJSONToCityObject.CreateCityObjects(meshFilter.gameObject, meshes, attributes, cityJsonModel.vertices);
+        var uitbouwMeshes = new List<Mesh>();
         foreach (var obj in cityObjects)
         {
             uitbouw.AddCityObject(obj.Value);
-            obj.Value.SetMeshActive(highestLod);
+            var mesh = obj.Value.SetMeshActive(highestLod);
+            uitbouwMeshes.Add(mesh);
         }
         var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
         var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
         uitbouw.ReparentToMainBuilding(mainBuilding);
 
-        //meshFilter.mesh = combinedMesh;
-        //uitbouw.GetComponentInChildren<MeshCollider>().sharedMesh = meshFilter.mesh;
-
-        uitbouw.SetMeshFilter(uitbouw.MeshFilter); //todo: this does not work with new parsing method and multiple child meshes
+        var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
+        uitbouw.SetCombinedMesh(combinedActiveMesh); 
 
         //center mesh
         var offset = uitbouw.MeshFilter.mesh.bounds.center;

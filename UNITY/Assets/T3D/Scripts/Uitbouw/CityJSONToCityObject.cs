@@ -265,6 +265,7 @@ public class CityJSONToCityObject : CityObject
             {
                 var obj = Instantiate(Resources.Load("CityObjectMesh"), parentObject.transform, true) as GameObject;
                 obj.name = geometryKey.Key;
+                obj.layer = parentObject.layer;
 
                 var co = obj.GetComponent<CityJSONToCityObject>();
                 co.Type = geometryKey.Type;
@@ -299,9 +300,9 @@ public class CityJSONToCityObject : CityObject
         if (col)
             col.sharedMesh = pair.Value;
 
-        var uploadedUitbouw = GetComponentInParent<UploadedUitbouw>();
-        if (uploadedUitbouw)
-            uploadedUitbouw.SetMeshFilter(meshFilter);
+        //var uploadedUitbouw = GetComponentInParent<UploadedUitbouw>();
+        //if (uploadedUitbouw)
+        //    uploadedUitbouw.SetCombinedMesh(meshFilter);
 
         return pair.Value;
     }
