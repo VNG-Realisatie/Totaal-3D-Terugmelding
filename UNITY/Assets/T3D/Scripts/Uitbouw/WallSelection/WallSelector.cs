@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 
 namespace Netherlands3D.T3D.Uitbouw
 {
-    //todo: in case there are 2 coplanar walls, this script will treat them as one, need to add a check to ensure the returned wall is contiguous
-
     public struct Edge
     {
         public int IndexA;
@@ -55,8 +53,6 @@ namespace Netherlands3D.T3D.Uitbouw
 
     public class WallSelector : MonoBehaviour
     {
-        [SerializeField]
-        private MeshFilter buildingMeshFilter;
         private MeshFilter wallMeshFilter;
 
         private BuildingMeshGenerator building;
@@ -164,8 +160,11 @@ namespace Netherlands3D.T3D.Uitbouw
                 WallPlane = new Plane(hit.normal, hit.point);
 
                 //copy mesh data to avoid getting a copy every iteration in the loop
-                var sourceVerts = buildingMeshFilter.mesh.vertices;
-                var sourceTriangles = buildingMeshFilter.mesh.triangles;
+                var meshCollider = hit.collider as MeshCollider;
+                var mesh = meshCollider.sharedMesh;
+
+                var sourceVerts = mesh.vertices;
+                var sourceTriangles = mesh.triangles;
                 //var sourceUVs = buildingMeshFilter.mesh.uvs;
 
                 //List<Vector3> parallelVertices = new List<Vector3>();

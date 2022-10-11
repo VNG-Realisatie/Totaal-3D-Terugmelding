@@ -43,6 +43,11 @@ public class T3DInit : MonoBehaviour, IUniqueService
 
     public Netherlands3D.Rendering.RenderSettings RenderSettings;
 
+    [SerializeField]
+    private bool useTestBuilding; //use when VCS server is down
+    [SerializeField]
+    private TextAsset testBuildingJson;
+
     private void Awake()
     {
         HTMLData = new HTMLInitSaveData();
@@ -62,21 +67,20 @@ public class T3DInit : MonoBehaviour, IUniqueService
 
     public void LoadBuilding()
     {
-        //wait until the end of the frame and then load the building. this is needed to ensure all SaveableVariables are correctly loaded before using them.
-    //    StartCoroutine(GoToBuildingAtEndOfFrame());
-    //}
-
-    //private IEnumerator GoToBuildingAtEndOfFrame()
-    //{
-    //    yield return null; //wait a frame
-
         //set relative center to cameraposition to avoid floating point precision issues
         Config.activeConfiguration.RelativeCenterRD = new Vector2RD(HTMLData.RDPosition.x, HTMLData.RDPosition.y);
 
         GotoPosition(HTMLData.RDPosition);
 
-        StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBag(HTMLData.BagId));
-        StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
+        if (!useTestBuilding)
+        {
+            StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBag(HTMLData.BagId));
+            StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
+        }
+        else
+        {
+            ServiceLocator.GetService<MetadataLoader>().LoadTestBuilding(testBuildingJson.text);
+        }
 
         ServiceLocator.GetService<MetadataLoader>().RequestBuildingData(HTMLData.RDPosition, HTMLData.BagId);
     }

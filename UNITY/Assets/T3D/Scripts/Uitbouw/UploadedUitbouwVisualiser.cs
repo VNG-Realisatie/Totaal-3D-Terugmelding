@@ -67,18 +67,23 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
         //var combinedMesh = CombineMeshes(meshes.Values.ToList(), meshFilter.transform.localToWorldMatrix);
 
-        var cityObject = meshFilter.gameObject.AddComponent<CityJSONToCityObject>();
-        cityObject.SetNodes(meshes, attributes, cityJsonModel.vertices);
-        uitbouw.AddCityObject(cityObject);
-        uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.GetComponent<CityObject>());
+        //var cityObject = meshFilter.gameObject.AddComponent<CityJSONToCityObject>();
         var highestLod = meshes.Keys.Max(k => k.Lod);
         print("Enabling the highest lod: " + highestLod);
-        cityObject.SetMeshActive(highestLod);
+        var cityObjects = CityJSONToCityObject.CreateCityObjects(meshFilter.gameObject, meshes, attributes, cityJsonModel.vertices);
+        var uitbouwMeshes = new List<Mesh>();
+        foreach (var obj in cityObjects)
+        {
+            uitbouw.AddCityObject(obj.Value);
+            var mesh = obj.Value.SetMeshActive(highestLod);
+            uitbouwMeshes.Add(mesh);
+        }
+        //var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
+        //var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
+        uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
 
-        //meshFilter.mesh = combinedMesh;
-        //uitbouw.GetComponentInChildren<MeshCollider>().sharedMesh = meshFilter.mesh;
-
-        uitbouw.SetMeshFilter(uitbouw.MeshFilter);
+        var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
+        uitbouw.SetCombinedMesh(combinedActiveMesh); 
 
         //center mesh
         var offset = uitbouw.MeshFilter.mesh.bounds.center;

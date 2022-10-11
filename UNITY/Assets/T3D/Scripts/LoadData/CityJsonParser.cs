@@ -92,6 +92,7 @@ namespace T3D.LoadData
             maxx = vertarray.Max(o => o.Value[0].AsDouble * transformScale.x);
             maxy = vertarray.Max(o => o.Value[1].AsDouble * transformScale.y);
             maxz = vertarray.Max(o => o.Value[2].AsDouble * transformScale.z);
+
             //}
 
             if ((maxx - minx > 500) || (maxy - miny > 500))
@@ -100,59 +101,50 @@ namespace T3D.LoadData
             }
             var centerx = minx + ((maxx - minx) / 2);
             var centery = miny + ((maxy - miny) / 2);
+            var centerz = minz + ((maxz - minz) / 2);
 
-            //now load all the vertices with the scaler and offset applied
-            foreach (JSONNode node in cityjsonNode["vertices"])
+            var centerRD = new Vector3RD(centerx, centery, centerz);
+            //check the center for validity, only check once, so all verts are processed using the same coordinate system.
+            var validRD = IsValidRD(centerRD);
+
+            if (IsValidRD(centerRD))
             {
-                var rd = new Vector3RD(
-                        node[0].AsDouble * transformScale.x + transformOffset.x,
-                        node[1].AsDouble * transformScale.y + transformOffset.y,
-                        node[2].AsDouble * transformScale.z + transformOffset.z
-                );
-
-                if (IsValidRD(rd))
+                if (checkDistanceFromCenter)
                 {
-                    if (checkDistanceFromCenter)
+                    var center = Netherlands3D.Config.activeConfiguration.RelativeCenterRD;
+                    var check_x = Math.Abs(centerRD.x - center.x);
+                    var check_y = Math.Abs(centerRD.y - center.y);
+
+                    var perceelRadius = RestrictionChecker.ActivePerceel.Radius;
+                    if (check_x > perceelRadius || check_y > perceelRadius)
                     {
-                        var center = Netherlands3D.Config.activeConfiguration.RelativeCenterRD;
-                        var check_x = Math.Abs(rd.x - center.x);
-                        var check_y = Math.Abs(rd.y - center.y);
-
-                        var perceelRadius = RestrictionChecker.ActivePerceel.Radius;
-
-                        if (check_x > perceelRadius || check_y > perceelRadius)
-                        {
-                            var vertCoordinates = new Vector3Double(rd.x - centerx, rd.z + centerWorld.z, rd.y - centery);
-                            vertices.Add(vertCoordinates);
-                        }
-                        else
-                        {
-                            AddToVertices(rd);
-                        }
+                        //loop to add all verts like this
+                        AddVerticesWithCenterOffset(cityjsonNode["vertices"], new Vector3Double(centerx, centery, centerz), centerWorld);
                     }
                     else
                     {
-                        AddToVertices(rd);
+                        AddVerticesAsRD(cityjsonNode["vertices"]);
                     }
                 }
-                else //is it WGS84 or is it Unity coordinate
+                else
                 {
-                    Vector3WGS wgs = new Vector3WGS(rd.x, rd.y, rd.z);
-
-                    if (IsValidWGS84(wgs))
-                    {
-                        var unityCoordinates = CoordConvert.WGS84toUnity(wgs);
-                        var vertCoordinates = new Vector3Double(unityCoordinates.x, unityCoordinates.z, unityCoordinates.y);
-                        vertices.Add(vertCoordinates);
-                    }
-                    else
-                    {
-                        //var posRd = new Vector3RD(centerWorld.x + rd.x - centerx, centerWorld.y + rd.y - centery, centerWorld.z + rd.z);
-                        var vertCoordinates = new Vector3Double(rd.x - centerx, rd.z + centerWorld.z, rd.y - centery);
-                        vertices.Add(vertCoordinates);
-                    }
+                    AddVerticesAsRD(cityjsonNode["vertices"]);
                 }
             }
+            else //is it WGS84 or is it Unity coordinate
+            {
+                Vector3WGS wgs = new Vector3WGS(centerRD.x, centerRD.y, centerRD.z);
+
+                if (IsValidWGS84(wgs))
+                {
+                    AddVerticesAsWGS(cityjsonNode["vertices"]);
+                }
+                else
+                {
+                    AddVerticesWithCenterOffset(cityjsonNode["vertices"], new Vector3Double(centerx, centery, centerz), centerWorld);
+                }
+            }
+                      
             //get textureVertices
             foreach (JSONNode node in cityjsonNode["appearance"]["vertices-texture"])
             {
@@ -183,7 +175,50 @@ namespace T3D.LoadData
             //}
         }
 
-        private void AddToVertices(Vector3RD rd)
+        private void AddVerticesAsWGS(JSONNode verticesNode)
+        {
+            foreach (JSONNode node in verticesNode)
+            {
+                var vert = new Vector3WGS(
+                   node[0].AsDouble * transformScale.x + transformOffset.x,
+                   node[1].AsDouble * transformScale.y + transformOffset.y,
+                   node[2].AsDouble * transformScale.z + transformOffset.z
+                );
+                var unityCoordinates = CoordConvert.WGS84toUnity(vert);
+                var vertCoordinates = new Vector3Double(unityCoordinates.x, unityCoordinates.z, unityCoordinates.y);
+                vertices.Add(vertCoordinates);
+            }
+        }
+
+        private void AddVerticesWithCenterOffset(JSONNode verticesNode, Vector3Double center, Vector3RD centerWorld)
+        {
+            foreach (JSONNode node in verticesNode)
+            {
+                var vert = new Vector3Double(
+                   node[0].AsDouble * transformScale.x + transformOffset.x,
+                   node[1].AsDouble * transformScale.y + transformOffset.y,
+                   node[2].AsDouble * transformScale.z + transformOffset.z
+                );
+                //var vertCoordinates = new Vector3Double(vert.x - center.x, vert.z + center.z, vert.y - center.y);
+                var vertCoordinates = new Vector3Double(vert.x - center.x, vert.z + centerWorld.z, vert.y - center.y); //original, why use CenterWorld for height and building center for xz?
+                vertices.Add(vertCoordinates);
+            }
+        }
+
+        private void AddVerticesAsRD(JSONNode verticesNode)
+        {
+            foreach (JSONNode node in verticesNode)
+            {
+                var vert = new Vector3RD(
+                   node[0].AsDouble * transformScale.x + transformOffset.x,
+                   node[1].AsDouble * transformScale.y + transformOffset.y,
+                   node[2].AsDouble * transformScale.z + transformOffset.z
+                );
+                AddRDToVertices(vert);
+            }
+        }
+
+        private void AddRDToVertices(Vector3RD rd)
         {
             var unityCoordinates = CoordConvert.RDtoUnity(rd);
             var vertCoordinates = new Vector3Double(unityCoordinates.x, unityCoordinates.z, unityCoordinates.y);

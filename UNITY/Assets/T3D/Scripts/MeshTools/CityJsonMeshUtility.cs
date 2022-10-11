@@ -1,7 +1,9 @@
 using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using T3D.LoadData;
+using T3D.Uitbouw;
 using UnityEngine;
 
 public class CityJsonMeshUtility
@@ -41,7 +43,7 @@ public class CityJsonMeshUtility
             mesh.RecalculateNormals();
 
             var lod = cityObject["geometry"][i]["lod"].AsInt;
-            var identifier = new CityObjectIdentifier(cityObjectKey, cityObject["geometry"][i], lod, flipYZ);
+            var identifier = new CityObjectIdentifier(cityObjectKey, (CityObjectType)Enum.Parse(typeof(CityObjectType), cityObject["type"]), cityObject["geometry"][i], lod, flipYZ);
             meshes.Add(identifier, mesh);
         }
         //mesh.RecalculateBounds();

@@ -254,7 +254,34 @@ public class CityJSONToCityObject : CityObject
         return attributes;
     }
 
-    public void SetNodes(Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices)
+    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(GameObject parentObject, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
+    {
+        //var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
+
+        Dictionary<string, CityJSONToCityObject> cityObjects = new Dictionary<string, CityJSONToCityObject>();
+        foreach (var geometryKey in meshes.Keys)
+        {
+            if (!cityObjects.Keys.Contains(geometryKey.Key))
+            {
+                var obj = Instantiate(Resources.Load("CityObjectMesh"), parentObject.transform, true) as GameObject;
+                obj.name = geometryKey.Key;
+                obj.layer = parentObject.layer;
+
+                var co = obj.GetComponent<CityJSONToCityObject>();
+                co.Type = geometryKey.Type;
+                co.includeSemantics = includeSemantics;
+                co.isMainBuilding = isMainBuilding; //base.Start is called in SetNodes so no need to force update SetID here
+                cityObjects.Add(geometryKey.Key, co);
+                var correspondingMeshes = meshes.Where(m => m.Key.Key == geometryKey.Key).ToDictionary(dict => dict.Key, dict => dict.Value);
+
+                cityObjects[geometryKey.Key].SetNodes(correspondingMeshes, attributes, combinedVertices);
+            }
+        }
+
+        return cityObjects;
+    }
+
+    private void SetNodes(Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices)
     {
         this.geometryNodes = meshes;
         this.attributes = attributes;
@@ -273,9 +300,9 @@ public class CityJSONToCityObject : CityObject
         if (col)
             col.sharedMesh = pair.Value;
 
-        var uploadedUitbouw = GetComponentInParent<UploadedUitbouw>();
-        if (uploadedUitbouw)
-            uploadedUitbouw.SetMeshFilter(meshFilter);
+        //var uploadedUitbouw = GetComponentInParent<UploadedUitbouw>();
+        //if (uploadedUitbouw)
+        //    uploadedUitbouw.SetCombinedMesh(meshFilter);
 
         return pair.Value;
     }

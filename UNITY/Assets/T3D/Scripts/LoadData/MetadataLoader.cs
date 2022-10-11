@@ -224,6 +224,12 @@ namespace Netherlands3D.T3D.Uitbouw
             }
         }
 
+        public void LoadTestBuilding(string json)
+        {
+            Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
+            CityJsonBagReceived?.Invoke(json);
+        }
+
         public IEnumerator GetCityJsonBagBoundingBox(double x, double y, string excludeBagId)
         {
             string bbox = $"{x - 25},{y - 25},{x + 25},{y + 25}";
