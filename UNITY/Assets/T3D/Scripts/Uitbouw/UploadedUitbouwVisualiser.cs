@@ -72,7 +72,13 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         //var cityObject = meshFilter.gameObject.AddComponent<CityJSONToCityObject>();
         var highestLod = meshes.Keys.Max(k => k.Lod);
         print("Enabling the highest lod: " + highestLod);
-        var cityObjects = CityJSONToCityObject.CreateCityObjects(meshFilter.gameObject, meshes, attributes, cityJsonModel.vertices);
+
+        var parent = meshFilter.transform;
+        foreach (Transform child in parent)
+        {
+            Destroy(child.gameObject);
+        }
+        var cityObjects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices);
         var uitbouwMeshes = new List<Mesh>();
         foreach (var obj in cityObjects)
         {

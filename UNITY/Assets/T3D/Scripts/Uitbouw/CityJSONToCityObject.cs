@@ -254,7 +254,7 @@ public class CityJSONToCityObject : CityObject
         return attributes;
     }
 
-    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(GameObject parentObject, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
+    public static Dictionary<string, CityJSONToCityObject> CreateCityObjects(Transform parent, Dictionary<CityObjectIdentifier, Mesh> meshes, JSONObject attributes, List<Vector3Double> combinedVertices, bool includeSemantics = true, bool isMainBuilding = false)
     {
         //var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
 
@@ -263,9 +263,9 @@ public class CityJSONToCityObject : CityObject
         {
             if (!cityObjects.Keys.Contains(geometryKey.Key))
             {
-                var obj = Instantiate(Resources.Load("CityObjectMesh"), parentObject.transform, true) as GameObject;
+                var obj = Instantiate(Resources.Load("CityObjectMesh"), parent, true) as GameObject;
                 obj.name = geometryKey.Key;
-                obj.layer = parentObject.layer;
+                obj.layer = parent.gameObject.layer;
 
                 var co = obj.GetComponent<CityJSONToCityObject>();
                 co.Type = geometryKey.Type;

@@ -69,8 +69,12 @@ namespace Netherlands3D.T3D.Uitbouw
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
 
-
-            var objects = CityJSONToCityObject.CreateCityObjects(gameObject, meshes, attributes, cityJsonModel.vertices, true, true);
+            var parent = gameObject.transform;
+            foreach (Transform child in parent)
+            {
+                Destroy(child.gameObject);
+            }
+            var objects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices, true, true);
             MainCityObject = objects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
             //var cityObject = GetComponent<CityJSONToCityObject>();
             //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
@@ -80,7 +84,7 @@ namespace Netherlands3D.T3D.Uitbouw
             {
                 var mesh = obj.Value.SetMeshActive(ActiveLod);
                 //if (mesh != null)
-                    buildingMeshes.Add(mesh);
+                buildingMeshes.Add(mesh);
             }
 
             var activeMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes, transform.localToWorldMatrix);
