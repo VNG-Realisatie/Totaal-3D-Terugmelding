@@ -65,11 +65,6 @@ namespace WebGLFileUploaderExample
             ShowHTMLOverlayButton();
         }
 
-        private void UpdateSlider()
-        {
-            
-        }
-
         /// <summary>
         /// Raises the destroy event.
         /// </summary>
@@ -78,6 +73,22 @@ namespace WebGLFileUploaderExample
             WebGLFileUploadManager.onFileUploaded -= OnFileUploaded;
             WebGLFileUploadManager.Dispose();
         }
+
+        private void OnDisable()
+        {
+            Debug.Log("UploadModel OnEnable:false");
+            WebGLFileUploadManager.Show(false, false);
+        }
+
+        private void OnEnable()
+        {
+            Debug.Log("UploadModel OnEnable:true");
+            WebGLFileUploadManager.Show(false, true);
+            
+            RecalculatePositionAndSize();
+            WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
+        }
+
 
         /// <summary>
         /// Raises the file uploaded event.
@@ -227,11 +238,17 @@ namespace WebGLFileUploaderExample
             r.anchorMax = new Vector2(0, 1);
             r.pivot = new Vector2(0, 1);
 
+            //Vector2 rectpos = new Vector2(r.rect.x, r.rect.y);
+            //var screenpoint = RectTransformUtility.PixelAdjustPoint(rectpos, transform, canvas);
+            //x = (int)screenpoint.x;
+            //y = (int)screenpoint.y;
+
             x = (int)transform.position.x;
             y = (int)transform.position.y;
 
             w = (int)(r.sizeDelta.x * canvas.scaleFactor);
             h = (int)(r.sizeDelta.y * canvas.scaleFactor);
+
         }
 
         public void SetX(string input)
@@ -253,13 +270,13 @@ namespace WebGLFileUploaderExample
 
         private void Update()
         {
-            UpdateHTMLButtonVisibility();
+            //UpdateHTMLButtonVisibility();
 
-            if (htmlIsVisible)
-            {
-                RecalculatePositionAndSize();
-                WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
-            }
+            //if (htmlIsVisible)
+            //{
+            //    RecalculatePositionAndSize();
+            //    WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
+            //}
         }
 
         private void UpdateHTMLButtonVisibility()

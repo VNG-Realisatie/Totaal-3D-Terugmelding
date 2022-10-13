@@ -718,7 +718,7 @@
 
         //Unity_FileUploadManager_UpdateButtonPosition(x, y, width, height);
 
-        targetElem.style.setProperty("background-color", "red");
+        //targetElem.style.setProperty("background-color", "red");
         targetElem.style.setProperty("pointer-events", "all", "important");
 
         return Unity_FileUploadManager.isInitialized;

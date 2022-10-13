@@ -12,6 +12,10 @@ body {
 	background: #383838;
 }
 
+#file_input_description{
+  display: none;  
+}
+
 .noselect,.usabilla_live_button_container {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
