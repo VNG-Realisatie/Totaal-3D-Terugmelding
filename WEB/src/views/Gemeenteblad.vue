@@ -6,7 +6,7 @@
 
     <img src="images/icoon_externe_link.png" class="linkimg" alt="">
 
-    <span @click="opensession(item.SessionId)">Aanvraag omgevingsvergunning {{item.Street}} {{item.HouseNumber}}, {{item.Zipcode}} {{item.City}} </span>    
+    <span @click="opensession(item)">Aanvraag omgevingsvergunning {{item.Street}} {{item.HouseNumber}}, {{item.Zipcode}} {{item.City}} </span>    
     <div class="datum">{{item.Date}}</div>
   </div>
 
@@ -97,8 +97,15 @@ export default {
             } );
 
         },
-        opensession(sessionid){
-          window.location=`${shared.frontend_base}/3d/?sessionId=${sessionid}`;
+        opensession(item){
+
+          if(item.simpleAddressJson == undefined){
+            window.location=`${shared.frontend_base}/vergunningschecker_3d/?sessionId=${item.SessionId}`;
+          }
+          else{
+            window.location=`${shared.frontend_base}/3d/?sessionId=${item.SessionId.replace("_html", "")}`;
+          }
+          
         }
   }
 }
