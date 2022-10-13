@@ -16,6 +16,10 @@ body {
   display: none;  
 }
 
+#file_input_button{
+  border: solid 1px #ccc !important;
+}
+
 .noselect,.usabilla_live_button_container {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
