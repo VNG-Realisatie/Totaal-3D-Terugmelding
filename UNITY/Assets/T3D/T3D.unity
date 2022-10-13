@@ -26688,7 +26688,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: debug
 --- !u!222 &796275298
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -37460,7 +37460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RenderSettings: {fileID: 1151787654788113914}
   useTestBuilding: 0
-  testBuildingJson: {fileID: 0}
+  testBuildingJson: {fileID: 4900000, guid: 5d9073f6aa9504cef9b8adf427fdc65f, type: 3}
 --- !u!1 &1148822980
 GameObject:
   m_ObjectHideFlags: 0
@@ -64665,7 +64665,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Kies een bestand
+  m_Text: BTN_POS
 --- !u!222 &2057498812
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -79072,7 +79072,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 43.72709, y: 0}
+  m_AnchoredPosition: {x: 41.825485, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
