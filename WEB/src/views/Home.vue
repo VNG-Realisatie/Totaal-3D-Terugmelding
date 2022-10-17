@@ -67,8 +67,7 @@
       
       <div class="spacer"></div>
       <div><strong>Github</strong></div>
-      <div><a href="https://github.com/VNG-Realisatie/Totaal-3D">Github Web</a></div>
-      <div><a href="https://github.com/Amsterdam/3DAmsterdam/tree/develop_t3d">Github Unity</a></div>
+      <div><a href="https://github.com/VNG-Realisatie/Totaal-3D/tree/main/UNITY">Github Unity</a></div>      
       <div><a href="https://CloudCompetenceCenter@dev.azure.com/CloudCompetenceCenter/Totaal3Dimensionaal/_git/Totaal3Dimensionaal">Github Backend</a></div>
 
 
