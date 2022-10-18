@@ -108,7 +108,7 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
         uitbouw.InitializeUserMovementAxes();
 
-        uitbouw.gameObject.transform.parent.gameObject.SetActive(true);
+        //uitbouw.gameObject.transform.parent.gameObject will be active in next state
 
         HasLoaded = true;
     }
