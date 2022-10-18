@@ -31,6 +31,7 @@ namespace Netherlands3D.T3D.Uitbouw
 
         private CityJsonModel cityJsonModel;
         public CityObject MainCityObject { get; private set; }
+        private Dictionary<string, CityJSONToCityObject> activeCityObjects = new Dictionary<string, CityJSONToCityObject>();
 
         public int ActiveLod = 2;
 
@@ -69,18 +70,17 @@ namespace Netherlands3D.T3D.Uitbouw
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
 
-            var parent = gameObject.transform;
-            foreach (Transform child in parent)
+            foreach (var oldCityObject in activeCityObjects.Values)
             {
-                Destroy(child.gameObject);
+                Destroy(oldCityObject.gameObject);
             }
-            var objects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices, true, true);
-            MainCityObject = objects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
+            activeCityObjects = CityJSONToCityObject.CreateCityObjects(transform, meshes, attributes, cityJsonModel.vertices, true, true);
+            MainCityObject = activeCityObjects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
             //var cityObject = GetComponent<CityJSONToCityObject>();
             //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
 
             var buildingMeshes = new List<Mesh>();
-            foreach (var obj in objects)
+            foreach (var obj in activeCityObjects)
             {
                 var mesh = obj.Value.SetMeshActive(ActiveLod);
                 //if (mesh != null)
