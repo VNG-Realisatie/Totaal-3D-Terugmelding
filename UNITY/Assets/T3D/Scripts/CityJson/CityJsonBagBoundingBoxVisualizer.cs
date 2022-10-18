@@ -31,7 +31,7 @@ public class CityJsonBagBoundingBoxVisualizer : MonoBehaviour
 
         foreach (var pair in buildingMeshes.ToList()) //go to list to avoid Collection was modiefied errors
         {
-            if (pair.Key.Key.Contains(excludeBagId))
+            if (pair.Key.Key.Contains(excludeBagId) || pair.Key.Key == "NL.IMBAG.Pand.-0")
             {
                 buildingMeshes.Remove(pair.Key);
             }
@@ -40,5 +40,19 @@ public class CityJsonBagBoundingBoxVisualizer : MonoBehaviour
         var combinedMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes.Values.ToList(), transform.localToWorldMatrix);
         GetComponent<MeshFilter>().sharedMesh = combinedMesh;
         GetComponent<MeshCollider>().sharedMesh = combinedMesh;
+    }
+
+    /// <summary>
+    /// Debug method to visualize each mesh
+    /// </summary>    
+    void AddMesh(string id, Mesh mesh)
+    {
+        var gam = new GameObject();
+        gam.name = id;
+        var filter = gam.AddComponent<MeshFilter>();
+        var ren = gam.AddComponent<MeshRenderer>();
+        ren.material = GetComponent<MeshRenderer>().material;
+        filter.sharedMesh = mesh;
+        gam.transform.parent = transform;
     }
 }
