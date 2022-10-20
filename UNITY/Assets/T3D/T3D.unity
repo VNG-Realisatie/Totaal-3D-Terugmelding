@@ -57980,8 +57980,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeshMaterial: {fileID: 2100000, guid: dbcc42433f2f7d443a9a36b38393891f, type: 2}
-  testJSON: {fileID: 4900000, guid: d72c90b38a98041d2958c29bedccb5a3, type: 3}
-  useTestJSON: 1
+  testJSON: {fileID: 0}
+  useTestJSON: 0
 --- !u!1 &1865638254
 GameObject:
   m_ObjectHideFlags: 0
@@ -79072,7 +79072,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 42.876713, y: 0}
+  m_AnchoredPosition: {x: 44.392525, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
