@@ -27,6 +27,23 @@ public struct CityObjectIdentifier
         Node = node;
         FlipYZ = flipYZ;
     }
+
+    public override bool Equals(object other)
+    {
+        if (!(other is CityObjectIdentifier)) return false;
+
+        return Equals((CityObjectIdentifier)other);
+    }
+
+    public bool Equals(CityObjectIdentifier other)
+    {
+        return Key == other.Key;
+    }
+
+    public override int GetHashCode()
+    {
+        return Key.GetHashCode();
+    }
 }
 
 public static class CityJsonVisualiser //: MonoBehaviour, IUniqueService
