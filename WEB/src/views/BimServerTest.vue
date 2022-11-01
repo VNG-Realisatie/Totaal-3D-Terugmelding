@@ -14,6 +14,7 @@
         <b-th>Name</b-th>
         <b-th>Hasversions</b-th>
         <b-th>Status</b-th>
+        <b-th>CityJson Conversion Status</b-th>
         <b-th>Action</b-th>
         <b-th>Action</b-th>  
         <b-th>Action</b-th>        
@@ -23,18 +24,19 @@
         <b-td>{{model._id}}</b-td>
         <b-td>{{model.name}}</b-td>
         <b-td>{{hasVersions(model.versions) }}</b-td>
-        <b-td>{{getStatus(model.versions) }}</b-td>        
-        <b-td><b-button :disabled="file == null || model.versions.length>0" @click="addVersionAxios(model._id)"  variant="primary">Add version</b-button></b-td>        
-        <b-td><b-button :disabled="isNotDone(model.versions)" @click="getCityJSON(model._id, model.versions)"  variant="primary">Get CityJSON</b-button></b-td>     
+        <b-td>{{getStatus(model.versions) }}</b-td>   
+        <b-td>{{getCityJsonStatus(model.versions) }}</b-td>        
+        <b-td><b-button :disabled="file == null || model.versions.length>0" @click="addVersionAxios(model._id)"  variant="primary">Add version</b-button></b-td>      
+        <b-td><b-button :disabled="isNotDone(model.versions)" @click="getCityJSON(model._id, model.versions)"  variant="primary">Get CityJSON</b-button></b-td>    
         <b-td><b-button @click="deleteModel(model._id)"  variant="danger">Delete</b-button></b-td>        
       </b-tr>
     </b-thead>
   </b-table-simple>
 
 
-  <b-button @click="addBim()"  variant="primary">Add bim</b-button>
+  <!-- <b-button @click="addBim()"  variant="primary">Add bim</b-button>
   <b-button @click="blobTest()"  variant="primary">Blob test</b-button>
-    <b-button @click="testBimApi()"  variant="primary">Test Bim API</b-button>
+    <b-button @click="testBimApi()"  variant="primary">Test Bim API</b-button> -->
 
     <div class="margintop100">
 
@@ -89,6 +91,12 @@ export default {
             if(versions.length == 0) return "-";
             else{
                 return versions[0].status;
+            }
+        },
+        getCityJsonStatus(versions){
+            if(versions.length == 0) return "-";
+            else{
+                return versions[0].conversions.cityjson;
             }
         },
         deleteModel(id){
@@ -198,7 +206,7 @@ export default {
             body: formdata           
             };
             
-            fetch(`https://bim.clearly.app/api/organisations/${this.organisationId}/projects/${this.projectId}/models/${id}/versions`, requestOptions)            
+            fetch(`https://bim.clearly.app/api/organisations/${this.organisationId}/projects/${this.projectId}/models/${id}/versions?cityjson=true`, requestOptions)            
             .then(response => response.json())
             .then(data =>
             {
@@ -209,7 +217,7 @@ export default {
         addVersionAxios(id){
             //console.log(this.file);
 
-            var url = `https://bim.clearly.app/api/organisations/${this.organisationId}/projects/${this.projectId}/models/${id}/versions`;
+            var url = `https://bim.clearly.app/api/organisations/${this.organisationId}/projects/${this.projectId}/models/${id}/versions?cityjson=true`;
 
             var formdata=  new FormData();
             formdata.append("version", this.file, this.file.name );
@@ -232,7 +240,34 @@ export default {
                 this.getmodels();           
             } );
         },
-        addBim(){
+        addBim(id){
+            //console.log(this.file);
+
+            //var url = `${shared.backend_base}/uploadbim/${this.file.name}`;
+            var urlbim = `https://bim.clearly.app/api/organisations/${this.organisationId}/projects/${this.projectId}/models/${id}/versions?cityjson=true`;
+
+            var formdata=  new FormData();
+            formdata.append("version", this.file, this.file.name );
+
+            var requestOptions = {
+            method: "POST",
+            headers: {                        
+                "Authorization": `Bearer ${this.authToken}`
+            },
+            onUploadProgress: uploadEvent =>{
+                this.progressValue = (uploadEvent.loaded / uploadEvent.total) *100;
+                console.log(  `Upload progress: ${this.progressValue}` );
+            }
+            };
+            
+            axios.post(url, formdata, requestOptions)                        
+            .then(response =>
+            {
+                console.log(response);
+                
+            } );
+        },
+        addBimAzure(){
             //console.log(this.file);
 
             var url = `${shared.backend_base}/uploadbim/${this.file.name}`;
