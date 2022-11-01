@@ -20,7 +20,11 @@ public class UploadBimUtility
         FileInfo finfo = new FileInfo(filePath);
         string data = File.ReadAllText(filePath);
 
-        formData.Add(new MultipartFormFileSection(data, finfo.Name));
+        var bytes = File.ReadAllBytes(filePath);
+
+        //formData.Add(new MultipartFormFileSection(data, finfo.Name));
+        formData.Add(new MultipartFormFileSection(finfo.Name, bytes));
+
 
         UnityWebRequest req = UnityWebRequest.Post(url, formData);
 
@@ -30,7 +34,7 @@ public class UploadBimUtility
 
         while (!req.isDone)
         {
-            slider.value = req.uploadProgress;            
+            slider.value = req.uploadProgress;        
             yield return null;
         }
 
@@ -39,23 +43,27 @@ public class UploadBimUtility
 
     }
 
-    public static IEnumerator CheckBimVersion(string url, CoString result, CoBool success)
+    public static IEnumerator CheckBimVersion(Text debugText, string url, CoString result, CoBool success)
     {
         int retryCount = 0;
+        string retrydots = "";
 
-        while (retryCount < 10)
+        while (retryCount < 25)
         {
             UnityWebRequest req = UnityWebRequest.Get(url);
             yield return req.SendWebRequest();
 
             if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
             {
+                debugText.text = "Error request";
                 yield return new WaitForSeconds(1);
             }
             else
             {
                 var json = JSON.Parse(req.downloadHandler.text);
                 var conversionStatus = json["conversions"]["cityjson"];
+
+                debugText.text = $"Conversion status: {conversionStatus} {retrydots+='.'}";
 
                 if (conversionStatus == "DONE")
                 {
@@ -64,11 +72,12 @@ public class UploadBimUtility
                     yield break;
                 }
 
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(2);
                 retryCount++;
             }
 
         }
+        debugText.text = $"max retry exceeded on {url} ";
         result.val = $"max retry exceeded on {url} ";
     }
     

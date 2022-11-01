@@ -125,7 +125,7 @@ namespace WebGLFileUploaderExample
 #if UNITY_EDITOR
         public void UploadFromEditor()
         {
-            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc");
+            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc,skp");
             FileInfo finfo = new FileInfo(path);
 
             if (path.Length != 0)
@@ -142,24 +142,31 @@ namespace WebGLFileUploaderExample
             CoString result = new CoString();
             CoBool success = new CoBool();
 
+            debugText.text = "Status: \"Uploaden bestand...\"";
+
             yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, slider, url, filePath));
-            
-            debugText.text = result;
-            if (success == false) yield break;
+
+            if (success == false)
+            {
+                debugText.text = $"Status: \"Probleem met uploaden: {result}\"";
+                yield break;
+            }
             
             var jsonResult = JSON.Parse(result);
 
             if (filePath.ToLower().EndsWith(".skp"))
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
+                debugText.text = "Status: \"Sketchup bestand geconverteerd\"";
             }
             else
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+                debugText.text = "Status: \"IFC bestand geupload\"";
 
                 var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
-                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(urlIfc, result, success));
-                debugText.text = result;
+                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(debugText, urlIfc, result, success));
+                //debugText.text = "Status: \"IFC bestand geconverteerd\"";
             }
 
             //the file has been successfully converted to CityJson, now lets get the CityJson
