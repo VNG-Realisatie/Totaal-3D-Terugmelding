@@ -154,19 +154,22 @@ namespace WebGLFileUploaderExample
             
             var jsonResult = JSON.Parse(result);
 
+            bool isIfc = false;
+
             if (filePath.ToLower().EndsWith(".skp"))
             {
+                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = null;
                 ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
                 debugText.text = "Status: \"Sketchup bestand geconverteerd\"";
             }
             else
-            {
+            {                
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = null;
                 debugText.text = "Status: \"IFC bestand geupload\"";
 
                 var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
-                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(debugText, urlIfc, result, success));
-                //debugText.text = "Status: \"IFC bestand geconverteerd\"";
+                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(debugText, urlIfc, result, success));                
             }
 
             //the file has been successfully converted to CityJson, now lets get the CityJson
