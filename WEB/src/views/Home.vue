@@ -69,6 +69,7 @@
       <div><strong>Github</strong></div>
       <div><a href="https://github.com/VNG-Realisatie/Totaal-3D/tree/main/UNITY">Github Unity</a></div>      
       <div><a href="https://CloudCompetenceCenter@dev.azure.com/CloudCompetenceCenter/Totaal3Dimensionaal/_git/Totaal3Dimensionaal">Github Backend</a></div>
+      <div><a :href="download" >ifc_modellen.zip</a></div>
 
 
     </b-col>
@@ -97,6 +98,9 @@ export default {
 
   },
   computed:{
+    download(){
+      return `${shared.frontend_base}/bim_modellen/ifc_modellen.zip`;
+    }
   },
   watch: {
   },
@@ -105,7 +109,6 @@ export default {
   mounted:function(){
   },
  methods: {   
-
   OpenSession(){
       window.open(
         `${shared.frontend_base}/3d/`,
