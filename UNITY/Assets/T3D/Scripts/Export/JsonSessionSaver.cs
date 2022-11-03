@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Netherlands3D;
+using Netherlands3D.Interface;
 using SimpleJSON;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,8 +16,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     private JSONNode rootObject = new JSONObject();
     const string uploadURL = "api/upload/";
 
-    public Coroutine saveCoroutine;
-    public Coroutine uploadCoroutine;
+    public Coroutine saveCoroutine;    
     private bool autoSaveEnabled = true;
     [SerializeField]
     private SaveFeedback saveFeedback;
@@ -54,16 +56,34 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     {
         string saveData = CityJSONFormatter.GetJSON();
         print(saveData);
+        StartCoroutine(GetVersionAndUpload(saveData));        
+    }
 
-        if (uploadCoroutine == null)
+    IEnumerator GetVersionAndUpload(string saveData)
+    {
+        CoString versie = new CoString();
+        yield return GetVersie(versie);        
+        yield return UploadDataToEndpoint(saveData, versie);
+    }
+
+    IEnumerator GetVersie(CoString versie)
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        var url = Path.Combine(Application.dataPath, "versie.txt");
+        UnityWebRequest req = UnityWebRequest.Get(url);
+        yield return req.SendWebRequest();
+        if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
         {
-            uploadCoroutine = StartCoroutine(UploadDataToEndpoint(saveData));
+            ServiceLocator.GetService<WarningDialogs>().ShowNewDialog("versie.txt kon niet opgehaald worden");
         }
         else
         {
-            print("Still waiting for coroutine to return, not sending data");
-            UploadToEndpointCompleted?.Invoke(false);
+            versie.val = req.downloadHandler.text;            
         }
+#else        
+        versie.val = PlayerSettings.bundleVersion;
+        yield return null;
+#endif
     }
 
     public void AddContainer(SaveDataContainer saveDataContainer)
@@ -112,7 +132,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
         }
     }
 
-    private IEnumerator UploadDataToEndpoint(string jsonData)
+    private IEnumerator UploadDataToEndpoint(string jsonData, string versie)
     {
         //var url = Config.activeConfiguration.T3DAzureFunctionURL + uploadURL + name;
         var url = Config.activeConfiguration.CityJSONUploadEndoint;
@@ -121,6 +141,9 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
         uwr.SetRequestHeader("objectId", ServiceLocator.GetService<T3DInit>().HTMLData.BagId);
         uwr.SetRequestHeader("initiatorPersoon", SubmitPermitRequestState.UserName);
         uwr.SetRequestHeader("Authorization", "Bearer " + Config.activeConfiguration.CityJSONUploadEndpointToken);
+        uwr.SetRequestHeader("initiatieSysteemVersie", versie );
+
+        yield return null;
 
         using (uwr)
         {
@@ -135,8 +158,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
             {
                 //saveFeedback.SetSaveStatus(SaveFeedback.SaveStatus.ChangesSaved);
                 UploadToEndpointCompleted?.Invoke(true);
-            }
-            uploadCoroutine = null;
+            }            
         }
     }
 
