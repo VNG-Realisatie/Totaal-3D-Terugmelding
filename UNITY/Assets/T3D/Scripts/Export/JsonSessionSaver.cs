@@ -60,30 +60,8 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     }
 
     IEnumerator GetVersionAndUpload(string saveData)
-    {
-        CoString versie = new CoString();
-        yield return GetVersie(versie);        
-        yield return UploadDataToEndpoint(saveData, versie);
-    }
-
-    IEnumerator GetVersie(CoString versie)
-    {
-#if UNITY_WEBGL && !UNITY_EDITOR
-        var url = Path.Combine(Application.dataPath, "versie.txt");
-        UnityWebRequest req = UnityWebRequest.Get(url);
-        yield return req.SendWebRequest();
-        if (req.result == UnityWebRequest.Result.ConnectionError || req.result == UnityWebRequest.Result.ProtocolError)
-        {
-            ServiceLocator.GetService<WarningDialogs>().ShowNewDialog("versie.txt kon niet opgehaald worden");
-        }
-        else
-        {
-            versie.val = req.downloadHandler.text;            
-        }
-#else        
-        versie.val = PlayerSettings.bundleVersion;
-        yield return null;
-#endif
+    {        
+        yield return UploadDataToEndpoint(saveData);
     }
 
     public void AddContainer(SaveDataContainer saveDataContainer)
@@ -132,7 +110,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
         }
     }
 
-    private IEnumerator UploadDataToEndpoint(string jsonData, string versie)
+    private IEnumerator UploadDataToEndpoint(string jsonData)
     {
         //var url = Config.activeConfiguration.T3DAzureFunctionURL + uploadURL + name;
         var url = Config.activeConfiguration.CityJSONUploadEndoint;
@@ -140,8 +118,8 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
         uwr.SetRequestHeader("Content-Type", "application/json");
         uwr.SetRequestHeader("objectId", ServiceLocator.GetService<T3DInit>().HTMLData.BagId);
         uwr.SetRequestHeader("initiatorPersoon", SubmitPermitRequestState.UserName);
-        uwr.SetRequestHeader("Authorization", "Bearer " + Config.activeConfiguration.CityJSONUploadEndpointToken);
-        uwr.SetRequestHeader("initiatieSysteemVersie", versie );
+        uwr.SetRequestHeader("Authorization", "Bearer " + Config.activeConfiguration.CityJSONUploadEndpointToken);        
+        uwr.SetRequestHeader("initiatieSysteemVersie", Application.version);
 
         yield return null;
 

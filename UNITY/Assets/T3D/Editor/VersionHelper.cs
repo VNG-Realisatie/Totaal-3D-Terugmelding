@@ -55,11 +55,6 @@ public class VersionHelper : EditorWindow
 
         Debug.Log("Building to: " + buildPlayerOptions.locationPathName);
         
-        //write build version so we can use it in webgl reading it from a webrequest..        
-        Directory.CreateDirectory(buildPlayerOptions.locationPathName);
-        var rootpath = Path.Combine(buildPlayerOptions.locationPathName, "versie.txt");
-        File.WriteAllText(rootpath, PlayerSettings.bundleVersion);
-
         BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
         BuildSummary buildSummary = report.summary;
         if (buildSummary.result == BuildResult.Succeeded)
