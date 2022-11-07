@@ -89,4 +89,15 @@ public class PlaceBoundaryFeaturesState : State
 
         return;
     }
+
+    //called by ui button
+    public void DeleteAllBoundaryFeatures()
+    {
+        GetComponent<BoundaryFeatureEditHandler>().DeselectFeature();
+        for (int i = SavedBoundaryFeatures.Count - 1; i >= 0; i--)
+        {
+            BoundaryFeature bf = SavedBoundaryFeatures[i];
+            bf.DeleteFeature();
+        }
+    }
 }

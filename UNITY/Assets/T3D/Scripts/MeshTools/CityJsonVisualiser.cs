@@ -1,7 +1,6 @@
 ﻿using ConvertCoordinates;
 using Netherlands3D.T3D.Uitbouw;
 using SimpleJSON;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -37,12 +36,15 @@ public struct CityObjectIdentifier
 
     public bool Equals(CityObjectIdentifier other)
     {
-        return Key == other.Key;
+        return (Key == other.Key) && (Lod == other.Lod);
     }
-
     public override int GetHashCode()
     {
-        return Key.GetHashCode();
+        //https://stackoverflow.com/questions/1646807/quick-and-simple-hash-code-combinations
+        int hash = 17;
+        hash = hash * 31 + Key.GetHashCode();
+        hash = hash * 31 + Lod.GetHashCode();
+        return hash;
     }
 }
 

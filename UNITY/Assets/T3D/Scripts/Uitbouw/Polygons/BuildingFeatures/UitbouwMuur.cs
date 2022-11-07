@@ -162,6 +162,8 @@ namespace Netherlands3D.T3D.Uitbouw
 
         public void SetMaterial(Material newMaterial, Vector2 scale)
         {
+            return; //todo: there is a nullreference issue with MaterialLibrary.GetMaterialIndex, but we're not using materials anymore so just return
+
             var newMaterialInstance = new Material(newMaterial);
             //Instantiate(newMaterial);
             normalMaterial = newMaterialInstance;
