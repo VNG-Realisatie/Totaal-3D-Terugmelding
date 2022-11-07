@@ -165,7 +165,8 @@ public class SelectOptionState : State
             {
                 var uploadedUitbouw = ServiceLocator.GetService<T3DInit>().HTMLData.HasFile;
                 var drawChange = ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel;
-                uiToggle.SetVisible(uploadedUitbouw && drawChange);
+                var snapToWall = ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall;
+                uiToggle.SetVisible(uploadedUitbouw && drawChange && !snapToWall);
                 continue;
             }
 

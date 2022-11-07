@@ -84,7 +84,7 @@ namespace WebGLFileUploaderExample
         {
             Debug.Log("UploadModel OnEnable:true");
             WebGLFileUploadManager.Show(false, true);
-            
+
             RecalculatePositionAndSize();
             WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
         }
@@ -101,7 +101,7 @@ namespace WebGLFileUploaderExample
                 Debug.Log("File upload Error!");
                 debugText.text = "File upload Error!";
             }
-            else                        
+            else
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
 
@@ -117,7 +117,7 @@ namespace WebGLFileUploaderExample
                     var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(file.name)}";
 
                     StartCoroutine(UploadAndCheck(url, file.filePath));
-                 
+
                 }
             }
         }
@@ -130,9 +130,9 @@ namespace WebGLFileUploaderExample
 
             if (path.Length != 0)
             {
-                var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString( finfo.Name )}";
+                var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(finfo.Name)}";
                 StartCoroutine(UploadAndCheck(url, path));
-                
+
             }
         }
 #endif
@@ -143,10 +143,10 @@ namespace WebGLFileUploaderExample
             CoBool success = new CoBool();
 
             yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, slider, url, filePath));
-            
+
             debugText.text = result;
             if (success == false) yield break;
-            
+
             var jsonResult = JSON.Parse(result);
 
             if (filePath.ToLower().EndsWith(".skp"))
@@ -179,7 +179,7 @@ namespace WebGLFileUploaderExample
                     ErrorService.GoToErrorPage(result);
                 }
             }
-            
+
 
         }
 
@@ -291,7 +291,7 @@ namespace WebGLFileUploaderExample
             }
         }
 
-        
+
 
     }
 }
