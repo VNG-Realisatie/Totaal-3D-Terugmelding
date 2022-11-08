@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using Netherlands3D;
+using Netherlands3D.Interface;
 using SimpleJSON;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -13,8 +16,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     private JSONNode rootObject = new JSONObject();
     const string uploadURL = "api/upload/";
 
-    public Coroutine saveCoroutine;
-    public Coroutine uploadCoroutine;
+    public Coroutine saveCoroutine;    
     private bool autoSaveEnabled = true;
     [SerializeField]
     private SaveFeedback saveFeedback;
@@ -54,16 +56,12 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
     {
         string saveData = CityJSONFormatter.GetJSON();
         print(saveData);
+        StartCoroutine(GetVersionAndUpload(saveData));        
+    }
 
-        if (uploadCoroutine == null)
-        {
-            uploadCoroutine = StartCoroutine(UploadDataToEndpoint(saveData));
-        }
-        else
-        {
-            print("Still waiting for coroutine to return, not sending data");
-            UploadToEndpointCompleted?.Invoke(false);
-        }
+    IEnumerator GetVersionAndUpload(string saveData)
+    {        
+        yield return UploadDataToEndpoint(saveData);
     }
 
     public void AddContainer(SaveDataContainer saveDataContainer)
@@ -120,7 +118,10 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
         uwr.SetRequestHeader("Content-Type", "application/json");
         uwr.SetRequestHeader("objectId", ServiceLocator.GetService<T3DInit>().HTMLData.BagId);
         uwr.SetRequestHeader("initiatorPersoon", SubmitPermitRequestState.UserName);
-        uwr.SetRequestHeader("Authorization", "Bearer " + Config.activeConfiguration.CityJSONUploadEndpointToken);
+        uwr.SetRequestHeader("Authorization", "Bearer " + Config.activeConfiguration.CityJSONUploadEndpointToken);        
+        uwr.SetRequestHeader("initiatieSysteemVersie", Application.version);
+
+        yield return null;
 
         using (uwr)
         {
@@ -135,8 +136,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
             {
                 //saveFeedback.SetSaveStatus(SaveFeedback.SaveStatus.ChangesSaved);
                 UploadToEndpointCompleted?.Invoke(true);
-            }
-            uploadCoroutine = null;
+            }            
         }
     }
 
