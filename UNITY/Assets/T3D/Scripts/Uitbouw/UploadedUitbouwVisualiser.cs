@@ -18,8 +18,8 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     [SerializeField]
     private TextAsset testJSON;
-    [SerializeField]
-    private bool useTestJSON;
+    //[SerializeField]
+    //private bool useTestJSON;
 
     private void Awake()
     {
@@ -48,7 +48,7 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         Debug.Log("OnBimCityJsonReceived");
         this.cityJson = cityJson;
 
-        ParseCityJson(useTestJSON);
+        ParseCityJson(false);
         //VisualizeCityJson();
     }
 
@@ -57,9 +57,9 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
        
     //}
 
-    private void ParseCityJson(bool useTestJson)
+    public void ParseCityJson(bool useTestJson)
     {
-        if (useTestJSON)
+        if (useTestJson)
             cityJson = testJSON.text;
 
         var meshFilter = uitbouw.MeshFilter;

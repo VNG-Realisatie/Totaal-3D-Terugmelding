@@ -94,4 +94,9 @@ public class DebugSettings : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
     }
+
+    public void LoadTestJSON()
+    {
+        ServiceLocator.GetService<UploadedUitbouwVisualiser>().ParseCityJson(true);
+    }
 }

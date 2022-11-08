@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class DisableMainBuildingToggle : UIToggle
 {
-    private int activeLod;
+    private Dictionary<CityJSONToCityObject, int> activeLods = new Dictionary<CityJSONToCityObject, int>();
 
     private void Start()
     {
@@ -16,25 +16,33 @@ public class DisableMainBuildingToggle : UIToggle
 
     protected override void ToggleAction(bool active)
     {
-        CityJSONToCityObject building = RestrictionChecker.ActiveBuilding.GetComponent<CityJSONToCityObject>();
+        var buildings = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityJSONToCityObject>();
         var uitbouw = RestrictionChecker.ActiveUitbouw as UploadedUitbouw;//.GetComponent<CityObject>();
         if (active)
         {
-            building.SetMeshActive(activeLod);
-            building.GetComponentInChildren<WallSelector>(true).gameObject.SetActive(true);
-            CityJSONFormatter.AddCityObejct(building);
+            foreach (var co in buildings)
+            {
+                co.SetMeshActive(activeLods[co]);
+                CityJSONFormatter.AddCityObejct(co);
+                uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
+            }
+            var snapToWall = ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall;
+            RestrictionChecker.ActiveBuilding.SelectedWall.gameObject.SetActive(snapToWall);
             //uitbouw.Type = uitbouwType;
-            uitbouw.ReparentToMainBuilding(building);
         }
         else
         {
             //save data to set back when toggle is turned on again
-            activeLod = building.ActiveLod;
+            activeLods = new Dictionary<CityJSONToCityObject, int>();
             //uitbouwType = uitbouw.Type;
 
-            building.SetMeshActive(-1);
-            building.GetComponentInChildren<WallSelector>(true).gameObject.SetActive(false);
-            CityJSONFormatter.RemoveCityObject(building);
+            foreach (var co in buildings)
+            {
+                activeLods.Add(co, co.ActiveLod);
+                co.SetMeshActive(-1);
+                CityJSONFormatter.RemoveCityObject(co);
+            }
+            RestrictionChecker.ActiveBuilding.SelectedWall.gameObject.SetActive(false);
             //uitbouw.Type = CityObjectType.Building;
             uitbouw.UnparentFromMainBuilding();
         }
