@@ -1,8 +1,6 @@
-﻿using ConvertCoordinates;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Text.RegularExpressions;
+using Netherlands3D.Core;
 using UnityEngine;
 
 namespace Netherlands3D

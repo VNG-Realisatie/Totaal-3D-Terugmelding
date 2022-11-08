@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
 using Netherlands3D;
 using Netherlands3D.Interface;
 using SimpleJSON;
@@ -12,6 +11,7 @@ using UnityEngine.UI;
 using Netherlands3D.Utilities;
 using System.Globalization;
 using System.IO;
+using Netherlands3D.Core;
 
 namespace Netherlands3D.T3D.Uitbouw
 {

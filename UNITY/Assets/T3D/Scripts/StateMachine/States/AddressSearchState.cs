@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
+using Netherlands3D.Core;
 using Netherlands3D.T3D.Uitbouw;
 using SimpleJSON;
 using UnityEngine;

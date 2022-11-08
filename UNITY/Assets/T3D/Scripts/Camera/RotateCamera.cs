@@ -4,7 +4,7 @@ using Netherlands3D.T3D.Uitbouw;
 using Netherlands3D.InputHandler;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using ConvertCoordinates;
+using Netherlands3D.Core;
 using System.Collections;
 
 public class RotateCamera : MonoBehaviour, ICameraControls

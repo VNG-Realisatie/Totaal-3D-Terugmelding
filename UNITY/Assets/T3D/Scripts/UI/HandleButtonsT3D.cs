@@ -1,4 +1,4 @@
-﻿using ConvertCoordinates;
+﻿using Netherlands3D.Core;
 using Netherlands3D.Cameras;
 using Netherlands3D.Interface;
 using Netherlands3D.Sun;
