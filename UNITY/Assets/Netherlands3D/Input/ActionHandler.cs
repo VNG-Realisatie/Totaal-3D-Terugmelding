@@ -29,7 +29,6 @@ namespace Netherlands3D.InputHandler
 
         private void Awake()
         {
-            print(System.HashCode.Combine(1, 2, 3));
             actions = new Netherlands3DInputActions();
             actionMaps = actions.asset;
 
