@@ -211,7 +211,6 @@ public class AddressSearchState : State
                 ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition = pos;
                 StartCoroutine(GetMonumentStatus(pos));
                 StartCoroutine(GetProtectedStatus(pos));
-                GotoPosition(pos);
                 //ServiceLocator.GetService<T3DInit>().LoadBuilding();
             }
             else
@@ -220,13 +219,6 @@ public class AddressSearchState : State
             }
         }
         //this.getPerceel(this.bagcoordinates[0], this.bagcoordinates[1]);
-    }
-
-    void GotoPosition(Vector3RD position)
-    {
-        Vector3 cameraOffsetForTargetLocation = new Vector3(0, 38, 0);
-        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.position = CoordConvert.RDtoUnity(position) + cameraOffsetForTargetLocation;
-        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
     }
 
     private IEnumerator GetMonumentStatus(Vector3RD position)

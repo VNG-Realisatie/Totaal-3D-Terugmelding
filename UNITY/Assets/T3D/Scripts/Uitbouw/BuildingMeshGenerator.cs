@@ -56,6 +56,36 @@ namespace Netherlands3D.T3D.Uitbouw
             ServiceLocator.GetService<MetadataLoader>().RequestPerceelAndBuildingOutlineData(pos, bagId);
 
             MainCityObject = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
+
+            ProcessActiveMesh();
+        }
+
+        private void ProcessActiveMesh()
+        {
+            //get all active lods.
+            List<Mesh> activeMeshes = new List<Mesh>();
+            Vector3 positionOffset = Vector3.zero;
+            int count = 0;
+            foreach (var co in GetComponent<CityJSON>().CityObjects)
+            {
+                var visualizer = co.GetComponent<CityObjectVisualizer>();
+                if (visualizer.ActiveLod == ActiveLod)
+                {
+                    activeMeshes.Add(visualizer.ActiveMesh);
+                    print("bCenter " + BuildingCenter);
+                    print("gl " + GroundLevel);
+                    positionOffset += co.transform.position;
+                    count++;
+                }
+            }
+
+            positionOffset /= count;
+            var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
+
+            var activeMesh = CityJsonVisualiser.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
+            print(activeMesh);
+            if (activeMesh)
+                ProcessMesh(activeMesh, positionOffset);
         }
 
         void GotoPosition(Vector3RD position)
@@ -65,6 +95,7 @@ namespace Netherlands3D.T3D.Uitbouw
             ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
         }
 
+        /*
         private void BuildingMeshGenerator_CityJsonBagReceived(string cityJson)
         {
             //HandleTextFile.WriteString("sourceBuilding.json", cityJson);
@@ -106,14 +137,19 @@ namespace Netherlands3D.T3D.Uitbouw
             if (activeMesh)
                 ProcessMesh(activeMesh);
         }
+        */
 
-        private void ProcessMesh(Mesh mesh)
+        private void ProcessMesh(Mesh mesh, Vector3 positionOffset)
         {
             //var col = GetComponent<MeshCollider>();
-            BuildingCenter = mesh.bounds.center;
+            BuildingCenter = mesh.bounds.center + positionOffset;
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
+
+            print("normalizedY: " + CoordConvert.zeroGroundLevelY);
+            print("processing mesh: bCenter " + BuildingCenter);
+            print("processing mesh: gl " + GroundLevel);
             RoofEdgePlanes = ProcessRoofEdges(mesh);
 
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes
