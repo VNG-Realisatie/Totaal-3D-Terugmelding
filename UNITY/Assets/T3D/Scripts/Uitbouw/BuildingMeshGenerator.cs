@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Netherlands3D.Core;
 using T3D.LoadData;
-using T3D.Uitbouw;
+using Netherlands3D.Cameras;
+using Netherlands3D.T3DPipeline;
 
 namespace Netherlands3D.T3D.Uitbouw
 {
@@ -42,13 +43,26 @@ namespace Netherlands3D.T3D.Uitbouw
 
         protected void Start()//in start to avoid race conditions
         {
-            //base.Start();
-            //ServiceLocator.GetService<MetadataLoader>().BuildingMetaDataLoaded += Instance_BuildingMetaDataLoaded;
             ServiceLocator.GetService<MetadataLoader>().BuildingOutlineLoaded += Instance_BuildingOutlineLoaded;
-            //ServiceLocator.GetService<MetadataLoader>().CityJsonBagLoaded += OnCityJsonBagLoaded;
-            ServiceLocator.GetService<MetadataLoader>().CityJsonBagReceived += BuildingMeshGenerator_CityJsonBagReceived;
-
             SessionSaver.Loader.LoadingCompleted += Loader_LoadingCompleted;
+        }
+
+        //called by event in the inspector
+        public void ProcessBuilding()
+        {
+            var pos = ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition;
+            var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
+            GotoPosition(pos);
+            ServiceLocator.GetService<MetadataLoader>().RequestPerceelAndBuildingOutlineData(pos, bagId);
+
+            MainCityObject = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
+        }
+
+        void GotoPosition(Vector3RD position)
+        {
+            Vector3 cameraOffsetForTargetLocation = new Vector3(0, 38, 0);
+            ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.position = CoordConvert.RDtoUnity(position) + cameraOffsetForTargetLocation;
+            ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
         }
 
         private void BuildingMeshGenerator_CityJsonBagReceived(string cityJson)
@@ -64,18 +78,16 @@ namespace Netherlands3D.T3D.Uitbouw
 
             cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
             var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            verts = cityJsonModel.vertices;
             var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
             CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
             //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
 
-            foreach (var oldCityObject in activeCityObjects.Values)
-            {
-                Destroy(oldCityObject.gameObject);
-            }
+            //foreach (var oldCityObject in activeCityObjects.Values)
+            //{
+            //    Destroy(oldCityObject.gameObject);
+            //}
             activeCityObjects = CityJSONToCityObject.CreateCityObjects(transform, meshes, attributes, cityJsonModel.vertices, true, true);
-            MainCityObject = activeCityObjects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
+            //MainCityObject = activeCityObjects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
             //var cityObject = GetComponent<CityJSONToCityObject>();
             //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
 
@@ -93,8 +105,6 @@ namespace Netherlands3D.T3D.Uitbouw
 
             if (activeMesh)
                 ProcessMesh(activeMesh);
-
-            test = true;
         }
 
         private void ProcessMesh(Mesh mesh)
@@ -170,51 +180,51 @@ namespace Netherlands3D.T3D.Uitbouw
         /// <summary>
         /// delete everything below this when bugfixing is complete
         /// </summary>
-        bool test = false;
-        Dictionary<CityObjectIdentifier, Mesh> parsedMeshes = new Dictionary<CityObjectIdentifier, Mesh>();
-        List<Vector3Double> verts;
-        List<Vector3> unityVerts => GetVerts(verts, true);
-        private void OnDrawGizmos()
-        {
-            if (test)
-            {
-                Gizmos.color = Color.blue;
-                var pair = parsedMeshes.FirstOrDefault(x => x.Key.Lod == ActiveLod);
-                var mesh = pair.Value;
+        //bool test = false;
+        //Dictionary<CityObjectIdentifier, Mesh> parsedMeshes = new Dictionary<CityObjectIdentifier, Mesh>();
+        //List<Vector3Double> verts;
+        //List<Vector3> unityVerts => GetVerts(verts, true);
+        //private void OnDrawGizmos()
+        //{
+        //    if (test)
+        //    {
+        //        Gizmos.color = Color.blue;
+        //        var pair = parsedMeshes.FirstOrDefault(x => x.Key.Lod == ActiveLod);
+        //        var mesh = pair.Value;
 
-                for (int i = 0; i < mesh.triangles.Length; i += 3)
-                {
-                    //mesh = GetComponent<MeshFilter>().mesh;
+        //        for (int i = 0; i < mesh.triangles.Length; i += 3)
+        //        {
+        //            //mesh = GetComponent<MeshFilter>().mesh;
 
-                    //print(pair.Key.Node.ToString());
+        //            //print(pair.Key.Node.ToString());
 
-                    var index1 = mesh.triangles[i];
-                    var index2 = mesh.triangles[i + 1];
-                    var index3 = mesh.triangles[i + 2];
-                    Gizmos.DrawLine(mesh.vertices[index1], mesh.vertices[index2]);
-                    Gizmos.DrawLine(mesh.vertices[index2], mesh.vertices[index3]);
-                    Gizmos.DrawLine(mesh.vertices[index3], mesh.vertices[index1]);
+        //            var index1 = mesh.triangles[i];
+        //            var index2 = mesh.triangles[i + 1];
+        //            var index3 = mesh.triangles[i + 2];
+        //            Gizmos.DrawLine(mesh.vertices[index1], mesh.vertices[index2]);
+        //            Gizmos.DrawLine(mesh.vertices[index2], mesh.vertices[index3]);
+        //            Gizmos.DrawLine(mesh.vertices[index3], mesh.vertices[index1]);
 
-                }
-                Gizmos.color = Color.red;
-                foreach (var v in unityVerts)
-                {
-                    //var unity_vert = new Vector3((float)v.x, (float)v.y, (float)v.z);
-                    Gizmos.DrawSphere(v, .2f);
-                }
-            }
-        }
+        //        }
+        //        Gizmos.color = Color.red;
+        //        foreach (var v in unityVerts)
+        //        {
+        //            //var unity_vert = new Vector3((float)v.x, (float)v.y, (float)v.z);
+        //            Gizmos.DrawSphere(v, .2f);
+        //        }
+        //    }
+        //}
 
-        private List<Vector3> GetVerts(List<Vector3Double> vertices, bool flipYZ)
-        {
-            if (flipYZ)
-            {
-                return vertices.Select(o => new Vector3((float)o.x, (float)o.z, (float)o.y)).ToList();
-            }
-            else
-            {
-                return vertices.Select(o => new Vector3((float)o.x, (float)o.y, (float)o.z)).ToList();
-            }
-        }
+        //private List<Vector3> GetVerts(List<Vector3Double> vertices, bool flipYZ)
+        //{
+        //    if (flipYZ)
+        //    {
+        //        return vertices.Select(o => new Vector3((float)o.x, (float)o.z, (float)o.y)).ToList();
+        //    }
+        //    else
+        //    {
+        //        return vertices.Select(o => new Vector3((float)o.x, (float)o.y, (float)o.z)).ToList();
+        //    }
+        //}
     }
 }

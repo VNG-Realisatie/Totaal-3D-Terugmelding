@@ -1,6 +1,5 @@
 ﻿using Netherlands3D.Core;
 using Netherlands3D;
-using Netherlands3D.Cameras;
 using Netherlands3D.T3D.Uitbouw;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,31 +57,24 @@ public class T3DInit : MonoBehaviour, IUniqueService
         ToggleQuality(true);
     }
 
-    void GotoPosition(Vector3RD position)
-    {
-        Vector3 cameraOffsetForTargetLocation = new Vector3(0, 38, 0);
-        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.position = CoordConvert.RDtoUnity(position) + cameraOffsetForTargetLocation;
-        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
-    }
-
     public void LoadBuilding()
     {
         //set relative center to cameraposition to avoid floating point precision issues
-        Config.activeConfiguration.RelativeCenterRD = new Vector2RD(HTMLData.RDPosition.x, HTMLData.RDPosition.y);
+        //Config.activeConfiguration.RelativeCenterRD = new Vector2RD(HTMLData.RDPosition.x, HTMLData.RDPosition.y);
 
-        GotoPosition(HTMLData.RDPosition);
+        //GotoPosition(HTMLData.RDPosition);
 
-        if (!useTestBuilding)
-        {
-            StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBag(HTMLData.BagId));
-            StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
-        }
-        else
-        {
-            ServiceLocator.GetService<MetadataLoader>().LoadTestBuilding(testBuildingJson.text);
-        }
+        //if (!useTestBuilding)
+        //{
+            //StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBag(HTMLData.BagId));
+            //todo: StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
+        //}
+        //else
+        //{
+        //    ServiceLocator.GetService<MetadataLoader>().LoadTestBuilding(testBuildingJson.text);
+        //}
 
-        ServiceLocator.GetService<MetadataLoader>().RequestBuildingData(HTMLData.RDPosition, HTMLData.BagId);
+        //ServiceLocator.GetService<MetadataLoader>().RequestPerceelData(HTMLData.RDPosition, HTMLData.BagId);
     }
 
     private void ToggleQuality(bool ishigh)

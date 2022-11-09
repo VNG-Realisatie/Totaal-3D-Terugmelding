@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D;
+using System.Globalization;
+using Netherlands3D.Core;
+using Netherlands3D.Events;
 using Netherlands3D.Interface;
+using Netherlands3D.Utilities;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
-using Netherlands3D.Utilities;
-using System.Globalization;
-using System.IO;
-using Netherlands3D.Core;
 
 namespace Netherlands3D.T3D.Uitbouw
 {
@@ -82,10 +79,10 @@ namespace Netherlands3D.T3D.Uitbouw
         public delegate void BuildingOutlineLoadedEventHandler(object source, BuildingOutlineEventArgs args);
         public event BuildingOutlineLoadedEventHandler BuildingOutlineLoaded;
 
-
-
-        public delegate void CityJsonBagEventHandler(string cityJson);
-        public event CityJsonBagEventHandler CityJsonBagReceived;
+        [SerializeField]
+        private StringEvent cityJsonBagReceived;
+        //public delegate void CityJsonBagEventHandler(string cityJson);
+        //public event CityJsonBagEventHandler CityJsonBagReceived;
 
         public delegate void CityJsonBagBoundingBoxEventHandler(string cityJson, string excludeBagId);
         public event CityJsonBagBoundingBoxEventHandler CityJsonBagBoundingBoxReceived;
@@ -110,16 +107,10 @@ namespace Netherlands3D.T3D.Uitbouw
             Perceel = perceel;
         }
 
-        public void RequestBuildingData(Vector3RD position, string id)
+        public void RequestPerceelAndBuildingOutlineData(Vector3RD position, string bagId)
         {
-            if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile && (!string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.ModelId) || !string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.BlobId)))
-            {
-                //StartCoroutine(GetBimCityJson());
-            }
-
             StartCoroutine(GetPerceelData(position));
-
-            StartCoroutine(RequestBuildingOutlineData(id));
+            StartCoroutine(RequestBuildingOutlineData(bagId));
         }
 
         IEnumerator RequestBuildingOutlineData(string bagId)
@@ -178,32 +169,32 @@ namespace Netherlands3D.T3D.Uitbouw
             }
         }
 
-        public IEnumerator GetCityJsonBag(string id)
-        {
-            var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{id}&OUTPUTFORMAT=application%2Fjson";
-            var uwr = UnityWebRequest.Get(url);
+        //public IEnumerator GetCityJsonBag(string id)
+        //{
+        //    var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{id}&OUTPUTFORMAT=application%2Fjson";
+        //    var uwr = UnityWebRequest.Get(url);
 
-            using (uwr)
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError(uwr.error);
-                }
-                else
-                {
-                    CityJsonBag = uwr.downloadHandler.text;
-                    CityJsonBagReceived?.Invoke(CityJsonBag);
-                }
+        //    using (uwr)
+        //    {
+        //        yield return uwr.SendWebRequest();
+        //        if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
+        //        {
+        //            Debug.LogError(uwr.error);
+        //        }
+        //        else
+        //        {
+        //            CityJsonBag = uwr.downloadHandler.text;
+        //            cityJsonBagReceived.started.Invoke(CityJsonBag);
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
-        public void LoadTestBuilding(string json)
-        {
-            Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
-            CityJsonBagReceived?.Invoke(json);
-        }
+        //public void LoadTestBuilding(string json)
+        //{
+        //    Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
+        //    cityJsonBagReceived.started.Invoke(json);
+        //}
 
         public IEnumerator GetCityJsonBagBoundingBox(double x, double y, string excludeBagId)
         {

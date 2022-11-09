@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Cameras;
 using Netherlands3D.Core;
+using Netherlands3D.Events;
 using Netherlands3D.T3D.Uitbouw;
 using SimpleJSON;
 using UnityEngine;
@@ -25,6 +27,9 @@ public class AddressSearchState : State
 
     [SerializeField]
     private Button nextButton;
+
+    [SerializeField]
+    private StringEvent bagIDReceived;
 
     protected override void Awake()
     {
@@ -86,6 +91,7 @@ public class AddressSearchState : State
             var addressNode = node["_embedded"]["adressen"][0];
             var bagId = addressNode["pandIdentificaties"][0];
             ServiceLocator.GetService<T3DInit>().HTMLData.BagId = bagId;
+            bagIDReceived.started.Invoke(bagId);
 
             selectedAddressPanel.gameObject.SetActive(true);
             selectedAddressPanel.SetText(addressNode);
@@ -205,7 +211,8 @@ public class AddressSearchState : State
                 ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition = pos;
                 StartCoroutine(GetMonumentStatus(pos));
                 StartCoroutine(GetProtectedStatus(pos));
-                ServiceLocator.GetService<T3DInit>().LoadBuilding();
+                GotoPosition(pos);
+                //ServiceLocator.GetService<T3DInit>().LoadBuilding();
             }
             else
             {
@@ -213,6 +220,13 @@ public class AddressSearchState : State
             }
         }
         //this.getPerceel(this.bagcoordinates[0], this.bagcoordinates[1]);
+    }
+
+    void GotoPosition(Vector3RD position)
+    {
+        Vector3 cameraOffsetForTargetLocation = new Vector3(0, 38, 0);
+        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.position = CoordConvert.RDtoUnity(position) + cameraOffsetForTargetLocation;
+        ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
     }
 
     private IEnumerator GetMonumentStatus(Vector3RD position)
