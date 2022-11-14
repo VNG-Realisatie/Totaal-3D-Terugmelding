@@ -1,14 +1,14 @@
 ﻿using Netherlands3D.Core;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using T3D.LoadData;
-using T3D.Uitbouw;
 //using T3D.LoadData;
 using UnityEngine;
+using Netherlands3D.T3DPipeline;
 
 public struct CityObjectIdentifier
 {
@@ -107,7 +107,7 @@ public static class CityJsonVisualiser //: MonoBehaviour, IUniqueService
             if (useKeytoSetExportIdPrefix)
             {
                 var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
-                CityObject.IdPrefix = key.Split(bagId.ToCharArray())[0];
+                T3D.Uitbouw.CityObject.IdPrefix = key.Split(bagId.ToCharArray())[0];
             }
             var geometries = meshmaker.CreateMeshes(key, localToWorldMatrix, cityJsonModel, co.Value, flipYZ);
 

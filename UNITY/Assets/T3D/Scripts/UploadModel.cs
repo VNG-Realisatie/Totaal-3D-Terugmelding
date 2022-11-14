@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 using System.Web;
 using System.Threading.Tasks;
 using SimpleJSON;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEditor;
 
 #if UNITY_5_3 || UNITY_5_3_OR_NEWER

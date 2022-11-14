@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Netherlands3D.Cameras;
 using Netherlands3D.Core;
 using Netherlands3D.Events;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -30,6 +30,8 @@ public class AddressSearchState : State
 
     [SerializeField]
     private StringEvent bagIDReceived;
+    [SerializeField]
+    private DoubleArrayEvent buildingPositionReceived;
 
     protected override void Awake()
     {
@@ -209,8 +211,13 @@ public class AddressSearchState : State
                 var bagCoordinates = node["verblijfsobject"]["geometrie"]["punt"]["coordinates"];
                 var pos = new Vector3RD(bagCoordinates[0], bagCoordinates[1], bagCoordinates[2]);
                 ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition = pos;
+
+                var doubleArray = new double[] { pos.x, pos.y, pos.z };
+                buildingPositionReceived.Invoke(doubleArray);
+
                 StartCoroutine(GetMonumentStatus(pos));
                 StartCoroutine(GetProtectedStatus(pos));
+                //StartCoroutine(.GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
                 //ServiceLocator.GetService<T3DInit>().LoadBuilding();
             }
             else

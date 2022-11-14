@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Netherlands3D.Cameras;
-using Netherlands3D.T3D;
-using Netherlands3D.T3D.Uitbouw;
+using T3D;
+using T3D.Uitbouw;
 using UnityEngine;
 
 public struct MeasureLine
@@ -103,7 +103,7 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
         else if (planeIntersect)
             mousePositionInWorld = ray.origin + ray.direction * enter;
 
-        if (ObjectClickHandler.GetClickOnObject(true, LayerMask.GetMask("SelectionPoints")))
+        if (T3D.ObjectClickHandler.GetClickOnObject(true, LayerMask.GetMask("SelectionPoints")))
         {
             if (!isValidMeshPoint)
             {

@@ -1,6 +1,6 @@
 ﻿using Netherlands3D.Cameras;
 using UnityEngine;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using Netherlands3D.InputHandler;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;

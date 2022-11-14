@@ -3,10 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 //using Netherlands3D.AssetGeneration.CityJSON;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using SimpleJSON;
 using T3D.LoadData;
-using T3D.Uitbouw;
 using UnityEngine;
 
 public class CityJSONToCityObject : CityObject

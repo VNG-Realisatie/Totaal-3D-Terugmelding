@@ -1,11 +1,5 @@
-using Netherlands3D.T3D.Uitbouw;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class SelectComponent : SelectableLibraryItem
     {

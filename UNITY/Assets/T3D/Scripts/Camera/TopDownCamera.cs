@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Netherlands3D.Core;
 using Netherlands3D.Cameras;
 using Netherlands3D.InputHandler;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

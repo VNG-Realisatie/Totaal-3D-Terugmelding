@@ -7,7 +7,7 @@ using T3D.LoadData;
 using Netherlands3D.Cameras;
 using Netherlands3D.T3DPipeline;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class BuildingMeshGenerator : MonoBehaviour
     {
@@ -31,7 +31,7 @@ namespace Netherlands3D.T3D.Uitbouw
         public event BuildingDataProcessedEventHandler BuildingDataProcessed;
 
         private CityJsonModel cityJsonModel;
-        public CityObject MainCityObject { get; private set; }
+        public Netherlands3D.T3DPipeline.CityObject MainCityObject { get; private set; }
         private Dictionary<string, CityJSONToCityObject> activeCityObjects = new Dictionary<string, CityJSONToCityObject>();
 
         public int ActiveLod = 2;
@@ -65,25 +65,24 @@ namespace Netherlands3D.T3D.Uitbouw
             //get all active lods.
             List<Mesh> activeMeshes = new List<Mesh>();
             Vector3 positionOffset = Vector3.zero;
-            int count = 0;
             foreach (var co in GetComponent<CityJSON>().CityObjects)
             {
                 var visualizer = co.GetComponent<CityObjectVisualizer>();
-                if (visualizer.ActiveLod == ActiveLod)
+                var hasActiveMesh = visualizer.SetLODActive(ActiveLod);
+
+                if (hasActiveMesh)
                 {
-                    activeMeshes.Add(visualizer.ActiveMesh);
-                    print("bCenter " + BuildingCenter);
-                    print("gl " + GroundLevel);
+                    var mesh = visualizer.GetComponent<MeshFilter>().mesh;
+                    activeMeshes.Add(mesh);
                     positionOffset += co.transform.position;
-                    count++;
                 }
             }
 
-            positionOffset /= count;
+            positionOffset /= activeMeshes.Count;
             var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
 
             var activeMesh = CityJsonVisualiser.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
-            print(activeMesh);
+
             if (activeMesh)
                 ProcessMesh(activeMesh, positionOffset);
         }
@@ -146,10 +145,6 @@ namespace Netherlands3D.T3D.Uitbouw
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
-
-            print("normalizedY: " + CoordConvert.zeroGroundLevelY);
-            print("processing mesh: bCenter " + BuildingCenter);
-            print("processing mesh: gl " + GroundLevel);
             RoofEdgePlanes = ProcessRoofEdges(mesh);
 
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes

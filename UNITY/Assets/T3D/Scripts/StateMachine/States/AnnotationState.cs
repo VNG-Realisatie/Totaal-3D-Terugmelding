@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Netherlands3D.Interface;
-using Netherlands3D.T3D.Uitbouw;
 using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.UI;
@@ -93,12 +92,12 @@ public class AnnotationState : State
     {
         var maskPlacementPoint = LayerMask.GetMask("ActiveSelection", "Uitbouw");
         var maskMarker = LayerMask.GetMask("SelectionPoints");
-        if (AllowSelection && ObjectClickHandler.GetClickOnObject(false, out var hit, maskPlacementPoint, true))
+        if (AllowSelection && T3D.ObjectClickHandler.GetClickOnObject(false, out var hit, maskPlacementPoint, true))
         {
             var parentCityObject = hit.collider.GetComponentInParent<CityObject>();
             CreateAnnotation(parentCityObject.Id, hit.point + hit.normal * 0.01f); //offset to allow correct raycasting
         }
-        else if (ObjectClickHandler.GetClickOnObject(false, out hit, maskMarker, false))
+        else if (T3D.ObjectClickHandler.GetClickOnObject(false, out hit, maskMarker, false))
         {
             SelectAnnotation(hit.collider.GetComponent<AnnotationMarker>().Id);
         }

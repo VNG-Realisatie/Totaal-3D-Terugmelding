@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Assertions;
-using T3D.Uitbouw;
 using System;
 
 public enum SemanticType
@@ -47,29 +46,29 @@ public class CitySurface
         Polygons.Add(solidSurfacePolygon);
     }
 
-    public static bool IsValidSemanticType(T3D.Uitbouw.CityObjectType parent, SemanticType type)
-    {
-        if (type == SemanticType.Null) //no semantic type is always allowed
-            return true;
+    //public static bool IsValidSemanticType(T3D.Uitbouw.CityObjectType parent, SemanticType type)
+    //{
+    //    if (type == SemanticType.Null) //no semantic type is always allowed
+    //        return true;
 
-        var testInt = (int)type / 10;
-        var parentInt = (int)parent / 10;
+    //    var testInt = (int)type / 10;
+    //    var parentInt = (int)parent / 10;
 
-        if (testInt == parentInt) //default test
-        {
-            return true;
-        }
-        if (testInt == parentInt - 100) // child test
-        {
-            return true;
-        }
+    //    if (testInt == parentInt) //default test
+    //    {
+    //        return true;
+    //    }
+    //    if (testInt == parentInt - 100) // child test
+    //    {
+    //        return true;
+    //    }
 
-        if (testInt == 108 && (parent == CityObjectType.Road || parent == CityObjectType.Railway || parent == CityObjectType.TransportSquare)) //custom test
-        {
-            return true;
-        }
-        return false;
-    }
+    //    if (testInt == 108 && (parent == CityObjectType.Road || parent == CityObjectType.Railway || parent == CityObjectType.TransportSquare)) //custom test
+    //    {
+    //        return true;
+    //    }
+    //    return false;
+    //}
 
     public void TryAddHole(CityPolygon hole)
     {

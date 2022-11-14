@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     [RequireComponent(typeof(UitbouwBase))]
     public class UitbouwMovement : MonoBehaviour

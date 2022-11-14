@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.Assertions;
 using SimpleJSON;
 using System.Linq;
 using System;
-
+using Netherlands3D.T3DPipeline;
 
 namespace T3D.Uitbouw
 {
@@ -21,34 +21,34 @@ namespace T3D.Uitbouw
         CompositeSolid = 41,
     }
 
-    public enum CityObjectType
-    {
-        // 1000-2000: 1st level city objects
-        Building = 1000,
-        Bridge = 1010,
-        CityObjectGroup = 1020,
-        CityFurniture = 1030,
-        GenericCityObject = 1040,
-        LandUse = 1050,
-        PlantCover = 1060,
-        Railway = 1070,
-        Road = 1080,
-        SolitaryVegetationObject = 1090,
-        TINRelief = 1100,
-        TransportSquare = 1110,
-        Tunnel = 1120,
-        WaterBody = 1130,
+    //public enum CityObjectType
+    //{
+    //    // 1000-2000: 1st level city objects
+    //    Building = 1000,
+    //    Bridge = 1010,
+    //    CityObjectGroup = 1020,
+    //    CityFurniture = 1030,
+    //    GenericCityObject = 1040,
+    //    LandUse = 1050,
+    //    PlantCover = 1060,
+    //    Railway = 1070,
+    //    Road = 1080,
+    //    SolitaryVegetationObject = 1090,
+    //    TINRelief = 1100,
+    //    TransportSquare = 1110,
+    //    Tunnel = 1120,
+    //    WaterBody = 1130,
 
-        //2000-3000: 2nd level city objects. the middle numbers indicates the required parent. e.g 200x has to be a parent of 1000, 201x of 1010 etc.
-        BuildingPart = 2000,
-        BuildingInstallation = 2001,
-        BridgePart = 2010,
-        BridgeInstallation = 2011,
-        BridgeConstructionElement = 2012,
+    //    //2000-3000: 2nd level city objects. the middle numbers indicates the required parent. e.g 200x has to be a parent of 1000, 201x of 1010 etc.
+    //    BuildingPart = 2000,
+    //    BuildingInstallation = 2001,
+    //    BridgePart = 2010,
+    //    BridgeInstallation = 2011,
+    //    BridgeConstructionElement = 2012,
 
-        TunnelPart = 2120,
-        TunnelInstallation = 2121
-    }
+    //    TunnelPart = 2120,
+    //    TunnelInstallation = 2121
+    //}
 
     public abstract class CityObject : MonoBehaviour
     {

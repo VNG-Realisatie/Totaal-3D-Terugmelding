@@ -5,7 +5,7 @@ using Netherlands3D.Cameras;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public struct Edge
     {
@@ -119,7 +119,7 @@ namespace Netherlands3D.T3D.Uitbouw
         {
             var mask = LayerMask.GetMask("ActiveSelection");
 
-            if (AllowSelection && ObjectClickHandler.GetClickOnObject(false, mask))
+            if (AllowSelection && T3D.ObjectClickHandler.GetClickOnObject(false, mask))
             {
                 if (EventSystem.current.IsPointerOverGameObject()) //clicked on ui elements
                     return;

@@ -1,4 +1,5 @@
-﻿using Netherlands3D.Cameras;
+﻿using Netherlands3D;
+using Netherlands3D.Cameras;
 using Netherlands3D.ObjectInteraction;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +11,7 @@ public enum InteractableState
     Active = 2,
 }
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class DragableAxis : Interactable
     {

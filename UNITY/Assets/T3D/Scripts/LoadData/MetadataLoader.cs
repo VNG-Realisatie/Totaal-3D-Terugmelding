@@ -10,7 +10,7 @@ using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class ObjectDataEventArgs : EventArgs
     {
@@ -33,7 +33,7 @@ namespace Netherlands3D.T3D.Uitbouw
             Perceel = perceel;
             Area = area;
 
-            var centerAndRadius = Utilities.GeometryCalculator.GetCenterAndRadius(perceel);
+            var centerAndRadius = GeometryCalculator.GetCenterAndRadius(perceel);
             Center = new Vector2RD(centerAndRadius.Center.x, centerAndRadius.Center.y);
             Radius = centerAndRadius.Radius;
         }
@@ -54,7 +54,7 @@ namespace Netherlands3D.T3D.Uitbouw
             Outline = outline;
             TotalArea = totalArea;
 
-            var centerAndRadius = Utilities.GeometryCalculator.GetCenterAndRadius(outline);
+            var centerAndRadius = GeometryCalculator.GetCenterAndRadius(outline);
             Center = new Vector2RD(centerAndRadius.Center.x, centerAndRadius.Center.y);
             Radius = centerAndRadius.Radius;
 
@@ -196,30 +196,9 @@ namespace Netherlands3D.T3D.Uitbouw
         //    cityJsonBagReceived.started.Invoke(json);
         //}
 
-        public IEnumerator GetCityJsonBagBoundingBox(double x, double y, string excludeBagId)
-        {
-            string bbox = $"{x - 25},{y - 25},{x + 25},{y + 25}";
-
-            var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&BBOX={bbox}&OUTPUTFORMAT=application%2Fjson";
-            var uwr = UnityWebRequest.Get(url);
-
-            using (uwr)
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError("WebRequest failed: Could not load buildings in bounding box");
-                }
-                else
-                {
-                    CityJsonBagBoundingBoxReceived?.Invoke(uwr.downloadHandler.text, excludeBagId);
-                }
-
-            }
-        }
-
         void ProcessPerceelData(JSONNode jsonData)
         {
+            print(jsonData.ToString());
             JSONNode feature1 = jsonData["features"][0];
             //var perceelGrootte = $"Perceeloppervlakte: {feature1["properties"]["kadastraleGrootteWaarde"]}";
 

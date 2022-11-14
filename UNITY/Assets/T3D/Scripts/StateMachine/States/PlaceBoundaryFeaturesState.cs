@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Netherlands3D.T3D.Uitbouw;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using T3D.Uitbouw;
+using T3D.Uitbouw.BoundaryFeatures;
 using UnityEngine;
 
 public class PlaceBoundaryFeaturesState : State

@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using T3D.Uitbouw.BoundaryFeatures;
 using T3D.Uitbouw;
 using UnityEngine;
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     [RequireComponent(typeof(UitbouwBase))]
     public class ShapableUitbouwCityObject : CityObject
@@ -12,9 +12,10 @@ namespace Netherlands3D.T3D.Uitbouw
         {
             base.Start();
             var building = GetComponent<UitbouwBase>().ActiveBuilding;
-            SetParents(new CityObject[] {
-                building.MainCityObject
-            });
+            Debug.LogError("set parents here after finishing converting to T3DPipeline");
+            //SetParents(new CityObject[] {
+            //    building.MainCityObject
+            //});
         }
 
         public override CitySurface[] GetSurfaces()

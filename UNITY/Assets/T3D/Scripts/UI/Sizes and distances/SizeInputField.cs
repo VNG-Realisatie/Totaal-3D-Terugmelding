@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 using System.Reflection;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public enum SizeType
     {

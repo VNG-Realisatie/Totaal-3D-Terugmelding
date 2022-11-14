@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Netherlands3D.Utilities;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class PerceelRenderer : MonoBehaviour
     {

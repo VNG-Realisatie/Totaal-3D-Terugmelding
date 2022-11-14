@@ -12,7 +12,7 @@ public enum Axis
     Z = 2,
 }
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class RotateImageToCamera : MonoBehaviour
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Netherlands3D.Core;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using T3D.LoadData;
 using T3D.Uitbouw;
 using UnityEngine;
@@ -82,7 +82,7 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         var uitbouwMeshes = new List<Mesh>();
         foreach (var obj in cityObjects)
         {
-            uitbouw.AddCityObject(obj.Value);
+            //todo: uitbouw.AddCityObject(obj.Value);
             var mesh = obj.Value.SetMeshActive(highestLod);
             uitbouwMeshes.Add(mesh);
         }

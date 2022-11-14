@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
 using T3D.Uitbouw;
+using T3D.Uitbouw.BoundaryFeatures;
 using UnityEngine;
 
 [RequireComponent(typeof(BoundaryFeature))]

@@ -4,7 +4,7 @@ using UnityEngine;
 using SimpleJSON;
 using System.IO;
 using Netherlands3D.Core;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using System.Linq;
 using System;
 

@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SimpleJSON;
-using T3D.Uitbouw;
 using System;
+using Netherlands3D.T3DPipeline;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class UploadedUitbouw : UitbouwBase
     {
-        private List<CityObject> cityObjects = new List<CityObject>();
+        private List<Netherlands3D.T3DPipeline.CityObject> cityObjects = new List<Netherlands3D.T3DPipeline.CityObject>();
         [SerializeField]
         private MeshFilter meshFilter;
         public MeshFilter MeshFilter => meshFilter;
@@ -50,32 +50,32 @@ namespace Netherlands3D.T3D.Uitbouw
             return new Vector3(a.x * b.x, a.y * b.y, a.z * b.z);
         }
 
-        public void AddCityObject(CityJSONToCityObject newCityObject)
-        {
-            if (cityObjects.Contains(newCityObject))
-            {
-                Debug.LogError("list already contains this City object");
-                return;
-            }
+        //public void AddCityObject(CityJSONToCityObject newCityObject)
+        //{
+        //    if (cityObjects.Contains(newCityObject))
+        //    {
+        //        Debug.LogError("list already contains this City object");
+        //        return;
+        //    }
 
-            cityObjects.Add(newCityObject);
-            newCityObject.Type = CityObjectType.BuildingPart;
-        }
+        //    cityObjects.Add(newCityObject);
+        //    newCityObject.Type = CityObjectType.BuildingPart;
+        //}
 
         public void UnparentFromMainBuilding()
         {
             foreach(var co in cityObjects)
             {
-                co.SetParents(new CityObject[0]);
+                co.SetParents(new Netherlands3D.T3DPipeline.CityObject[0]);
                 co.Type = CityObjectType.Building;
             }
         }
 
-        public void ReparentToMainBuilding(CityObject mainBuilding)
+        public void ReparentToMainBuilding(Netherlands3D.T3DPipeline.CityObject mainBuilding)
         {
             foreach(var co in cityObjects)
             {
-                co.SetParents(new CityObject[] { mainBuilding });
+                co.SetParents(new Netherlands3D.T3DPipeline.CityObject[] { mainBuilding });
                 co.Type = CityObjectType.BuildingPart;
             }
         }

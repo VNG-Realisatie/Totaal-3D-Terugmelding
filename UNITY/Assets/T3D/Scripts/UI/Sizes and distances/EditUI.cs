@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class EditUI : WorldPointFollower
     {

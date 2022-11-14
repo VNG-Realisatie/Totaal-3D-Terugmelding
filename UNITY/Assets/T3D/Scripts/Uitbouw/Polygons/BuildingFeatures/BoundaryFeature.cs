@@ -5,7 +5,7 @@ using Netherlands3D.Cameras;
 using Netherlands3D.Interface;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class BoundaryFeatureSaveData : SaveDataContainer
     {

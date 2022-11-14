@@ -1,61 +1,69 @@
 using Netherlands3D.Core;
-using Netherlands3D.T3D.Uitbouw;
+using Netherlands3D.Events;
+using T3D.Uitbouw;
+using Netherlands3D.T3DPipeline;
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using T3D.LoadData;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CityJsonBagBoundingBoxVisualizer : MonoBehaviour
 {
+    [SerializeField]
+    private DoubleArrayEvent onBuildingPositionReceived;
+    [SerializeField]
+    private StringEvent boundingBoxCityJSONReceived;
+    [SerializeField]
+    private TriggerEvent onBoundingBoxCityJSONVisualized;
+    private string excludeBagID;
+
     void OnEnable()
     {
-        ServiceLocator.GetService<MetadataLoader>().CityJsonBagBoundingBoxReceived += OnCityJsonBagBoundingBoxReceived;
+        onBuildingPositionReceived.started.AddListener(RequestBoundingBoxJSON);
     }
 
     void OnDisable()
     {
-        ServiceLocator.GetService<MetadataLoader>().CityJsonBagBoundingBoxReceived -= OnCityJsonBagBoundingBoxReceived;
+        onBuildingPositionReceived.started.RemoveAllListeners();
     }
 
-    private void OnCityJsonBagBoundingBoxReceived(string cityJson, string excludeBagId)
+    public void RequestBoundingBoxJSON(double[] pos)
     {
-        StartCoroutine(ParseCityJson(cityJson, excludeBagId, false));
+        //var rdPos = new Vector3RD(pos[0], pos[1], pos[2]);
+        var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
+        StartCoroutine(GetCityJsonBagBoundingBox(pos[0], pos[1], bagId));
     }
 
-    private IEnumerator ParseCityJson(string cityjson, string excludeBagId, bool checkDistanceFromCenter)
+    private IEnumerator GetCityJsonBagBoundingBox(double x, double y, string excludeBagId)
     {
-        yield return new WaitUntil(() => RestrictionChecker.ActivePerceel.IsLoaded); //needed because perceelRadius is needed
-        var buildingMeshes = CityJsonVisualiser.ParseCityJson(cityjson, transform.localToWorldMatrix, true, false);
+        string bbox = $"{x - 25},{y - 25},{x + 25},{y + 25}";
 
-        foreach (var pair in buildingMeshes.ToList()) //go to list to avoid Collection was modiefied errors
+        var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&BBOX={bbox}&OUTPUTFORMAT=application%2Fjson";
+        var uwr = UnityWebRequest.Get(url);
+
+        using (uwr)
         {
-            //if (pair.Key.Key.Contains(excludeBagId) || pair.Key.Key == "NL.IMBAG.Pand.-0")
-            if (!pair.Key.Key.Contains(excludeBagId))
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
             {
-                //buildingMeshes.Remove(pair.Key);
-                AddMesh(pair.Key.Key, pair.Value);
-                yield return null;
+                Debug.LogError("WebRequest failed: Could not load buildings in bounding box");
+            }
+            else
+            {
+                excludeBagID = excludeBagId;
+                onBoundingBoxCityJSONVisualized.started.AddListener(DisableMainBuilding); //add listener before invoking the event that triggers the parsing (and visualization by extension)
+                boundingBoxCityJSONReceived.Invoke(uwr.downloadHandler.text);
             }
         }
-
-        //var combinedMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes.Values.ToList(), transform.localToWorldMatrix);
-        //GetComponent<MeshFilter>().sharedMesh = combinedMesh;
-        //GetComponent<MeshCollider>().sharedMesh = combinedMesh;
     }
 
-    /// <summary>
-    /// Visualize each mesh
-    /// </summary>    
-    void AddMesh(string id, Mesh mesh)
+    public void DisableMainBuilding()
     {
-        var gam = new GameObject();
-        gam.name = id;
-        var filter = gam.AddComponent<MeshFilter>();
-        var ren = gam.AddComponent<MeshRenderer>();
-        ren.material = GetComponent<MeshRenderer>().material;
-        filter.sharedMesh = mesh;
-        gam.transform.parent = transform;
+        var mainBuildingInBoundingBox = GetComponent<CityJSON>().CityObjects.First(co => co.Id.Contains(excludeBagID));
+        mainBuildingInBoundingBox.gameObject.SetActive(false);
+        onBoundingBoxCityJSONVisualized.started.RemoveAllListeners();
     }
 }

@@ -16929,7 +16929,8 @@ MonoBehaviour:
   cityObjectPrefab: {fileID: 1807838613596807431, guid: c12598c11cca042639583bdd25a72ebd,
     type: 3}
   useAsRelativeRDCenter: 1
-  onJsonParsed: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
+  onAllCityObjectsProcessed: {fileID: 11400000, guid: b4811dccd3b4440719bb412845931f98,
+    type: 2}
 --- !u!114 &486380472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16942,7 +16943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75b7e70441345c14ab89bfbaf4f57f18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onEvent: {fileID: 11400000, guid: a3d7bc3176844447aaf8b67070d5d2cc, type: 2}
+  onEvent: {fileID: 11400000, guid: b4811dccd3b4440719bb412845931f98, type: 2}
   trigger:
     m_PersistentCalls:
       m_Calls:
@@ -81461,7 +81462,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 42.387238, y: 0}
+  m_AnchoredPosition: {x: 44.799053, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

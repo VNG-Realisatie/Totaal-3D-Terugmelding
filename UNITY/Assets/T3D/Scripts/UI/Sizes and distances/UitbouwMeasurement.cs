@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Netherlands3D.Core;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class UitbouwMeasurement : DistanceMeasurement
     {

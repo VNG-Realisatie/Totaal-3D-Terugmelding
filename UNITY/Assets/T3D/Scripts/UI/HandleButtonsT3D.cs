@@ -2,7 +2,7 @@
 using Netherlands3D.Cameras;
 using Netherlands3D.Interface;
 using Netherlands3D.Sun;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using System;
 using System.Collections;
 using System.Collections.Generic;

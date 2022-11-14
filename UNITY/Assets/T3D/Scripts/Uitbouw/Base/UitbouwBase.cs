@@ -4,7 +4,7 @@ using Netherlands3D.Interface;
 using SimpleJSON;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class UitbouwBaseSaveDataContainer : SaveDataContainer
     {
