@@ -54,9 +54,19 @@ public class CityJsonBagBoundingBoxVisualizer : MonoBehaviour
             else
             {
                 excludeBagID = excludeBagId;
+                onBoundingBoxCityJSONVisualized.started.AddListener(RemoveBuildingsFromExport); //add listener before invoking the event that triggers the parsing (and visualization by extension)
                 onBoundingBoxCityJSONVisualized.started.AddListener(DisableMainBuilding); //add listener before invoking the event that triggers the parsing (and visualization by extension)
                 boundingBoxCityJSONReceived.Invoke(uwr.downloadHandler.text);
             }
+        }
+    }
+
+    private void RemoveBuildingsFromExport()
+    {
+        var cityObjects = GetComponent<CityJSON>().CityObjects;
+        foreach(var co in cityObjects)
+        {
+            co.IncludeInExport = false;
         }
     }
 

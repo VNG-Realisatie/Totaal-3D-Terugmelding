@@ -107,7 +107,7 @@ public static class CityJsonVisualiser //: MonoBehaviour, IUniqueService
             if (useKeytoSetExportIdPrefix)
             {
                 var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
-                T3D.Uitbouw.CityObject.IdPrefix = key.Split(bagId.ToCharArray())[0];
+                //todoT3D.Uitbouw.CityObject.IdPrefix = key.Split(bagId.ToCharArray())[0];
             }
             var geometries = meshmaker.CreateMeshes(key, localToWorldMatrix, cityJsonModel, co.Value, flipYZ);
 

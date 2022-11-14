@@ -4,7 +4,6 @@ using System.Linq;
 using Netherlands3D.Core;
 using T3D.Uitbouw;
 using T3D.LoadData;
-using T3D.Uitbouw;
 using UnityEngine;
 
 public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
@@ -78,13 +77,14 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         {
             Destroy(child.gameObject);
         }
-        var cityObjects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices);
+        //todo:var cityObjects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices);
+        var cityObjects = new Netherlands3D.T3DPipeline.CityObject[0];
         var uitbouwMeshes = new List<Mesh>();
         foreach (var obj in cityObjects)
         {
             //todo: uitbouw.AddCityObject(obj.Value);
-            var mesh = obj.Value.SetMeshActive(highestLod);
-            uitbouwMeshes.Add(mesh);
+            //todo: var mesh = obj.Value.SetMeshActive(highestLod);
+            //todo: uitbouwMeshes.Add(mesh);
         }
         //var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
         //var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);

@@ -21,7 +21,7 @@ public static class HandleTextFile
         Debug.Log("saved file to: " + path + fileName);
     }
 }
-
+/*
 public static class CityJSONFormatter
 {
     private static JSONObject RootObject;
@@ -221,4 +221,4 @@ public static class CityJSONFormatter
         if (extensionNodes.ContainsKey(key))
             extensionNodes.Remove(key);
     }
-}
+}*/

@@ -3211,6 +3211,7 @@ GameObject:
   - component: {fileID: 74250033}
   - component: {fileID: 74250032}
   - component: {fileID: 74250036}
+  - component: {fileID: 74250037}
   m_Layer: 0
   m_Name: CityJsonBagBoundingBoxVisualizer
   m_TagString: Untagged
@@ -3275,11 +3276,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 74250031}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cc9db1285a42a1f47802713bf1675c7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onBuildingPositionReceived: {fileID: 11400000, guid: 3ffc590d4c77447afa5274fdf17ea2fb,
+    type: 2}
+  boundingBoxCityJSONReceived: {fileID: 11400000, guid: dbe99f93852d2488bb2c8ffa0b3935d9,
+    type: 2}
+  onBoundingBoxCityJSONVisualized: {fileID: 11400000, guid: a862e095d4b234621af0223ed8c47a11,
+    type: 2}
 --- !u!4 &74250035
 Transform:
   m_ObjectHideFlags: 0
@@ -3309,6 +3316,24 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &74250037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 74250031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCityJSONReceived: {fileID: 11400000, guid: dbe99f93852d2488bb2c8ffa0b3935d9, type: 2}
+  cityObjectPrefab: {fileID: 1807838613596807431, guid: 8079a6434ea124d458bceb01cd6de3e0,
+    type: 3}
+  useAsRelativeRDCenter: 0
+  onAllCityObjectsProcessed: {fileID: 11400000, guid: a862e095d4b234621af0223ed8c47a11,
+    type: 2}
 --- !u!1 &75784185
 GameObject:
   m_ObjectHideFlags: 0
@@ -41041,6 +41066,8 @@ MonoBehaviour:
   selectedAddressPanel: {fileID: 846696069}
   nextButton: {fileID: 648912227}
   bagIDReceived: {fileID: 11400000, guid: 5fdf7cd463c7b40c095754e098d7fe57, type: 2}
+  buildingPositionReceived: {fileID: 11400000, guid: 3ffc590d4c77447afa5274fdf17ea2fb,
+    type: 2}
 --- !u!1 &1229900209
 GameObject:
   m_ObjectHideFlags: 0
@@ -81462,7 +81489,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 44.799053, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

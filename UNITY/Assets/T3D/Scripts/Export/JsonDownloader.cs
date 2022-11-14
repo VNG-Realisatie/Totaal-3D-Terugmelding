@@ -1,4 +1,5 @@
 using Netherlands3D.JavascriptConnection;
+using Netherlands3D.T3DPipeline;
 using UnityEngine;
 
 public class JsonDownloader : MonoBehaviour
@@ -11,7 +12,7 @@ public class JsonDownloader : MonoBehaviour
         JavascriptMethodCaller.DownloadByteArrayAsFile(bytes, bytes.Length, "gebouw_met_uitbouw.json");
 #else
         Debug.Log("downloading file only works in a WebGL build");
-        Debug.Log(CityJSONFormatter.GetJSON());
+        Debug.Log(CityJSONFormatter.GetCityJSON());
 #endif
     }
 }
