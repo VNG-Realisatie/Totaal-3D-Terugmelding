@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Netherlands3D.Core;
+using Netherlands3D.Events;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class AnnotationUISaveData : SaveDataContainer
@@ -61,6 +63,11 @@ public class AnnotationUI : MonoBehaviour
     private void OnEnable()
     {
         inputField.onValueChanged.AddListener(OnInputFieldValueChanged);
+    }
+
+    private void OnDisable()
+    {
+        inputField.onValueChanged.RemoveListener(OnInputFieldValueChanged);
     }
 
     public void OnInputFieldValueChanged(string newText)

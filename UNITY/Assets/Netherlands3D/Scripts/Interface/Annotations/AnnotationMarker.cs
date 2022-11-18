@@ -6,77 +6,80 @@ using Netherlands3D.Interface;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AnnotationMarker : MeasurePoint
+namespace T3D.Uitbouw
 {
-    [SerializeField]
-    private WorldPointFollower idMarkerPrefab;
-    private WorldPointFollower idLabel;
-
-    public int Id { get; private set; }
-
-    private Image idLabelImage;
-    private Text idLabelText;
-
-    [SerializeField]
-    private Color selectedColor;
-    private Color normalColor;
-
-    private Camera cam;
-
-    void Awake()
+    public class AnnotationMarker : MeasurePoint
     {
-        //SetId(id);
+        [SerializeField]
+        private WorldPointFollower idMarkerPrefab;
+        private WorldPointFollower idLabel;
 
-        idLabel = ServiceLocator.GetService<CoordinateNumbers>().CreateGenericWorldPointFollower(idMarkerPrefab);
-        idLabel.AlignWithWorldPosition(transform.position);
-        idLabelImage = idLabel.GetComponent<Image>();
-        idLabelText = idLabel.GetComponentInChildren<Text>();
-        SetSelectable(true);
-        normalColor = idLabel.GetComponent<Image>().color;
-    }
+        public int Id { get; private set; }
 
-    public void SetId(int id)
-    {
-        Id = id;
-        idLabelText.text = (id + 1).ToString();
-    }
+        private Image idLabelImage;
+        private Text idLabelText;
 
-    private void OnDestroy()
-    {
-        if (idLabel)
-            Destroy(idLabel.gameObject);
-    }
+        [SerializeField]
+        private Color selectedColor;
+        private Color normalColor;
 
-    public void SetSelectedColor(bool selected)
-    {
-        idLabel.GetComponent<Image>().color = selected ? selectedColor : normalColor;
-    }
+        private Camera cam;
 
-    protected override void Update()
-    {
-        base.Update();
-        cam = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera;
-        var dir = cam.transform.position - idLabel.WorldPosition;
-        var imageColor = idLabelImage.color;
-        var textColor = idLabelText.color;
-        if (Physics.Raycast(idLabel.WorldPosition, dir.normalized, out var hit, dir.magnitude))
+        void Awake()
         {
-            imageColor.a = 0.3f;
-            textColor.a = 0.3f;
-        }
-        else
-        {
-            imageColor.a = 1f;
-            textColor.a = 1f;
+            //SetId(id);
+
+            idLabel = ServiceLocator.GetService<CoordinateNumbers>().CreateGenericWorldPointFollower(idMarkerPrefab);
+            idLabel.AlignWithWorldPosition(transform.position);
+            idLabelImage = idLabel.GetComponent<Image>();
+            idLabelText = idLabel.GetComponentInChildren<Text>();
+            SetSelectable(true);
+            normalColor = idLabel.GetComponent<Image>().color;
         }
 
-        idLabelImage.color = imageColor;
-        idLabelText.color = textColor;
-    }
+        public void SetId(int id)
+        {
+            Id = id;
+            idLabelText.text = (id + 1).ToString();
+        }
 
-    public void ShowMarker(bool show)
-    {
-        idLabel.gameObject.SetActive(show);
-        gameObject.SetActive(show);
+        private void OnDestroy()
+        {
+            if (idLabel)
+                Destroy(idLabel.gameObject);
+        }
+
+        public void SetSelectedColor(bool selected)
+        {
+            idLabel.GetComponent<Image>().color = selected ? selectedColor : normalColor;
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            cam = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera;
+            var dir = cam.transform.position - idLabel.WorldPosition;
+            var imageColor = idLabelImage.color;
+            var textColor = idLabelText.color;
+            if (Physics.Raycast(idLabel.WorldPosition, dir.normalized, out var hit, dir.magnitude))
+            {
+                imageColor.a = 0.3f;
+                textColor.a = 0.3f;
+            }
+            else
+            {
+                imageColor.a = 1f;
+                textColor.a = 1f;
+            }
+
+            idLabelImage.color = imageColor;
+            idLabelText.color = textColor;
+        }
+
+        public void ShowMarker(bool show)
+        {
+            idLabel.gameObject.SetActive(show);
+            gameObject.SetActive(show);
+        }
     }
 }
