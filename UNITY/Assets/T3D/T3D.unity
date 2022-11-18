@@ -16906,6 +16906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActiveLod: 2
+  positionReceived: {fileID: 11400000, guid: 3ffc590d4c77447afa5274fdf17ea2fb, type: 2}
 --- !u!4 &486380469
 Transform:
   m_ObjectHideFlags: 0
@@ -38631,8 +38632,6 @@ MonoBehaviour:
   shapableUitbouw: {fileID: 154850934}
   uploadedUitbouwPrefab: {fileID: 1604081640823115902, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
     type: 3}
-  cityJsonBagReceived: {fileID: 11400000, guid: 354dafefa262440b9814dc5beaecec5a,
-    type: 2}
   building: {fileID: 486380466}
   perceel: {fileID: 620146493}
 --- !u!1 &1148822980
@@ -81493,7 +81492,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 40.032364, y: 0}
+  m_AnchoredPosition: {x: 42.490974, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

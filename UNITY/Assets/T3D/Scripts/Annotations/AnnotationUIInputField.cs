@@ -13,7 +13,6 @@ public class AnnotationUIInputField : MonoBehaviour, ISelectHandler
 
     public void OnSelect(BaseEventData eventData)
     {
-        print("selecting2: " + eventData.selectedObject);
         reselectAnnotationEvent.Invoke(ui.Id);
     }
 }

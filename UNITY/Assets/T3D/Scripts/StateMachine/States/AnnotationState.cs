@@ -85,9 +85,6 @@ public class AnnotationState : State
 
     private void LoadSavedAnnotations() //todo
     {
-        Debug.LogError("loading not implemented yet", gameObject);
-        //PreviousButton.SetActive( ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel);
-
         var annotationSaveDataNode = SessionSaver.GetJSONNodeOfType(typeof(AnnotationUISaveData).ToString());
 
         //onAnnotationStarted.started.AddListener(OnLoadAnnotationStarted);
@@ -98,14 +95,20 @@ public class AnnotationState : State
             var parent = data["ParentCityObject"];
             var connectionPoint = data["ConnectionPoint"];
             var text = data["AnnotationText"];
-            //savedAnnotationTexts.Add(int.Parse(node.Key), text);
-            //buildingClicked.Invoke(connectionPoint.ReadVector3()); //event triggers creation of new annotation. Event is sent back when this is completed and 
-            //CreateAnnotation(parent, connectionPoint.ReadVector3(), );
-            //annotationCompleted.Invoke();
-        }
 
-        //onAnnotationStarted.started.RemoveListener(OnLoadAnnotationStarted);
-        //onAnnotationStarted.started.AddListener(OnAnnotationStarted);
+            var coas = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObjectAnnotations>();
+
+            foreach (var coa in coas)
+            {
+                if (coa.CityObject.Id != parent)
+                    continue;
+
+                coa.StartAddNewAnnotation(connectionPoint); //this will invoke events and create uis for use on the next line
+                int globalId = AnnotationUIs.Count - 1;
+                reselectAnnotationEvent.Invoke(globalId);
+                AnnotationUIs[globalId].SetText(text);
+            }
+        }
     }
 
     public override void StateEnteredAction()
@@ -158,7 +161,6 @@ public class AnnotationState : State
     private void OnAnnotationStarted(int globalId)
     {
         annotationCompleted.Invoke(); //complete annotation so it is added to the list
-        print("clobal id " +globalId);
         var ann = CityObjectAnnotations.GetAnnotation(globalId);
         CreateAnnotationUI(ann.ParentAttribute.ParentCityObject.Id, (Vector3)ann.Position, globalId);
         AnnotationUIs[globalId].SetId(globalId);
@@ -170,11 +172,7 @@ public class AnnotationState : State
 
     private void SelectAnnotation(int globalId)
     {
-        print("selecting: " + globalId);
-        print(ActiveSelectedId);
-
         var oldAnnotation = CityObjectAnnotations.GetAnnotation(ActiveSelectedId);
-        print(oldAnnotation.Text);
         AnnotationUIs[ActiveSelectedId].SetSelectedColor(false);
         var marker = oldAnnotation.AnnotationMarker.GetComponent<T3D.Uitbouw.AnnotationMarker>();
         marker.SetSelectedColor(false);
@@ -209,9 +207,6 @@ public class AnnotationState : State
         AnnotationUIs.Remove(ui);
         Destroy(ui.gameObject);
         CityObjectAnnotations.DeleteAnnotationWithGlobalId(globalId);
-        //var annotation = CityObjectAnnotations.GetAnnotation(globalId);
-        //var newSelectedMarker = annotation.AnnotationMarker.GetComponent<AnnotationMarker>();
-        //Destroy(marker.gameObject);
 
         if (globalId == ActiveSelectedId)
             ActiveSelectedId = 0;

@@ -6,6 +6,7 @@ using Netherlands3D.Core;
 using T3D.LoadData;
 using Netherlands3D.Cameras;
 using Netherlands3D.T3DPipeline;
+using Netherlands3D.Events;
 
 namespace T3D.Uitbouw
 {
@@ -34,6 +35,8 @@ namespace T3D.Uitbouw
         public CityObject MainCityObject { get; private set; }
 
         public int ActiveLod = 2;
+        [SerializeField]
+        private DoubleArrayEvent positionReceived;
 
         private void Awake()
         {
@@ -44,16 +47,21 @@ namespace T3D.Uitbouw
         {
             ServiceLocator.GetService<MetadataLoader>().BuildingOutlineLoaded += Instance_BuildingOutlineLoaded;
             SessionSaver.Loader.LoadingCompleted += Loader_LoadingCompleted;
+            positionReceived.started.AddListener(ProcessPosition);
         }
 
         //called by event in the inspector
-        public void ProcessBuilding()
+        public void ProcessPosition(double[] position)
         {
             var pos = ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition;
             var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
             GotoPosition(pos);
             ServiceLocator.GetService<MetadataLoader>().RequestPerceelAndBuildingOutlineData(pos, bagId);
+        }
 
+        //called by event in the inspector
+        public void ProcessBuilding()
+        {
             var cityObjects = GetComponent<CityJSON>().CityObjects;
             MainCityObject = cityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
             foreach (var co in cityObjects)

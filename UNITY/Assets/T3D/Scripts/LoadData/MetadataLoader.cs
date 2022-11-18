@@ -79,11 +79,6 @@ namespace T3D.Uitbouw
         public delegate void BuildingOutlineLoadedEventHandler(object source, BuildingOutlineEventArgs args);
         public event BuildingOutlineLoadedEventHandler BuildingOutlineLoaded;
 
-        [SerializeField]
-        private StringEvent cityJsonBagReceived;
-        //public delegate void CityJsonBagEventHandler(string cityJson);
-        //public event CityJsonBagEventHandler CityJsonBagReceived;
-
         public delegate void CityJsonBagBoundingBoxEventHandler(string cityJson, string excludeBagId);
         public event CityJsonBagBoundingBoxEventHandler CityJsonBagBoundingBoxReceived;
 
@@ -153,6 +148,9 @@ namespace T3D.Uitbouw
 
         IEnumerator GetPerceelData(Vector3RD position)
         {
+            print(SessionSaver.HasLoaded);
+            yield return new WaitUntil(() => SessionSaver.HasLoaded);// wait until position has loaded
+
             var bbox = $"{ position.x - 0.5},{ position.y - 0.5},{ position.x + 0.5},{ position.y + 0.5}";
             var url = $"https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=kadastralekaartv4:perceel&STARTINDEX=0&COUNT=1&SRSNAME=urn:ogc:def:crs:EPSG::28992&BBOX={bbox},urn:ogc:def:crs:EPSG::28992&outputFormat=json";
 
