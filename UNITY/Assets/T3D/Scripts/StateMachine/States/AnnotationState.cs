@@ -138,15 +138,7 @@ public class AnnotationState : State
 
     void Update()
     {
-        //var maskPlacementPoint = LayerMask.GetMask("ActiveSelection", "Uitbouw");
         var maskMarker = LayerMask.GetMask("SelectionPoints");
-        //if (AllowSelection && T3D.ObjectClickHandler.GetClickOnObject(false, out var hit, maskPlacementPoint, true))
-        //{
-        //    var parentCityObject = hit.collider.GetComponent<CityObject>();
-        //    var localId = parentCityObject.GetComponent<CityObjectAnnotations>().LocalId;
-        //    CreateAnnotation(parentCityObject.Id, hit.point + hit.normal * 0.01f, localId); //offset to allow correct raycasting
-        //}
-        //else
         if (T3D.ObjectClickHandler.GetClickOnObject(false, out var hit, maskMarker, false))
         {
             //SelectAnnotation(hit.collider.GetComponent<T3D.Uitbouw.AnnotationMarker>().Id);
@@ -157,28 +149,15 @@ public class AnnotationState : State
 
     private void CreateAnnotationUI(string parentCityObject, Vector3 connectionPoint, int globalId)
     {
-        print("click");
-        //int id = CityObjectAnnotations.GlobalCount;
-        //int id = AnnotationUIs.Count - 1;
-        //var annotationmarker = Instantiate(markerPrefab, connectionPoint, Quaternion.identity);
-        //annotationmarker.SetId(id);
-        //annotationMarkers.Add(annotationmarker);
-
         var annotationUI = Instantiate(annotationPrefab, annotationParent);
         AnnotationUIs.Add(annotationUI);
         annotationUI.Initialize(globalId, parentCityObject, connectionPoint);
         RecalculeteContentHeight();
-
-        //annotationCompleted.Invoke();
-        //var parentCityObject = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObjectAnnotations>().FirstOrDefault(a => a.)
-
-        //OnAnnotationStarted(id);
     }
 
     private void OnAnnotationStarted(int globalId)
     {
         annotationCompleted.Invoke(); //complete annotation so it is added to the list
-        //CityObjectAnnotations.GetAnnotation(globalId);
         print("clobal id " +globalId);
         var ann = CityObjectAnnotations.GetAnnotation(globalId);
         CreateAnnotationUI(ann.ParentAttribute.ParentCityObject.Id, (Vector3)ann.Position, globalId);
@@ -187,27 +166,18 @@ public class AnnotationState : State
         marker.SetId(globalId);
 
         SelectAnnotation(globalId); //reselect completed annotation
-        //scroll.SetSelectedChild(globalId); //go there
-
-        ////load text if needed
-        //if (savedAnnotationTexts.ContainsKey(id))
-        //{
-        //    var text = savedAnnotationTexts[id];
-        //    AnnotationUIs[AmountOfAnnotations - 1].SetText(text);
-        //    savedAnnotationTexts.Remove(id);
-        //}
     }
 
     private void SelectAnnotation(int globalId)
     {
         print("selecting: " + globalId);
-        var select = CityObjectAnnotations.SelectAnnotation(globalId);
+        print(ActiveSelectedId);
 
         var oldAnnotation = CityObjectAnnotations.GetAnnotation(ActiveSelectedId);
+        print(oldAnnotation.Text);
         AnnotationUIs[ActiveSelectedId].SetSelectedColor(false);
         var marker = oldAnnotation.AnnotationMarker.GetComponent<T3D.Uitbouw.AnnotationMarker>();
         marker.SetSelectedColor(false);
-        //annotationMarkers[ActiveSelectedId].SetSelectedColor(false);
 
         var newSelectedAnnotationUI = AnnotationUIs[globalId];
         var newAnnotation = CityObjectAnnotations.GetAnnotation(globalId);
@@ -245,6 +215,8 @@ public class AnnotationState : State
 
         if (globalId == ActiveSelectedId)
             ActiveSelectedId = 0;
+        else if (ActiveSelectedId > globalId)
+            ActiveSelectedId--;
 
         RecalculateAnnotationUIIds();
         RecalculeteContentHeight();
@@ -255,6 +227,9 @@ public class AnnotationState : State
         for (int i = 0; i < AnnotationUIs.Count; i++)
         {
             AnnotationUIs[i].SetId(i);
+            var ann = CityObjectAnnotations.GetAnnotation(i);
+            var marker = ann.AnnotationMarker.GetComponent<T3D.Uitbouw.AnnotationMarker>();
+            marker.SetId(i);
         }
     }
 
