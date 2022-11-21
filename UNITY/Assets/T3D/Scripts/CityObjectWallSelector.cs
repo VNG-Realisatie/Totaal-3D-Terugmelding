@@ -94,21 +94,22 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
         {
             WallMesh = wall;
             WallIsSelected = true;
-            wallSelected.Invoke(gameObject);
 
             HitPoint = hitPoint;
             HitNormal = hitNormal;
+
+            wallSelected.Invoke(gameObject);
         }
         else
         {
             WallMesh = new Mesh();
-            //wallMeshFilter.mesh = WallMesh;
             WallIsSelected = false;
             WallPlane = new Plane();
-            wallDeselected.Invoke(gameObject);
 
             HitPoint = Vector3.zero;
             HitNormal = Vector3.zero;
+
+            wallDeselected.Invoke(gameObject);
         }
     }
 

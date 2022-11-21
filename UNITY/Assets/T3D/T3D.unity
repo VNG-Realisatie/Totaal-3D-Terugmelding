@@ -36765,7 +36765,6 @@ GameObject:
   - component: {fileID: 1087382946}
   - component: {fileID: 1087382944}
   - component: {fileID: 1087382943}
-  - component: {fileID: 1087382942}
   - component: {fileID: 1087382940}
   - component: {fileID: 1087382941}
   m_Layer: 0
@@ -36816,18 +36815,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maximumViewDistance: 5000
   drawDebugLines: 0
---- !u!114 &1087382942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087382938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc3e69948dc9f604bbe45cfe4dca91a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1087382943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65047,7 +65034,6 @@ GameObject:
   - component: {fileID: 2013098744}
   - component: {fileID: 2013098741}
   - component: {fileID: 2013098740}
-  - component: {fileID: 2013098739}
   - component: {fileID: 2013098738}
   - component: {fileID: 2013098737}
   m_Layer: 0
@@ -65101,18 +65087,6 @@ MonoBehaviour:
   MaxFirstPersonDistance: 40
   firstPersonCameraDistance: 5
   rotationSpeed: 0.5
---- !u!114 &2013098739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2013098735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc3e69948dc9f604bbe45cfe4dca91a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2013098740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -72908,7 +72882,7 @@ BoxCollider:
   m_GameObject: {fileID: 3916014984755386467}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1.8, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -81491,7 +81465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 40.032364, y: 0}
+  m_AnchoredPosition: {x: 42.727272, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
@@ -82055,7 +82029,6 @@ GameObject:
   - component: {fileID: 1176705589908622003}
   - component: {fileID: 1283579041793267549}
   - component: {fileID: 4545947594993400296}
-  - component: {fileID: 6508571211958037197}
   - component: {fileID: 3916014984755386468}
   m_Layer: 11
   m_Name: FirstPersonCamera
@@ -88996,18 +88969,6 @@ MonoBehaviour:
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 2e6c3ed42a5d76c4d8e1d1a0efd077c7, type: 2}
---- !u!114 &6508571211958037197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3916014984755386467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc3e69948dc9f604bbe45cfe4dca91a1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &6512773813810601770
 GameObject:
   m_ObjectHideFlags: 0
