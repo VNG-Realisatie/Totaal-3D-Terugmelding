@@ -32778,9 +32778,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d04434ed94c5402a987365946a6fe54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triangleNormalTolerance: 0.01
-  verticalComponentTolerance: 0.1
-  groundLevelOffsetTolerance: 0.05
+  onWallSelected: {fileID: 11400000, guid: c6f4d5466c2934585b98224e89ab2a09, type: 2}
+  onWallDeselected: {fileID: 11400000, guid: 07e6a9c42467e4bd2accd61e9f1e7a99, type: 2}
 --- !u!1 &946982672
 GameObject:
   m_ObjectHideFlags: 0
@@ -81492,7 +81491,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 42.490974, y: 0}
+  m_AnchoredPosition: {x: 40.032364, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 5302617482703819505}
   - component: {fileID: 6016695265935519022}
   - component: {fileID: -8079496101518315025}
+  - component: {fileID: 4026898433190462745}
   m_Layer: 0
   m_Name: CityObjectVisualizedWithInteractionAndAnnotations
   m_TagString: Untagged
@@ -141,6 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectClicked: {fileID: 11400000, guid: 3987f2d6793904b8a90632ceb72c19ca, type: 2}
   annotationStateActive: 0
+  waitForAnnotationCompletedEvent: 0
   onAnnotationTextChanged: {fileID: 11400000, guid: 555d41ad34a81495fa807f5552e47584,
     type: 2}
   onNewAnnotationSumbmitted: {fileID: 11400000, guid: ba5456776a4e045a8a7f411f20888d75,
@@ -155,3 +157,22 @@ MonoBehaviour:
   annotationMarkerDeselected: {fileID: 0}
   reselectAnnotationEvent: {fileID: 11400000, guid: 381c575ad55fc48fa816fda3981d8577,
     type: 2}
+--- !u!114 &4026898433190462745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: beb50d96151e2404881d2abe125df313, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectClicked: {fileID: 11400000, guid: 3987f2d6793904b8a90632ceb72c19ca, type: 2}
+  triangleNormalTolerance: 0.01
+  coplanarTolerance: 0.01
+  verticalComponentTolerance: 0.1
+  groundLevelOffsetTolerance: 0.05
+  wallSelected: {fileID: 11400000, guid: c6f4d5466c2934585b98224e89ab2a09, type: 2}
+  wallDeselected: {fileID: 11400000, guid: 07e6a9c42467e4bd2accd61e9f1e7a99, type: 2}
