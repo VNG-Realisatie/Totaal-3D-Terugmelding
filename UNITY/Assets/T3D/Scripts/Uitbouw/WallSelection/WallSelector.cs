@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Netherlands3D.Cameras;
 using Netherlands3D.Events;
+using Netherlands3D.T3DPipeline;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,8 +12,9 @@ namespace T3D.Uitbouw
 {
     public class WallSelectorSaveDataContainer : SaveDataContainer
     {
-        public Vector3 RayOrigin;
-        public Vector3 RayDirection;
+        public string CityObjectId;
+        public Vector3 HitPoint;
+        public Vector3 HitNormal;
     }
 
     public class WallSelector : MonoBehaviour
@@ -85,6 +88,10 @@ namespace T3D.Uitbouw
             wallMeshFilter.mesh = WallMesh;
             WallIsSelected = true;
             WallChanged = true;
+
+            saveData.CityObjectId = go.GetComponent<CityObject>().Id;
+            saveData.HitPoint = wallSelector.HitPoint;
+            saveData.HitNormal = wallSelector.HitNormal;
         }
 
         private void OnWallDeselected(GameObject go)
@@ -93,6 +100,10 @@ namespace T3D.Uitbouw
             wallMeshFilter.mesh = WallMesh;
             WallIsSelected = false;
             WallPlane = new Plane();
+
+            saveData.CityObjectId = string.Empty;
+            saveData.HitPoint = Vector3.zero;
+            saveData.HitNormal = Vector3.zero;
         }
 
         private void Building_BuildingDataProcessed(BuildingMeshGenerator building)
@@ -105,7 +116,11 @@ namespace T3D.Uitbouw
 
         private void LoadSelectedWall()
         {
-            Debug.LogError("todo: load wall");
+            var cityObjects = GetComponentInParent<CityJSON>().CityObjects;
+            var selectedWallObject = cityObjects.FirstOrDefault(co => co.Id == saveData.CityObjectId);
+
+            if (selectedWallObject)
+                selectedWallObject.GetComponent<CityObjectWallSelector>().ProcessHit(saveData.HitPoint, saveData.HitNormal);
         }
     }
 }

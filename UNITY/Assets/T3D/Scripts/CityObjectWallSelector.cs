@@ -63,8 +63,11 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
     public Plane WallPlane { get; private set; }
     public Mesh WallMesh { get; private set; }
     public Vector3 CenterPoint { get; private set; }
+    public Vector3 HitPoint { get; private set; }
+    public Vector3 HitNormal { get; private set; }
 
     private CityObjectVisualizer cityObjectVisualizer;
+
 
     private void Awake()
     {
@@ -77,14 +80,24 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
             return;
 
         base.OnPointerClick(eventData);
-        if (TryGetValidWall(eventData.pointerPressRaycast, out var wall))
+
+        var hitPoint = eventData.pointerPressRaycast.worldPosition;
+        var hitNormal = eventData.pointerPressRaycast.worldNormal;
+
+        ProcessHit(hitPoint, hitNormal);
+    }
+
+    //used for simulating click and loading a clicked wall
+    public void ProcessHit(Vector3 hitPoint, Vector3 hitNormal)
+    {
+        if (TryGetValidWall(hitPoint, hitNormal, out var wall))
         {
             WallMesh = wall;
-            //wallMeshFilter.mesh = WallMesh;
             WallIsSelected = true;
-            //WallChanged = true;
             wallSelected.Invoke(gameObject);
-            print("wall selected");
+
+            HitPoint = hitPoint;
+            HitNormal = hitNormal;
         }
         else
         {
@@ -93,30 +106,24 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
             WallIsSelected = false;
             WallPlane = new Plane();
             wallDeselected.Invoke(gameObject);
-            print("wall deselected");
+
+            HitPoint = Vector3.zero;
+            HitNormal = Vector3.zero;
         }
     }
 
-    private bool TryGetValidWall(RaycastResult hit, out Mesh wallMesh)
+    public bool TryGetValidWall(Vector3 hitPosition, Vector3 hitNormal, out Mesh wallMesh)
     {
-        //try to get a face, check if this face is grounded and if this face is vertical
-        //return TryGetFace(hit, out face, building.transform.position) && CheckIfGrounded(face, building.GroundLevel, groundLevelOffsetTolerance) && CheckIfVertical(face, verticalComponentTolerance);
-        //var groundLevel = cityObjectVisualizer.transform.position.y - cityObjectVisualizer.ActiveMesh.bounds.extents.y;
-
-        //print("gl: " + groundLevel);
-        //TryGetFace(hit, out wallMesh, transform.position);
-        //GetComponent<MeshFilter>().mesh = wallMesh;
-        //print(CheckIfGrounded(transform, wallMesh, groundLevel, groundLevelOffsetTolerance));
-
-        return TryGetFace(hit, out wallMesh, transform.position) &&
+        //try to get a face and if this face is vertical, groundlevel no longer checked here because CityObjects need a global groundlevel
+        return TryGetFace(hitPosition, hitNormal, out wallMesh, transform.position) &&
             //CheckIfGrounded(transform, wallMesh, groundLevel, groundLevelOffsetTolerance) &&
             CheckIfVertical(wallMesh, verticalComponentTolerance);
     }
 
-    private bool TryGetFace(RaycastResult hit, out Mesh face, Vector3 relativeCenter)
+    private bool TryGetFace(Vector3 hitPoistion, Vector3 hitNormal, out Mesh face, Vector3 relativeCenter)
     {
         face = new Mesh();
-        WallPlane = new Plane(hit.worldNormal, hit.worldPosition);
+        WallPlane = new Plane(hitNormal, hitPoistion);
 
         //copy mesh data to avoid getting a copy every iteration in the loop
         var mesh = cityObjectVisualizer.ActiveMesh;
@@ -138,7 +145,7 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
         {
             Vector3 triangleNormal = CalculateNormal(sourceVerts[sourceTriangles[i]], sourceVerts[sourceTriangles[i + 1]], sourceVerts[sourceTriangles[i + 2]]);
 
-            if ((triangleNormal - hit.worldNormal).sqrMagnitude < triangleNormalTolerance)
+            if ((triangleNormal - hitNormal).sqrMagnitude < triangleNormalTolerance)
             {
                 // parallel triangle, possibly part of the wall
                 // This tri is not part of the wall if it is not contiguous to other triangles, in ordet to check that we save the edges as well as the verts for later use
@@ -170,7 +177,7 @@ public class CityObjectWallSelector : Netherlands3D.T3DPipeline.ObjectClickHandl
                     }
 
                     // check if this is the clicked triangle to determine contiguous triangles later
-                    var relativeHitPoint = hit.worldPosition - relativeCenter;
+                    var relativeHitPoint = hitPoistion - relativeCenter;
                     if (!foundClickedTriangle && IsInsideTriangle(relativeHitPoint, sourceVerts[sourceTriangles[i]], sourceVerts[sourceTriangles[i + 1]], sourceVerts[sourceTriangles[i + 2]]))
                     {
                         //if this is the clicked triangle, the last triangle added to the coplanar triangle list is the one that should be used as start to find the contiguous triangles.

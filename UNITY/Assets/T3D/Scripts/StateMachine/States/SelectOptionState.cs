@@ -64,6 +64,7 @@ public class SelectOptionState : State
         var savedState = stateSaver.GetState(stateSaver.ActiveStateIndex);
         if (ActiveState != savedState)
         {
+            print("continue to next state");
             //if (uploadedModelToggle.isOn)
             //    LoadModel();
             //StartCoroutine(LoadModelAndGoToNextState());
@@ -105,11 +106,15 @@ public class SelectOptionState : State
 
     public void LoadModelAndGoToNextState()
     {
-        if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
+        //if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
+        if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         {
             StartCoroutine(GetAndParseCityJson());
         }
-        //EndState();
+        else
+        {
+            EndState();
+        }
     }
 
     IEnumerator GetAndParseCityJson()
