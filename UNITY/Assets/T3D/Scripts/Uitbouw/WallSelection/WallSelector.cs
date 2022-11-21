@@ -86,6 +86,8 @@ namespace T3D.Uitbouw
             transform.position = go.transform.position;
             WallMesh = wallSelector.WallMesh;
             wallMeshFilter.mesh = WallMesh;
+            WallPlane = wallSelector.WallPlane;
+
             WallIsSelected = true;
             WallChanged = true;
 
