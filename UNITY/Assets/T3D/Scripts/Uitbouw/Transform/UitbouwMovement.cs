@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Core;
 using UnityEngine;
 
 namespace T3D.Uitbouw
@@ -125,7 +126,8 @@ namespace T3D.Uitbouw
         private void LimitPositionWithinPerceelRadius(PerceelRenderer perceel)
         {
             var perceelRadius = perceel.Radius;
-            var perceelCenter = new Vector2(perceel.Center.x, perceel.Center.z);
+            var perceelLocalCenter = CoordConvert.RDtoUnity(RestrictionChecker.ActivePerceel.RDCenter);
+            var perceelCenter = new Vector2(perceelLocalCenter.x, perceelLocalCenter.z);
             var position2D = new Vector2(transform.position.x, transform.position.z);
             var dist = Vector2.Distance(position2D, perceelCenter);
 

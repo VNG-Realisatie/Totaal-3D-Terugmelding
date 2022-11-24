@@ -24,7 +24,7 @@ namespace T3D.Uitbouw
 
         public List<Vector2[]> Perceel { get; private set; }
         public float Area { get; private set; }
-        public Vector3 Center { get; private set; }
+        public Vector3RD RDCenter { get; private set; }
         public float Radius { get; private set; }
         public bool IsLoaded { get; private set; } = false;
         public Plane PerceelPlane { get; private set; }
@@ -44,7 +44,7 @@ namespace T3D.Uitbouw
             perceelOutlineGameObject.transform.position = new Vector3(perceelOutlineGameObject.transform.position.x, building.GroundLevel + 0.01f, perceelOutlineGameObject.transform.position.z);
 
             terreinMeshGameObject.transform.position = new Vector3(building.transform.position.x, building.GroundLevel, building.transform.position.z);
-            Center = new Vector3(Center.x, building.GroundLevel, Center.z);
+            RDCenter = new Vector3RD(RDCenter.x, RDCenter.y, building.GroundLevel);
             PerceelPlane = new Plane(Vector3.up, building.GroundLevel);
         }
 
@@ -59,8 +59,8 @@ namespace T3D.Uitbouw
             SetPerceelOutlineActive(true);
 
             Area = args.Area;
-            var coord = CoordConvert.RDtoUnity(args.Center);
-            Center = new Vector3(coord.x, Center.y, coord.z);
+            //var coord = CoordConvert.RDtoUnity(args.Center);
+            RDCenter = new Vector3RD(args.Center.x, args.Center.y, RDCenter.z);
             Radius = args.Radius;
             IsLoaded = true;
         }

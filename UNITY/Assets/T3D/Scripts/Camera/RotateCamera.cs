@@ -98,7 +98,8 @@ public class RotateCamera : MonoBehaviour, ICameraControls
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel == false || ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall)
         {
             yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActivePerceel != null);
-            dir = RestrictionChecker.ActivePerceel.Center - RestrictionChecker.ActiveBuilding.BuildingCenter;
+            var localCenter = CoordConvert.RDtoUnity(RestrictionChecker.ActivePerceel.RDCenter);
+            dir = localCenter - RestrictionChecker.ActiveBuilding.BuildingCenter;
         }
         else
         {
