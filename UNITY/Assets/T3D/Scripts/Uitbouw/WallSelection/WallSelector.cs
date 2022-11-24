@@ -45,10 +45,12 @@ namespace T3D.Uitbouw
             }
         }
 
-        public bool WallIsSelected { get; private set; }
-        public Plane WallPlane { get; private set; }
-        public Mesh WallMesh { get; private set; }
-        public Vector3 CenterPoint { get; private set; }
+        private CityObjectWallSelector selectedWall;
+        public bool WallIsSelected => selectedWall != null;
+        public Plane WallPlane => WallIsSelected ? selectedWall.WallPlane : new Plane();
+        public Mesh WallMesh => WallIsSelected ? selectedWall.WallMesh : null;
+        public Vector3 CenterPoint => WallIsSelected ? selectedWall.CenterPoint : new Vector3();
+        
         public bool WallChanged { get; set; } //is a different wall selected than before? Used to reposition the uitbouw when user went back and selected a different wall
 
         private WallSelectorSaveDataContainer saveData;
@@ -77,31 +79,27 @@ namespace T3D.Uitbouw
 
         private void OnWallSelected(GameObject go)
         {
-            var wallSelector = go.GetComponent<CityObjectWallSelector>();
-            if (!wallSelector.CheckIfGrounded(building.GroundLevel))
+            selectedWall = go.GetComponent<CityObjectWallSelector>();
+
+            if (!selectedWall.CheckIfGrounded(building.GroundLevel))
             {
                 OnWallDeselected(go);
                 return;
             }
             transform.position = go.transform.position;
-            WallMesh = wallSelector.WallMesh;
             wallMeshFilter.mesh = WallMesh;
-            WallPlane = wallSelector.WallPlane;
 
-            WallIsSelected = true;
             WallChanged = true;
 
             saveData.CityObjectId = go.GetComponent<CityObject>().Id;
-            saveData.HitPoint = wallSelector.HitPoint;
-            saveData.HitNormal = wallSelector.HitNormal;
+            saveData.HitPoint = selectedWall.HitPoint;
+            saveData.HitNormal = selectedWall.HitNormal;
         }
 
         private void OnWallDeselected(GameObject go)
         {
-            WallMesh = new Mesh();
             wallMeshFilter.mesh = WallMesh;
-            WallIsSelected = false;
-            WallPlane = new Plane();
+            selectedWall = null;
 
             saveData.CityObjectId = string.Empty;
             saveData.HitPoint = Vector3.zero;

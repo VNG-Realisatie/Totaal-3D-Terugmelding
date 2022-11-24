@@ -20,7 +20,6 @@ namespace T3D.Uitbouw
         {
             var building = GetComponent<UitbouwBase>().ActiveBuilding;
             Initialize(building.MainCityObject);
-            print(building.MainCityObject);
         }
 
 
