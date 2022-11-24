@@ -5,6 +5,8 @@ using Netherlands3D.Core;
 using T3D.Uitbouw;
 using T3D.LoadData;
 using UnityEngine;
+using Netherlands3D.T3DPipeline;
+using Netherlands3D.Events;
 
 public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 {
@@ -19,6 +21,10 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
     private TextAsset testJSON;
     //[SerializeField]
     //private bool useTestJSON;
+    [SerializeField]
+    private StringEvent onBimCityJsonReceived;
+    [SerializeField]
+    private TriggerEvent onUploadedModelVisualized;
 
     private void Awake()
     {
@@ -28,33 +34,54 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
     void OnEnable()
     {
         ServiceLocator.GetService<Events>().BimCityJsonReceived += OnBimCityJsonReceived;
+        onUploadedModelVisualized.started.AddListener(OnUploadedModelVisualized);
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += OnPerceelDataLoaded;
     }
 
     void OnDisable()
     {
         ServiceLocator.GetService<Events>().BimCityJsonReceived -= OnBimCityJsonReceived;
+        onUploadedModelVisualized.started.RemoveListener(OnUploadedModelVisualized);
         //ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded -= OnPerceelDataLoaded;
     }
 
-    //private void OnPerceelDataLoaded(object source, PerceelDataEventArgs args)
-    //{
-    //    perceelCenter = new Vector3RD(args.Center.x, args.Center.y, 0);
-    //}
-
     private void OnBimCityJsonReceived(string cityJson)
     {
-        Debug.Log("OnBimCityJsonReceived");
-        this.cityJson = cityJson;
+        Debug.Log("-OnBimCityJsonReceived");
+        //this.cityJson = cityJson;
+        //uitbouw.gameObject.SetActive(true);
+        onBimCityJsonReceived.Invoke(cityJson);
+        //uitbouw.GetComponentInChildren<CityJSON>().ParseCityJSON(cityJson);
 
-        ParseCityJson(false);
+        //ParseCityJson(false);
         //VisualizeCityJson();
     }
 
-    //public void VisualizeCityJson()
-    //{
-       
-    //}
+    private void OnUploadedModelVisualized()
+    {
+        var uitbouwMeshes = new List<Mesh>();
+        foreach (var obj in GetComponent<CityJSON>().CityObjects)
+        {
+            var visualizer = obj.GetComponent<CityObjectVisualizer>();
+            var mesh = visualizer.ActiveMesh;
+            uitbouwMeshes.Add(mesh);
+        }
+
+        uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
+
+        var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
+        uitbouw.SetCombinedMesh(combinedActiveMesh);
+
+        //center mesh
+        var offset = uitbouw.MeshFilter.mesh.bounds.center;
+        offset.y -= uitbouw.MeshFilter.mesh.bounds.extents.y;
+        offset += uitbouw.transform.forward * uitbouw.Depth / 2;
+        uitbouw.MeshFilter.transform.localPosition = -offset;
+
+        uitbouw.InitializeUserMovementAxes();
+
+        HasLoaded = true;
+    }
 
     public void ParseCityJson(bool useTestJson)
     {

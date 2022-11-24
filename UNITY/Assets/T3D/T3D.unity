@@ -9641,11 +9641,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Uitbouw_Model
       objectReference: {fileID: 0}
-    - target: {fileID: 1604081640823115902, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6754303235095884790, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
         type: 3}
       propertyPath: m_RootOrder
@@ -9699,6 +9694,11 @@ PrefabInstance:
     - target: {fileID: 6754303235095884790, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8007389617465903191, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -12523,6 +12523,8 @@ MonoBehaviour:
   notSupportedPanel: {fileID: 2037258292}
   nextButton: {fileID: 1210976337}
   visibilityPanel: {fileID: 664421357}
+  onUploadedModelVisualized: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
+    type: 2}
 --- !u!224 &334232650
 RectTransform:
   m_ObjectHideFlags: 0
@@ -60103,6 +60105,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1863914027}
   - component: {fileID: 1863914028}
+  - component: {fileID: 1863914029}
   m_Layer: 0
   m_Name: CityJsonVisualizer
   m_TagString: Untagged
@@ -60140,6 +60143,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MeshMaterial: {fileID: 2100000, guid: dbcc42433f2f7d443a9a36b38393891f, type: 2}
   testJSON: {fileID: 4900000, guid: 618f06493510b48cf8bc30e43f883712, type: 3}
+  onBimCityJsonReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
+    type: 2}
+  onUploadedModelVisualized: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
+    type: 2}
+--- !u!114 &1863914029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863914026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCityJSONReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85, type: 2}
+  cityObjectPrefab: {fileID: 1807838613596807431, guid: c3a7de5e7c1f040a48aee1de7e8292d3,
+    type: 3}
+  useAsRelativeRDCenter: 0
+  onAllCityObjectsProcessed: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
+    type: 2}
 --- !u!1 &1865638254
 GameObject:
   m_ObjectHideFlags: 0
@@ -81465,7 +81490,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 42.727272, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Core;
 using UnityEngine;
 
 namespace T3D.Uitbouw
@@ -25,9 +26,14 @@ namespace T3D.Uitbouw
         protected override void DrawLines()
         {
             var corners = square.Surface.SolidSurfacePolygon.Vertices;
+            var unityCorners = new Vector3[corners.Length];
+            for (int i = 0; i < corners.Length; i++)
+            {
+                unityCorners[i] = CoordConvert.RDtoUnity(corners[i]);
+            }
 
-            DrawLine(0, corners[0], corners[3]); //direction matters for resize
-            DrawLine(1, corners[2], corners[3]); //direction matters for resize
+            DrawLine(0, unityCorners[0], unityCorners[3]); //direction matters for resize
+            DrawLine(1, unityCorners[2], unityCorners[3]); //direction matters for resize
         }
     }
 }

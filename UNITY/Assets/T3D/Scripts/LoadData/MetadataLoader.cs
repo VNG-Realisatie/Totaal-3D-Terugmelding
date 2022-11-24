@@ -265,11 +265,10 @@ namespace T3D.Uitbouw
                 //shapableUitbouw.transform.rotation = Quaternion.identity;
                 Uitbouw = shapableUitbouw.GetComponentInChildren<UitbouwBase>(true);
             }
-
             EnableActiveuitbouw(true);
-            Uitbouw.GetComponent<UitbouwMovement>().SetPosition(spawnPosition);
-            //}
 
+            Uitbouw.GetComponent<UitbouwMovement>().transform.position = spawnPosition;
+            //}
         }
 
         //public void EnableUploadedUitbouw(bool active)
@@ -288,7 +287,7 @@ namespace T3D.Uitbouw
             if (!Uitbouw)
                 return;
 
-            Uitbouw.transform.parent.gameObject.SetActive(active);
+            Uitbouw.gameObject.SetActive(active);
             Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState))); 
             Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.EnableGizmo(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));

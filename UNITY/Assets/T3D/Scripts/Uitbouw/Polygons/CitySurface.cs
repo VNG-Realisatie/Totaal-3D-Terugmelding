@@ -7,26 +7,26 @@ using SimpleJSON;
 using UnityEngine.Assertions;
 using System;
 
-public enum SemanticType
-{
-    Null = 0,
+//public enum SemanticType
+//{
+//    Null = 0,
 
-    RoofSurface = 1000,
-    GroundSurface = 1001,
-    WallSurface = 1002,
-    ClosureSurface = 1003,
-    OuterCeilingSurface = 1004,
-    OuterFloorSurface = 1005,
-    Window = 1006,
-    Door = 1007,
+//    RoofSurface = 1000,
+//    GroundSurface = 1001,
+//    WallSurface = 1002,
+//    ClosureSurface = 1003,
+//    OuterCeilingSurface = 1004,
+//    OuterFloorSurface = 1005,
+//    Window = 1006,
+//    Door = 1007,
 
-    WaterSurface = 1130,
-    WaterGroundSurface = 1131,
-    WaterClosureSurface = 1132,
+//    WaterSurface = 1130,
+//    WaterGroundSurface = 1131,
+//    WaterClosureSurface = 1132,
 
-    TrafficArea = 1080,
-    AuxiliaryTrafficArea = 1081,
-}
+//    TrafficArea = 1080,
+//    AuxiliaryTrafficArea = 1081,
+//}
 
 //[RequireComponent(typeof(CityPolygon))]
 public class CitySurface
@@ -36,15 +36,15 @@ public class CitySurface
     public virtual CityPolygon SolidSurfacePolygon => Polygons[0];
     public virtual CityPolygon[] HolePolygons => Polygons.Skip(1).ToArray();
 
-    public SemanticType SurfaceType { get; set; }
+    //public SemanticType SurfaceType { get; set; }
     private List<CitySurface> semanticChildren = new List<CitySurface>();
     private CitySurface semanticParent;
 
-    public CitySurface(CityPolygon solidSurfacePolygon, SemanticType type = SemanticType.Null)
-    {
-        SurfaceType = type;
-        Polygons.Add(solidSurfacePolygon);
-    }
+    //public CitySurface(CityPolygon solidSurfacePolygon, SemanticType type = SemanticType.Null)
+    //{
+    //    SurfaceType = type;
+    //    Polygons.Add(solidSurfacePolygon);
+    //}
 
     //public static bool IsValidSemanticType(T3D.Uitbouw.CityObjectType parent, SemanticType type)
     //{
@@ -102,7 +102,7 @@ public class CitySurface
     public JSONNode GetSemanticObject(CitySurface[] allGeometrySurfaces)
     {
         var node = new JSONObject();
-        node["type"] = SurfaceType.ToString();
+        //node["type"] = SurfaceType.ToString();
         //node["name"] = name;
 
         if (semanticParent != null)

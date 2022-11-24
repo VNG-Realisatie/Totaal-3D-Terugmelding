@@ -1,13 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Netherlands3D.Core;
+using Netherlands3D.T3DPipeline;
 using UnityEngine;
 
 namespace T3D.Uitbouw
 {
     public class SquareSurface : MonoBehaviour
     {
-        public CitySurface Surface;
+        public Netherlands3D.T3DPipeline.CitySurface Surface;
+        //public Netherlands3D.T3DPipeline.CityGeometrySemanticsObject Semantics;
 
         [SerializeField]
         protected Transform meshTransform;
@@ -25,7 +28,7 @@ namespace T3D.Uitbouw
         public virtual Vector3 BottomBoundPosition => bottomBound.position;
 
         [SerializeField]
-        private SemanticType surfaceType;
+        private SurfaceSemanticType surfaceType;
 
         public Vector2 Size { get; private set; }
 
@@ -34,7 +37,10 @@ namespace T3D.Uitbouw
             if (!meshTransform)
                 meshTransform = transform;
             //assign the meshTransform before calling awake, because the meshTransform is needed to calculate the main surface polygon
-            Surface = new CitySurface(new CityPolygon(GetVertices(), GetBoundaries()), surfaceType);
+            Surface = new Netherlands3D.T3DPipeline.CitySurface();
+            Surface.SetSolidSurfacePolygon(new Netherlands3D.T3DPipeline.CityPolygon(GetVertices(),GetBoundaries()));
+
+            Surface.SemanticsObject = new CityGeometrySemanticsObject(surfaceType);
         }
 
         public int[] GetBoundaries()
@@ -49,13 +55,13 @@ namespace T3D.Uitbouw
             };
         }
 
-        public Vector3[] GetVertices()
+        public Vector3Double[] GetVertices()
         {
-            return new Vector3[] {
-                    GetCorner(leftBound, topBound),
-                    GetCorner(leftBound, bottomBound),
-                    GetCorner(rightBound, bottomBound),
-                    GetCorner(rightBound, topBound),
+            return new Vector3Double[] {
+                    CoordConvert.UnitytoRD(GetCorner(leftBound, topBound)),
+                    CoordConvert.UnitytoRD(GetCorner(leftBound, bottomBound)),
+                    CoordConvert.UnitytoRD(GetCorner(rightBound, bottomBound)),
+                    CoordConvert.UnitytoRD(GetCorner(rightBound, topBound)),
                 };
         }
 
@@ -108,15 +114,7 @@ namespace T3D.Uitbouw
 
         protected virtual void Update()
         {
-            Surface.SolidSurfacePolygon.UpdateVertices(GetVertices()); //needed when requesting the verts for JSONExport
+            Surface.SolidSurfacePolygon.Vertices = GetVertices(); //needed when requesting the verts for JSONExport
         }
-
-        //private void OnDrawGizmos()
-        //{
-        //    foreach (var corner in Polygon)
-        //    {
-        //        Gizmos.DrawSphere(corner, 0.1f);
-        //    }
-        //}
     }
 }

@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Netherlands3D.Events;
 using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.UI;
+using WebGLFileUploaderExample;
 
 public class SelectOptionState : State
 {
@@ -18,10 +20,30 @@ public class SelectOptionState : State
     [SerializeField]
     private GameObject visibilityPanel;
 
+    [SerializeField]
+    private TriggerEvent onUploadedModelVisualized;
+
+    private bool modelLoaded;
+
     protected override void Awake()
     {
         base.Awake();
         visualiser = ServiceLocator.GetService<UploadedUitbouwVisualiser>();
+    }
+
+    private void OnEnable()
+    {
+        onUploadedModelVisualized.started.AddListener(OnUploadedModelVisualized);
+    }
+
+    private void OnDisable()
+    {
+        onUploadedModelVisualized.started.RemoveListener(OnUploadedModelVisualized);
+    }
+
+    void OnUploadedModelVisualized()
+    {
+        modelLoaded = true;
     }
 
     private void Update()
@@ -32,7 +54,7 @@ public class SelectOptionState : State
         if (noModelToggle.isOn)
             nextButton.interactable = true;
         else if (uploadedModelToggle.isOn)
-            nextButton.interactable = !otherBuildingPartToggle.isOn && visualiser.HasLoaded;
+            nextButton.interactable = !otherBuildingPartToggle.isOn && modelLoaded && !GetComponentInChildren<UploadModel>().IsLoading;
         else
             nextButton.interactable = !otherBuildingPartToggle.isOn;
     }
@@ -131,7 +153,7 @@ public class SelectOptionState : State
             //EndState();
         }
         else
-        {         
+        {
             ErrorService.GoToErrorPage(result);
         }
 

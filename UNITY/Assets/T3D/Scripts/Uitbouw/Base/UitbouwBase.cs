@@ -16,8 +16,8 @@ namespace T3D.Uitbouw
     {
         //public CityObject CityObject { get; private set; }
 
-        protected BuildingMeshGenerator building;
-        public BuildingMeshGenerator ActiveBuilding => building;
+        //protected BuildingMeshGenerator building;
+        public BuildingMeshGenerator ActiveBuilding => RestrictionChecker.ActiveBuilding;
 
         public float Width { get; private set; }
         public float Depth { get; private set; }
@@ -78,7 +78,7 @@ namespace T3D.Uitbouw
         {
             get
             {
-                return new Plane(Vector3.up, building.GroundLevel);
+                return new Plane(Vector3.up, ActiveBuilding.GroundLevel);
             }
         }
 
@@ -114,7 +114,7 @@ namespace T3D.Uitbouw
         protected virtual void Awake()
         {
             saveData = new UitbouwBaseSaveDataContainer();
-            building = RestrictionChecker.ActiveBuilding; 
+            //building = RestrictionChecker.ActiveBuilding;
             InitializeUserMovementAxes();
         }
 

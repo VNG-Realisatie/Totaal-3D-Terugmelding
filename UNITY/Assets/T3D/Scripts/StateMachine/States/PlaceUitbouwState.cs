@@ -24,15 +24,7 @@ public class PlaceUitbouwState : State
         uitbouwMovement = RestrictionChecker.ActiveUitbouw.GetComponent<UitbouwMovement>();
         uitbouwRotation = RestrictionChecker.ActiveUitbouw.GetComponent<UitbouwRotation>();
 
-        //DisableUitbouwToggle.Instance.SetIsOnWithoutNotify(true);
         ServiceLocator.GetService<MetadataLoader>().EnableActiveuitbouw(true);
-        //RestrictionChecker.ActiveUitbouw.transform.parent.gameObject.SetActive(true);
-        //RestrictionChecker.ActiveUitbouw.EnableGizmo(true);
-        //if (!uitbouwMovement.AllowDrag)
-        //{
-        //    uitbouwMovement.SetAllowMovement(true);
-        //    uitbouwRotation.SetAllowRotation(true);
-        //}
     }
 
     public override void StateCompletedAction()

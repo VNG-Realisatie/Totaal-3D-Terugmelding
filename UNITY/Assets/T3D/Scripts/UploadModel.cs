@@ -32,6 +32,8 @@ namespace WebGLFileUploaderExample
         public Text debugText;
         public Slider slider;
 
+        public bool IsLoading { get; private set; } = false;
+
         void Start()
         {
             Debug.Log("WebGLFileUploadManager.getOS: " + WebGLFileUploadManager.getOS);
@@ -76,13 +78,11 @@ namespace WebGLFileUploaderExample
 
         private void OnDisable()
         {
-            Debug.Log("UploadModel OnEnable:false");
             WebGLFileUploadManager.Show(false, false);
         }
 
         private void OnEnable()
         {
-            Debug.Log("UploadModel OnEnable:true");
             WebGLFileUploadManager.Show(false, true);
             
             RecalculatePositionAndSize();
@@ -139,6 +139,8 @@ namespace WebGLFileUploaderExample
 
         IEnumerator UploadAndCheck(string url, string filePath)
         {
+            IsLoading = true;
+
             CoString result = new CoString();
             CoBool success = new CoBool();
 
@@ -189,8 +191,8 @@ namespace WebGLFileUploaderExample
                     ErrorService.GoToErrorPage(result);
                 }
             }
-            
 
+            IsLoading = false;
         }
 
 
