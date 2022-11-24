@@ -267,7 +267,7 @@ namespace T3D.Uitbouw
             }
             EnableActiveuitbouw(true);
 
-            Uitbouw.GetComponent<UitbouwMovement>().transform.position = spawnPosition;
+            Uitbouw.GetComponent<UitbouwMovement>().SetPosition(spawnPosition);
             //}
         }
 
@@ -288,7 +288,7 @@ namespace T3D.Uitbouw
                 return;
 
             Uitbouw.gameObject.SetActive(active);
-            Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState))); 
+            Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.EnableGizmo(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             //DisableUitbouwToggle.Instance.SetIsOnWithoutNotify(true);
