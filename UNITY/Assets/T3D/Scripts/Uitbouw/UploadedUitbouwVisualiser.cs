@@ -59,25 +59,26 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     private void OnUploadedModelVisualized()
     {
+        print("has loaded");
         var uitbouwMeshes = new List<Mesh>();
+
+        Mesh combinedActiveMesh = new Mesh();
         foreach (var obj in GetComponent<CityJSON>().CityObjects)
         {
+            obj.transform.SetParent(GetComponentInChildren<UploadedUitbouw>(true).transform);
             var visualizer = obj.GetComponent<CityObjectVisualizer>();
             var mesh = visualizer.ActiveMesh;
-            uitbouwMeshes.Add(mesh);
+            //uitbouwMeshes.Add(mesh);
+            var meshList = new List<Mesh>();
+            meshList.Add(combinedActiveMesh);
+            meshList.Add(mesh);
+            combinedActiveMesh = CityObjectVisualizer.CombineMeshes(meshList, obj.transform.localToWorldMatrix);
         }
 
         uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
 
-        var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
+        //var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
         uitbouw.SetCombinedMesh(combinedActiveMesh);
-
-        //center mesh
-        var offset = uitbouw.MeshFilter.mesh.bounds.center;
-        offset.y -= uitbouw.MeshFilter.mesh.bounds.extents.y;
-        offset += uitbouw.transform.forward * uitbouw.Depth / 2;
-        uitbouw.MeshFilter.transform.localPosition = -offset;
-
         uitbouw.InitializeUserMovementAxes();
 
         HasLoaded = true;
@@ -85,46 +86,46 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     public void ParseCityJson(bool useTestJson)
     {
-        if (useTestJson)
-            cityJson = testJSON.text;
+        //if (useTestJson)
+        //    cityJson = testJSON.text;
 
-        var meshFilter = uitbouw.MeshFilter;
-        var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
-        var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, meshFilter.transform.localToWorldMatrix, false, false);
-        var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
-        CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
+        //var meshFilter = uitbouw.MeshFilter;
+        //var cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
+        //var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, meshFilter.transform.localToWorldMatrix, false, false);
+        //var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
+        //CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
         //var combinedMesh = CombineMeshes(meshes.Values.ToList(), meshFilter.transform.localToWorldMatrix);
 
         //var cityObject = meshFilter.gameObject.AddComponent<CityJSONToCityObject>();
-        var highestLod = meshes.Keys.Max(k => k.Lod);
-        print("Enabling the highest lod: " + highestLod);
+        //var highestLod = meshes.Keys.Max(k => k.Lod);
+        //print("Enabling the highest lod: " + highestLod);
 
-        var parent = meshFilter.transform;
-        foreach (Transform child in parent)
-        {
-            Destroy(child.gameObject);
-        }
-        //todo:var cityObjects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices);
-        var cityObjects = new Netherlands3D.T3DPipeline.CityObject[0];
-        var uitbouwMeshes = new List<Mesh>();
-        foreach (var obj in cityObjects)
-        {
-            //todo: uitbouw.AddCityObject(obj.Value);
-            //todo: var mesh = obj.Value.SetMeshActive(highestLod);
-            //todo: uitbouwMeshes.Add(mesh);
-        }
+        //var parent = meshFilter.transform;
+        //foreach (Transform child in parent)
+        //{
+        //    Destroy(child.gameObject);
+        //}
+        //var cityObjects = CityJSONToCityObject.CreateCityObjects(parent, meshes, attributes, cityJsonModel.vertices);
+        //var cityObjects = new Netherlands3D.T3DPipeline.CityObject[0];
+        //var uitbouwMeshes = new List<Mesh>();
+        //foreach (var obj in cityObjects)
+        //{
+        //    uitbouw.AddCityObject(obj.Value);
+        //    var mesh = obj.Value.SetMeshActive(highestLod);
+        //    uitbouwMeshes.Add(mesh);
+        //}
         //var mainBuildingCityObjects = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
         //var mainBuilding = mainBuildingCityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
-        uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
+        //uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
 
-        var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
-        uitbouw.SetCombinedMesh(combinedActiveMesh); 
+        //var combinedActiveMesh = CityJsonVisualiser.CombineMeshes(uitbouwMeshes, transform.localToWorldMatrix);
+        //uitbouw.SetCombinedMesh(combinedActiveMesh); 
 
         //center mesh
-        var offset = uitbouw.MeshFilter.mesh.bounds.center;
-        offset.y -= uitbouw.MeshFilter.mesh.bounds.extents.y;
-        offset += uitbouw.transform.forward * uitbouw.Depth / 2;
-        uitbouw.MeshFilter.transform.localPosition = -offset;
+        //var offset = uitbouw.MeshFilter.mesh.bounds.center;
+        //offset.y -= uitbouw.MeshFilter.mesh.bounds.extents.y;
+        //offset += uitbouw.transform.forward * uitbouw.Depth / 2;
+        //uitbouw.MeshFilter.transform.localPosition = -offset;
 
         //re-initialize the usermovementaxes to ensure the new meshes are dragable
         //EnableUploadedModel(true);
@@ -133,10 +134,10 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         //var heightOffset = transform.up * ((uitbouw.Height / 2) - Vector3.Distance(uitbouw.CenterPoint, transform.position));
         //uitbouw.MeshFilter.transform.localPosition = depthOffset + heightOffset;
 
-        uitbouw.InitializeUserMovementAxes();
+        //uitbouw.InitializeUserMovementAxes();
 
         //uitbouw.gameObject.transform.parent.gameObject will be active in next state
 
-        HasLoaded = true;
+        //HasLoaded = true;
     }
 }

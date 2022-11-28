@@ -31,7 +31,7 @@ namespace T3D.Uitbouw
         public delegate void BuildingDataProcessedEventHandler(BuildingMeshGenerator building);
         public event BuildingDataProcessedEventHandler BuildingDataProcessed;
 
-        private CityJsonModel cityJsonModel;
+        //private CityJsonModel cityJsonModel;
         public CityObject MainCityObject { get; private set; }
 
         public int ActiveLod = 2;
@@ -93,7 +93,7 @@ namespace T3D.Uitbouw
             positionOffset /= activeMeshes.Count;
             var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
 
-            var activeMesh = CityJsonVisualiser.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
+            var activeMesh = CityObjectVisualizer.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
 
             if (activeMesh)
                 ProcessMesh(activeMesh, positionOffset);
@@ -121,8 +121,8 @@ namespace T3D.Uitbouw
 
         public void ResetBuilding()
         {
-            if (BuildingDataIsProcessed)
-                CityJsonVisualiser.RemoveExtensionNodes(cityJsonModel.cityjsonNode);
+            //if (BuildingDataIsProcessed)
+            //    CityJsonVisualiser.RemoveExtensionNodes(cityJsonModel.cityjsonNode);
 
             BuildingDataIsProcessed = false;
         }
