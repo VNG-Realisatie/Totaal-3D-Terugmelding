@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using Netherlands3D.Core;
 using System.Collections;
+using T3D;
 
 public class RotateCamera : MonoBehaviour, ICameraControls
 {
@@ -78,16 +79,35 @@ public class RotateCamera : MonoBehaviour, ICameraControls
     {
         //print("update: snap, waiting :" + RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed + "\t" + (RestrictionChecker.ActivePerceel != null));
         //print("update: no snap, waiting :" + RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed + "\t" + (RestrictionChecker.ActiveUitbouw != null));
-        ProcessUserInput();
+        dragging = ObjectClickHandler.GetDrag(out _);
+        ProcessDrag();
+        ProcessZoom();
         SmoothRotateToCameraTargetPoint();
     }
 
-    private void ProcessUserInput()
+    private void ProcessDrag()
     {
         if (dragging && Input.GetMouseButton(0))
         {
             var mouseDelta = Mouse.current.delta.ReadValue();
             RotateAround(mouseDelta.x, mouseDelta.y);
+        }
+    }
+    private void ProcessZoom()
+    {
+        scrollDelta = Input.mouseScrollDelta.y;
+
+        if (scrollDelta != 0)
+        {
+            //var lastY = myCam.transform.position.y;
+            var moveSpeed = Mathf.Sqrt(transform.position.y) * 1.3f;
+
+            var newpos = transform.position + transform.forward.normalized * (scrollDelta * moveSpeed * zoomSpeed);
+
+            if (newpos.y < minCameraHeight) return;
+            else if (CameraInRange(newpos) == false) return;
+
+            transform.position = newpos;
         }
     }
 
@@ -130,41 +150,41 @@ public class RotateCamera : MonoBehaviour, ICameraControls
         zoomScrollActionMouse = ServiceLocator.GetService<ActionHandler>().GetAction(ActionHandler.actions.GodViewMouse.Zoom);
 
         //Listeners
-        dragActionMouse.SubscribePerformed(Drag);
-        dragActionMouse.SubscribeCancelled(Drag);
+        //dragActionMouse.SubscribePerformed(Drag);
+        //dragActionMouse.SubscribeCancelled(Drag);
 
-        zoomScrollActionMouse.SubscribePerformed(Zoom);
+        //zoomScrollActionMouse.SubscribePerformed(Zoom);
     }
 
-    private void Drag(IAction action)
-    {
-        if (action.Cancelled)
-        {
-            dragging = false;
-        }
-        else if (action.Performed)
-        {
-            dragging = true;
-        }
-    }
+    //private void Drag(IAction action)
+    //{
+    //    if (action.Cancelled)
+    //    {
+    //        dragging = false;
+    //    }
+    //    else if (action.Performed)
+    //    {
+    //        dragging = true;
+    //    }
+    //}
 
-    private void Zoom(IAction action)
-    {
-        scrollDelta = ActionHandler.actions.GodViewMouse.Zoom.ReadValue<Vector2>().y;
+    //private void Zoom(IAction action)
+    //{
+    //    scrollDelta = ActionHandler.actions.GodViewMouse.Zoom.ReadValue<Vector2>().y;
 
-        if (scrollDelta != 0)
-        {
-            //var lastY = myCam.transform.position.y;
-            var moveSpeed = Mathf.Sqrt(transform.position.y) * 1.3f;
+    //    if (scrollDelta != 0)
+    //    {
+    //        //var lastY = myCam.transform.position.y;
+    //        var moveSpeed = Mathf.Sqrt(transform.position.y) * 1.3f;
 
-            var newpos = transform.position + transform.forward.normalized * (scrollDelta * moveSpeed * zoomSpeed);
+    //        var newpos = transform.position + transform.forward.normalized * (scrollDelta * moveSpeed * zoomSpeed);
 
-            if (newpos.y < minCameraHeight) return;
-            else if (CameraInRange(newpos) == false) return;
+    //        if (newpos.y < minCameraHeight) return;
+    //        else if (CameraInRange(newpos) == false) return;
 
-            transform.position = newpos;
-        }
-    }
+    //        transform.position = newpos;
+    //    }
+    //}
 
     void RotateAround(float xaxis, float yaxis)
     {
