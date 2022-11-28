@@ -120,12 +120,6 @@ public class SelectOptionState : State
             freePlaceToggle.isOn = true;
     }
 
-    ////called by button in inspector
-    //public void LoadModel()
-    //{
-    //    visualiser.VisualizeCityJson();
-    //}
-
     public void LoadModelAndGoToNextState()
     {
         //if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
@@ -150,13 +144,12 @@ public class SelectOptionState : State
         {
             Debug.Log("-------BimCityJsonReceived");
             ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
-            //EndState();
+            EndState();
         }
         else
         {
             ErrorService.GoToErrorPage(result);
         }
-
     }
 
     public override void StateEnteredAction()
