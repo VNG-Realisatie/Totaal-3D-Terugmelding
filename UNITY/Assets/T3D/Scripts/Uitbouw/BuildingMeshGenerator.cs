@@ -108,7 +108,6 @@ namespace T3D.Uitbouw
 
         private void ProcessMesh(Mesh mesh, Vector3 positionOffset)
         {
-            //var col = GetComponent<MeshCollider>();
             BuildingCenter = mesh.bounds.center + positionOffset;
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
@@ -121,9 +120,6 @@ namespace T3D.Uitbouw
 
         public void ResetBuilding()
         {
-            //if (BuildingDataIsProcessed)
-            //    CityJsonVisualiser.RemoveExtensionNodes(cityJsonModel.cityjsonNode);
-
             BuildingDataIsProcessed = false;
         }
 
