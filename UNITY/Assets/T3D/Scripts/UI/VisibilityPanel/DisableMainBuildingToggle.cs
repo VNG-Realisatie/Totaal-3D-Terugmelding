@@ -16,7 +16,7 @@ public class DisableMainBuildingToggle : UIToggle
 
     protected override void ToggleAction(bool active)
     {
-        var buildings = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityObject>();
+        var buildings = RestrictionChecker.ActiveBuilding.GetComponent<CityJSON>().CityObjects;
         var uitbouw = RestrictionChecker.ActiveUitbouw as UploadedUitbouw;//.GetComponent<CityObject>();
         if (active)
         {

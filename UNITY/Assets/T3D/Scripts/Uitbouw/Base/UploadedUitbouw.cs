@@ -76,17 +76,34 @@ namespace T3D.Uitbouw
 
         public void UnparentFromMainBuilding()
         {
-            foreach (var co in GetComponentsInChildren<CityObject>())
+            CityObject[] uitbouwCityObjects = GetComponentsInChildren<CityObject>();
+            //todo: now we take the first as the building, because there is currently no way to determine which of them is the Main building
+            var mainBuilding = uitbouwCityObjects[0];
+            mainBuilding.Type = CityObjectType.Building;
+            var mainBuildingId = RestrictionChecker.ActiveBuilding.MainCityObject.Id;
+            print("mainb:" + mainBuildingId);
+            mainBuilding.SetId(mainBuildingId);
+
+            var existingChildren = mainBuilding.CityChildren.Length;
+            for (int i = 1; i < uitbouwCityObjects.Length; i++) //skip the first
             {
-                co.SetParents(new CityObject[0]);
-                co.Type = CityObjectType.Building;
+                CityObject co = uitbouwCityObjects[i];
+                var newId = mainBuilding.Id + "-" + (existingChildren + i).ToString();
+                co.SetId(newId);
+                co.Type = CityObjectType.BuildingPart;
+                co.SetParents(new CityObject[] { mainBuilding });
             }
         }
 
         public void ReparentToMainBuilding(CityObject mainBuilding)
         {
-            foreach (var co in GetComponentsInChildren<CityObject>())
+            CityObject[] uitbouwCityObjects = GetComponentsInChildren<CityObject>();
+            var existingChildren = mainBuilding.CityChildren.Length;
+            for (int i = 0; i < uitbouwCityObjects.Length; i++)
             {
+                CityObject co = uitbouwCityObjects[i];
+                var newId = mainBuilding.Id + "-" + (existingChildren + i).ToString();
+                co.SetId(newId);
                 co.Type = CityObjectType.BuildingPart;
                 co.SetParents(new CityObject[] { mainBuilding });
             }

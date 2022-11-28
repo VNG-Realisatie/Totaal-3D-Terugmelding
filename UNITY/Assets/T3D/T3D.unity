@@ -46492,7 +46492,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MeshMaterial: {fileID: 2100000, guid: dbcc42433f2f7d443a9a36b38393891f, type: 2}
-  testJSON: {fileID: 4900000, guid: 618f06493510b48cf8bc30e43f883712, type: 3}
   onBimCityJsonReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
     type: 2}
   onUploadedModelVisualized: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
