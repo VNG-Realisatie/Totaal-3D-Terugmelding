@@ -87,8 +87,8 @@ namespace T3D.Uitbouw
         {
             foreach (var co in GetComponentsInChildren<CityObject>())
             {
-                co.SetParents(new CityObject[] { mainBuilding });
                 co.Type = CityObjectType.BuildingPart;
+                co.SetParents(new CityObject[] { mainBuilding });
             }
         }
     }
