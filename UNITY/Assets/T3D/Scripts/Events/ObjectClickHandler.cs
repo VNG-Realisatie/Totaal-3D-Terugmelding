@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Netherlands3D.Cameras;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -27,7 +28,22 @@ namespace T3D
         public static Collider ColliderOnStartDrag { get; private set; }
         public static bool OverUI
         {
-            get { return EventSystem.current.IsPointerOverGameObject(); }
+            get
+            {
+                PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+                eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+                List<RaycastResult> results = new List<RaycastResult>();
+                EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+                var uiElement = results.FirstOrDefault(result => result.gameObject.layer == LayerMask.NameToLayer("UI"));
+                if (uiElement.gameObject != null)
+                {
+                    return true;
+                }
+                return false;
+
+                //return results.Count > 0;
+                //return EventSystem.current.IsPointerOverGameObject(); //no longer works with Physics raycaster
+            }
         }
 
         private void Update()
@@ -63,11 +79,10 @@ namespace T3D
         public static bool GetClickOnObject(bool allowClickOnNothing, out RaycastHit hit, int layerMask = Physics.DefaultRaycastLayers, bool uiBlocks = true)
         {
             hit = new RaycastHit();
-
             //var containsUI = layerMask == (layerMask | (1 << LayerMask.NameToLayer("UI")));
             if (uiBlocks && OverUI) //compensate for UI not having physics colliders
             {
-                //print("over ui");
+                print("over ui");
                 return false;
             }
 

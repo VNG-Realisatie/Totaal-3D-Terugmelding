@@ -62,10 +62,13 @@ namespace T3D.Uitbouw.BoundaryFeatures
         private string displayName;
         public string DisplayName => displayName;
 
+        public Collider Collider { get; private set; }
+
         protected override void Awake()
         {
             base.Awake();
 
+            Collider = meshTransform.GetComponent<Collider>();
             distanceMeasurements = GetComponents<DistanceMeasurement>();
             editUI = ServiceLocator.GetService<CoordinateNumbers>().CreateEditUI(this);
         }
