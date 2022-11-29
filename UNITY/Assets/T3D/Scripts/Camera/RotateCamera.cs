@@ -79,7 +79,12 @@ public class RotateCamera : MonoBehaviour, ICameraControls
     {
         //print("update: snap, waiting :" + RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed + "\t" + (RestrictionChecker.ActivePerceel != null));
         //print("update: no snap, waiting :" + RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed + "\t" + (RestrictionChecker.ActiveUitbouw != null));
+
         dragging = ObjectClickHandler.GetDrag(out _);
+
+        if (ObjectClickHandler.ColliderOnStartDrag && ObjectClickHandler.ColliderOnStartDrag.GetComponent<DragableAxis>())
+            dragging = false;
+
         ProcessDrag();
         ProcessZoom();
         SmoothRotateToCameraTargetPoint();

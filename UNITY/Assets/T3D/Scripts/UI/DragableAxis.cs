@@ -1,6 +1,8 @@
 ﻿using Netherlands3D;
 using Netherlands3D.Cameras;
+using Netherlands3D.Core.Colors;
 using Netherlands3D.ObjectInteraction;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,10 +32,10 @@ namespace T3D.Uitbouw
         private const float heigtSpeedMultiplier = 0.5f;
         public bool IsDragging { get; private set; }
 
-        //[SerializeField]
-        //private ColorPalette interactionColors;
+        [SerializeField]
+        private ColorPalette interactionColors;
 
-        //private CameraMode cameraMode;
+        private CameraMode cameraMode;
 
         public static DragableAxis CreateDragableAxis(GameObject prefab, Vector3 position, Quaternion rotation, UitbouwBase linkedUitbouw)
         {
@@ -48,10 +50,10 @@ namespace T3D.Uitbouw
             uitbouw = linkedUitbouw;
         }
 
-        //protected virtual void Start()
-        //{
-        //    ServiceLocator.GetService<CameraModeChanger>().CameraModeChangedEvent += DragableAxis_CameraModeChangedEvent;
-        //}
+        protected virtual void Start()
+        {
+            ServiceLocator.GetService<CameraModeChanger>().CameraModeChangedEvent += DragableAxis_CameraModeChangedEvent;
+        }
 
         protected virtual void Update()
         {
@@ -64,35 +66,35 @@ namespace T3D.Uitbouw
             }
         }
 
-        //private void OnDestroy()
-        //{
-        //    ServiceLocator.GetService<CameraModeChanger>().CameraModeChangedEvent -= DragableAxis_CameraModeChangedEvent;
-        //}
+        private void OnDestroy()
+        {
+            ServiceLocator.GetService<CameraModeChanger>().CameraModeChangedEvent -= DragableAxis_CameraModeChangedEvent;
+        }
 
         private void ProcessInteractionState()
         {
             
 
-            //if (cameraMode != CameraMode.StreetView && IsHovered())
-            //{
-            //    if (Input.GetMouseButtonDown(0))
-            //    {
-            //        //start drag
-            //        TakeInteractionPriority();
-            //        IsDragging = true;
-            //        SetHighlight(InteractableState.Active);
-            //        RecalculateOffset();
-            //    }
-            //    else if (!Input.GetMouseButton(0))
-            //    {
-            //        SetHighlight(InteractableState.Hover);
-            //    }
-            //}
-            //else if (!Input.GetMouseButton(0))
-            //{
-            //    //not dragging and not hovering
-            //    SetHighlight(InteractableState.Default);
-            //}
+            if (cameraMode != CameraMode.StreetView && IsHovered())
+            {
+                if (Input.GetMouseButtonDown(0))
+                {
+                    //start drag
+                    TakeInteractionPriority();
+                    IsDragging = true;
+                    //SetHighlight(InteractableState.Active);
+                    RecalculateOffset();
+                }
+                else if (!Input.GetMouseButton(0))
+                {
+                    //SetHighlight(InteractableState.Hover);
+                }
+            }
+            else if (!Input.GetMouseButton(0))
+            {
+                //not dragging and not hovering
+                //SetHighlight(InteractableState.Default);
+            }
 
             if (Input.GetMouseButtonUp(0))
             {
@@ -111,10 +113,10 @@ namespace T3D.Uitbouw
             }
         }
 
-        //private void DragableAxis_CameraModeChangedEvent(object source, CameraMode newMode)
-        //{
-        //    cameraMode = newMode;
-        //}
+        private void DragableAxis_CameraModeChangedEvent(object source, CameraMode newMode)
+        {
+            cameraMode = newMode;
+        }
 
         public void RecalculateOffset()
         {
@@ -146,11 +148,26 @@ namespace T3D.Uitbouw
         //    if (!interactionColors)
         //        return;
 
-        //    var renderers = GetComponentsInChildren<MeshRenderer>();
-        //    foreach (var renderer in renderers)
-        //    {
-        //        renderer.material.color = interactionColors[status.ToString()];
-        //    }
+            //switch (status)
+            //{
+            //    case InteractableState.Default:
+            //        ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.AUTO);
+            //        break;
+            //    case InteractableState.Hover:
+            //        ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.GRAB);
+            //        print("grab");
+            //        break;
+            //    case InteractableState.Active:
+            //        print("grabing");
+            //        ChangePointerStyleHandler.ChangeCursor(ChangePointerStyleHandler.Style.GRABBING);
+            //        break;
+            //}
+
+            //var renderers = GetComponentsInChildren<MeshRenderer>();
+            //foreach (var renderer in renderers)
+            //{
+            //    renderer.material.color = interactionColors[status.ToString()];
+            //}
         //}
 
         public Vector3 GetPointerPositionInWorld(Vector3 optionalPositionOverride = default)

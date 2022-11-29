@@ -24,7 +24,7 @@ namespace T3D
         //private static bool clickStarted;
 
         private static bool dragStarted = false;
-        public static Collider DraggingCollider { get; private set; }
+        public static Collider ColliderOnStartDrag { get; private set; }
         public static bool OverUI
         {
             get { return EventSystem.current.IsPointerOverGameObject(); }
@@ -32,6 +32,8 @@ namespace T3D
 
         private void Update()
         {
+            GetDragOnObject(null, true); //sets ColliderOnStartDrag
+
             Ray ray = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.ScreenPointToRay(Input.mousePosition);
             if (Input.GetMouseButtonDown(0))
             {
@@ -49,7 +51,7 @@ namespace T3D
             if (Input.GetMouseButtonUp(0))
             {
                 dragStarted = false;
-                DraggingCollider = null;
+                ColliderOnStartDrag = null;
             }
         }
 
@@ -145,14 +147,14 @@ namespace T3D
         {
             var drag = GetDrag(out var draggedcol);
 
-            if (DraggingCollider == null)
+            if (ColliderOnStartDrag == null)
             {
-                DraggingCollider = draggedcol;
+                ColliderOnStartDrag = draggedcol;
             }
 
             if (allowDragOverOtherCollidersWhenStarted)
             {
-                return drag && DraggingCollider == col;
+                return drag && ColliderOnStartDrag == col;
             }
 
             return drag && col == draggedcol;

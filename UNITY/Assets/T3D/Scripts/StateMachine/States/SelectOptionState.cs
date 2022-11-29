@@ -86,7 +86,7 @@ public class SelectOptionState : State
         var savedState = stateSaver.GetState(stateSaver.ActiveStateIndex);
         if (ActiveState != savedState)
         {
-            print("continue to next state");
+            //print("continue to next state");
             //if (uploadedModelToggle.isOn)
             //    LoadModel();
             //StartCoroutine(LoadModelAndGoToNextState());
@@ -142,7 +142,7 @@ public class SelectOptionState : State
         //The CityJson has been downloaded, now lets visualize it
         if (success)
         {
-            Debug.Log("-------BimCityJsonReceived");
+            //Debug.Log("-------BimCityJsonReceived");
             ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
             EndState();
         }
