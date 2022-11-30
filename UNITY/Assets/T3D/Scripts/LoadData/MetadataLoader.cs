@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
-using Netherlands3D;
+using System.Globalization;
+using Netherlands3D.Core;
+using Netherlands3D.Events;
 using Netherlands3D.Interface;
+using Netherlands3D.Utilities;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
-using Netherlands3D.Utilities;
-using System.Globalization;
-using System.IO;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class ObjectDataEventArgs : EventArgs
     {
@@ -36,7 +33,7 @@ namespace Netherlands3D.T3D.Uitbouw
             Perceel = perceel;
             Area = area;
 
-            var centerAndRadius = Utilities.GeometryCalculator.GetCenterAndRadius(perceel);
+            var centerAndRadius = GeometryCalculator.GetCenterAndRadius(perceel);
             Center = new Vector2RD(centerAndRadius.Center.x, centerAndRadius.Center.y);
             Radius = centerAndRadius.Radius;
         }
@@ -57,7 +54,7 @@ namespace Netherlands3D.T3D.Uitbouw
             Outline = outline;
             TotalArea = totalArea;
 
-            var centerAndRadius = Utilities.GeometryCalculator.GetCenterAndRadius(outline);
+            var centerAndRadius = GeometryCalculator.GetCenterAndRadius(outline);
             Center = new Vector2RD(centerAndRadius.Center.x, centerAndRadius.Center.y);
             Radius = centerAndRadius.Radius;
 
@@ -82,11 +79,6 @@ namespace Netherlands3D.T3D.Uitbouw
         public delegate void BuildingOutlineLoadedEventHandler(object source, BuildingOutlineEventArgs args);
         public event BuildingOutlineLoadedEventHandler BuildingOutlineLoaded;
 
-
-
-        public delegate void CityJsonBagEventHandler(string cityJson);
-        public event CityJsonBagEventHandler CityJsonBagReceived;
-
         public delegate void CityJsonBagBoundingBoxEventHandler(string cityJson, string excludeBagId);
         public event CityJsonBagBoundingBoxEventHandler CityJsonBagBoundingBoxReceived;
 
@@ -110,16 +102,10 @@ namespace Netherlands3D.T3D.Uitbouw
             Perceel = perceel;
         }
 
-        public void RequestBuildingData(Vector3RD position, string id)
+        public void RequestPerceelAndBuildingOutlineData(Vector3RD position, string bagId)
         {
-            if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile && (!string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.ModelId) || !string.IsNullOrEmpty(ServiceLocator.GetService<T3DInit>().HTMLData.BlobId)))
-            {
-                //StartCoroutine(GetBimCityJson());
-            }
-
             StartCoroutine(GetPerceelData(position));
-
-            StartCoroutine(RequestBuildingOutlineData(id));
+            StartCoroutine(RequestBuildingOutlineData(bagId));
         }
 
         IEnumerator RequestBuildingOutlineData(string bagId)
@@ -162,6 +148,9 @@ namespace Netherlands3D.T3D.Uitbouw
 
         IEnumerator GetPerceelData(Vector3RD position)
         {
+            print(SessionSaver.HasLoaded);
+            yield return new WaitUntil(() => SessionSaver.HasLoaded);// wait until position has loaded
+
             var bbox = $"{ position.x - 0.5},{ position.y - 0.5},{ position.x + 0.5},{ position.y + 0.5}";
             var url = $"https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=kadastralekaartv4:perceel&STARTINDEX=0&COUNT=1&SRSNAME=urn:ogc:def:crs:EPSG::28992&BBOX={bbox},urn:ogc:def:crs:EPSG::28992&outputFormat=json";
 
@@ -178,57 +167,36 @@ namespace Netherlands3D.T3D.Uitbouw
             }
         }
 
-        public IEnumerator GetCityJsonBag(string id)
-        {
-            var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{id}&OUTPUTFORMAT=application%2Fjson";
-            var uwr = UnityWebRequest.Get(url);
+        //public IEnumerator GetCityJsonBag(string id)
+        //{
+        //    var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{id}&OUTPUTFORMAT=application%2Fjson";
+        //    var uwr = UnityWebRequest.Get(url);
 
-            using (uwr)
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError(uwr.error);
-                }
-                else
-                {
-                    CityJsonBag = uwr.downloadHandler.text;
-                    CityJsonBagReceived?.Invoke(CityJsonBag);
-                }
+        //    using (uwr)
+        //    {
+        //        yield return uwr.SendWebRequest();
+        //        if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
+        //        {
+        //            Debug.LogError(uwr.error);
+        //        }
+        //        else
+        //        {
+        //            CityJsonBag = uwr.downloadHandler.text;
+        //            cityJsonBagReceived.started.Invoke(CityJsonBag);
+        //        }
 
-            }
-        }
+        //    }
+        //}
 
-        public void LoadTestBuilding(string json)
-        {
-            Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
-            CityJsonBagReceived?.Invoke(json);
-        }
-
-        public IEnumerator GetCityJsonBagBoundingBox(double x, double y, string excludeBagId)
-        {
-            string bbox = $"{x - 25},{y - 25},{x + 25},{y + 25}";
-
-            var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&BBOX={bbox}&OUTPUTFORMAT=application%2Fjson";
-            var uwr = UnityWebRequest.Get(url);
-
-            using (uwr)
-            {
-                yield return uwr.SendWebRequest();
-                if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    Debug.LogError("WebRequest failed: Could not load buildings in bounding box");
-                }
-                else
-                {
-                    CityJsonBagBoundingBoxReceived?.Invoke(uwr.downloadHandler.text, excludeBagId);
-                }
-
-            }
-        }
+        //public void LoadTestBuilding(string json)
+        //{
+        //    Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
+        //    cityJsonBagReceived.started.Invoke(json);
+        //}
 
         void ProcessPerceelData(JSONNode jsonData)
         {
+            print(jsonData.ToString());
             JSONNode feature1 = jsonData["features"][0];
             //var perceelGrootte = $"Perceeloppervlakte: {feature1["properties"]["kadastraleGrootteWaarde"]}";
 
@@ -297,11 +265,10 @@ namespace Netherlands3D.T3D.Uitbouw
                 //shapableUitbouw.transform.rotation = Quaternion.identity;
                 Uitbouw = shapableUitbouw.GetComponentInChildren<UitbouwBase>(true);
             }
-
             EnableActiveuitbouw(true);
+
             Uitbouw.GetComponent<UitbouwMovement>().SetPosition(spawnPosition);
             //}
-
         }
 
         //public void EnableUploadedUitbouw(bool active)
@@ -320,8 +287,8 @@ namespace Netherlands3D.T3D.Uitbouw
             if (!Uitbouw)
                 return;
 
-            Uitbouw.transform.parent.gameObject.SetActive(active);
-            Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState))); 
+            Uitbouw.gameObject.SetActive(active);
+            Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.EnableGizmo(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             //DisableUitbouwToggle.Instance.SetIsOnWithoutNotify(true);

@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using ConvertCoordinates;
-using T3D.LoadData;
-using T3D.Uitbouw;
+using Netherlands3D.Core;
+using Netherlands3D.Cameras;
+using Netherlands3D.T3DPipeline;
+using Netherlands3D.Events;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class BuildingMeshGenerator : MonoBehaviour
     {
@@ -29,11 +30,12 @@ namespace Netherlands3D.T3D.Uitbouw
         public delegate void BuildingDataProcessedEventHandler(BuildingMeshGenerator building);
         public event BuildingDataProcessedEventHandler BuildingDataProcessed;
 
-        private CityJsonModel cityJsonModel;
+        //private CityJsonModel cityJsonModel;
         public CityObject MainCityObject { get; private set; }
-        private Dictionary<string, CityJSONToCityObject> activeCityObjects = new Dictionary<string, CityJSONToCityObject>();
 
         public int ActiveLod = 2;
+        [SerializeField]
+        private DoubleArrayEvent positionReceived;
 
         private void Awake()
         {
@@ -42,65 +44,70 @@ namespace Netherlands3D.T3D.Uitbouw
 
         protected void Start()//in start to avoid race conditions
         {
-            //base.Start();
-            //ServiceLocator.GetService<MetadataLoader>().BuildingMetaDataLoaded += Instance_BuildingMetaDataLoaded;
             ServiceLocator.GetService<MetadataLoader>().BuildingOutlineLoaded += Instance_BuildingOutlineLoaded;
-            //ServiceLocator.GetService<MetadataLoader>().CityJsonBagLoaded += OnCityJsonBagLoaded;
-            ServiceLocator.GetService<MetadataLoader>().CityJsonBagReceived += BuildingMeshGenerator_CityJsonBagReceived;
-
             SessionSaver.Loader.LoadingCompleted += Loader_LoadingCompleted;
+            positionReceived.started.AddListener(ProcessPosition);
         }
 
-        private void BuildingMeshGenerator_CityJsonBagReceived(string cityJson)
+        //called by event in the inspector
+        public void ProcessPosition(double[] position)
         {
-            //HandleTextFile.WriteString("sourceBuilding.json", cityJson);
-
-            StartCoroutine(ParseBuildingCityJson(cityJson));
+            var pos = ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition;
+            var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
+            GotoPosition(pos);
+            ServiceLocator.GetService<MetadataLoader>().RequestPerceelAndBuildingOutlineData(pos, bagId);
         }
 
-        private IEnumerator ParseBuildingCityJson(string cityJson)
+        //called by event in the inspector
+        public void ProcessBuilding()
         {
-            yield return new WaitUntil(() => RestrictionChecker.ActivePerceel.IsLoaded); //needed because perceelRadius is needed
-
-            cityJsonModel = new CityJsonModel(cityJson, new Vector3RD(), true);
-            var meshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            parsedMeshes = CityJsonVisualiser.ParseCityJson(cityJsonModel, transform.localToWorldMatrix, true, true);
-            verts = cityJsonModel.vertices;
-            var attributes = CityJsonVisualiser.GetAttributes(cityJsonModel.cityjsonNode["CityObjects"]);
-            CityJsonVisualiser.AddExtensionNodes(cityJsonModel.cityjsonNode);
-            //var combinedMesh = CityJsonVisualiser.CombineMeshes(meshes.Values.ToList(), transform.localToWorldMatrix);
-
-            foreach (var oldCityObject in activeCityObjects.Values)
+            var cityObjects = GetComponent<CityJSON>().CityObjects;
+            MainCityObject = cityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
+            foreach (var co in cityObjects)
             {
-                Destroy(oldCityObject.gameObject);
-            }
-            activeCityObjects = CityJSONToCityObject.CreateCityObjects(transform, meshes, attributes, cityJsonModel.vertices, true, true);
-            MainCityObject = activeCityObjects.FirstOrDefault(pair => pair.Value.Type == CityObjectType.Building).Value;
-            //var cityObject = GetComponent<CityJSONToCityObject>();
-            //cityObject.CreateCityObjects(meshes, attributes, cityJsonModel.vertices);
-
-            var buildingMeshes = new List<Mesh>();
-            foreach (var obj in activeCityObjects)
-            {
-                var mesh = obj.Value.SetMeshActive(ActiveLod);
-                //if (mesh != null)
-                buildingMeshes.Add(mesh);
+                co.gameObject.layer = LayerMask.NameToLayer("ActiveSelection");
             }
 
-            var activeMesh = CityJsonVisualiser.CombineMeshes(buildingMeshes, transform.localToWorldMatrix);
-            //GetComponent<MeshFilter>().mesh = activeMesh;
-            //var activeMesh = cityObject.SetMeshActive(2); //todo: not hardcode the active lod
+            ProcessActiveMesh();
+        }
+
+        private void ProcessActiveMesh()
+        {
+            //get all active lods.
+            List<Mesh> activeMeshes = new List<Mesh>();
+            Vector3 positionOffset = Vector3.zero;
+            foreach (var co in GetComponent<CityJSON>().CityObjects)
+            {
+                var visualizer = co.GetComponent<CityObjectVisualizer>();
+                var hasActiveMesh = visualizer.SetLODActive(ActiveLod);
+
+                if (hasActiveMesh)
+                {
+                    var mesh = visualizer.GetComponent<MeshFilter>().mesh;
+                    activeMeshes.Add(mesh);
+                    positionOffset += co.transform.position;
+                }
+            }
+
+            positionOffset /= activeMeshes.Count;
+            var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
+
+            var activeMesh = CityObjectVisualizer.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
 
             if (activeMesh)
-                ProcessMesh(activeMesh);
-
-            test = true;
+                ProcessMesh(activeMesh, positionOffset);
         }
 
-        private void ProcessMesh(Mesh mesh)
+        void GotoPosition(Vector3RD position)
         {
-            //var col = GetComponent<MeshCollider>();
-            BuildingCenter = mesh.bounds.center;
+            Vector3 cameraOffsetForTargetLocation = new Vector3(0, 38, 0);
+            ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.position = CoordConvert.RDtoUnity(position) + cameraOffsetForTargetLocation;
+            ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
+        }
+
+        private void ProcessMesh(Mesh mesh, Vector3 positionOffset)
+        {
+            BuildingCenter = mesh.bounds.center + positionOffset;
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
@@ -112,9 +119,6 @@ namespace Netherlands3D.T3D.Uitbouw
 
         public void ResetBuilding()
         {
-            if (BuildingDataIsProcessed)
-                CityJsonVisualiser.RemoveExtensionNodes(cityJsonModel.cityjsonNode);
-
             BuildingDataIsProcessed = false;
         }
 
@@ -165,56 +169,6 @@ namespace Netherlands3D.T3D.Uitbouw
                     select new Vector3(v3.x, GroundLevel, v3.z);
 
             AbsoluteBuildingCorners = q.ToArray();
-        }
-
-        /// <summary>
-        /// delete everything below this when bugfixing is complete
-        /// </summary>
-        bool test = false;
-        Dictionary<CityObjectIdentifier, Mesh> parsedMeshes = new Dictionary<CityObjectIdentifier, Mesh>();
-        List<Vector3Double> verts;
-        List<Vector3> unityVerts => GetVerts(verts, true);
-        private void OnDrawGizmos()
-        {
-            if (test)
-            {
-                Gizmos.color = Color.blue;
-                var pair = parsedMeshes.FirstOrDefault(x => x.Key.Lod == ActiveLod);
-                var mesh = pair.Value;
-
-                for (int i = 0; i < mesh.triangles.Length; i += 3)
-                {
-                    //mesh = GetComponent<MeshFilter>().mesh;
-
-                    //print(pair.Key.Node.ToString());
-
-                    var index1 = mesh.triangles[i];
-                    var index2 = mesh.triangles[i + 1];
-                    var index3 = mesh.triangles[i + 2];
-                    Gizmos.DrawLine(mesh.vertices[index1], mesh.vertices[index2]);
-                    Gizmos.DrawLine(mesh.vertices[index2], mesh.vertices[index3]);
-                    Gizmos.DrawLine(mesh.vertices[index3], mesh.vertices[index1]);
-
-                }
-                Gizmos.color = Color.red;
-                foreach (var v in unityVerts)
-                {
-                    //var unity_vert = new Vector3((float)v.x, (float)v.y, (float)v.z);
-                    Gizmos.DrawSphere(v, .2f);
-                }
-            }
-        }
-
-        private List<Vector3> GetVerts(List<Vector3Double> vertices, bool flipYZ)
-        {
-            if (flipYZ)
-            {
-                return vertices.Select(o => new Vector3((float)o.x, (float)o.z, (float)o.y)).ToList();
-            }
-            else
-            {
-                return vertices.Select(o => new Vector3((float)o.x, (float)o.y, (float)o.z)).ToList();
-            }
         }
     }
 }

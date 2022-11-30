@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
-using Netherlands3D.T3D.Uitbouw;
+using Netherlands3D.Cameras;
+using Netherlands3D.Core;
+using Netherlands3D.Events;
+using T3D.Uitbouw;
 using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -25,6 +27,11 @@ public class AddressSearchState : State
 
     [SerializeField]
     private Button nextButton;
+
+    [SerializeField]
+    private StringEvent bagIDReceived;
+    [SerializeField]
+    private DoubleArrayEvent buildingPositionReceived;
 
     protected override void Awake()
     {
@@ -86,6 +93,7 @@ public class AddressSearchState : State
             var addressNode = node["_embedded"]["adressen"][0];
             var bagId = addressNode["pandIdentificaties"][0];
             ServiceLocator.GetService<T3DInit>().HTMLData.BagId = bagId;
+            bagIDReceived.started.Invoke(bagId);
 
             selectedAddressPanel.gameObject.SetActive(true);
             selectedAddressPanel.SetText(addressNode);
@@ -203,9 +211,14 @@ public class AddressSearchState : State
                 var bagCoordinates = node["verblijfsobject"]["geometrie"]["punt"]["coordinates"];
                 var pos = new Vector3RD(bagCoordinates[0], bagCoordinates[1], bagCoordinates[2]);
                 ServiceLocator.GetService<T3DInit>().HTMLData.RDPosition = pos;
+
+                var doubleArray = new double[] { pos.x, pos.y, pos.z };
+                buildingPositionReceived.Invoke(doubleArray);
+
                 StartCoroutine(GetMonumentStatus(pos));
                 StartCoroutine(GetProtectedStatus(pos));
-                ServiceLocator.GetService<T3DInit>().LoadBuilding();
+                //StartCoroutine(.GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
+                //ServiceLocator.GetService<T3DInit>().LoadBuilding();
             }
             else
             {

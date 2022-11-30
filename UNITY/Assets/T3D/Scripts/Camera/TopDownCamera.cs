@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
+using Netherlands3D.Core;
 using Netherlands3D.Cameras;
 using Netherlands3D.InputHandler;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,17 +14,34 @@ public class TopDownCamera : MonoBehaviour, ICameraControls
     private float cameraHeight = 10000f;
     public CameraMode Mode => CameraMode.TopDown;
 
+    bool subscribedToPerceelEvent = false;
+
     private void Awake()
     {
         myCam = GetComponent<Camera>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        if (RestrictionChecker.ActivePerceel.IsLoaded)
-            SetCameraStartPosition(RestrictionChecker.ActivePerceel.Center, RestrictionChecker.ActivePerceel.Radius);
+        if (RestrictionChecker.ActivePerceel.IsLoaded && RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed)
+        {
+            var localCenter = CoordConvert.RDtoUnity(RestrictionChecker.ActivePerceel.RDCenter);
+            SetCameraStartPosition(localCenter, RestrictionChecker.ActivePerceel.Radius);
+        }
         else
+        {
             ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += OnPerceelDataLoaded;
+            subscribedToPerceelEvent = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (subscribedToPerceelEvent)
+        {
+            ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded -= OnPerceelDataLoaded;
+            subscribedToPerceelEvent = false;
+        }
     }
 
     public void SetCameraStartPosition(Vector3 perceelCenter, float perceelRadius)
@@ -37,6 +54,13 @@ public class TopDownCamera : MonoBehaviour, ICameraControls
 
     private void OnPerceelDataLoaded(object source, PerceelDataEventArgs args)
     {
+        StartCoroutine(SetCameraStartPositionWhenBuildingLoaded(args)); //todo: refactor this. We need to wait until the perceel center is loaded (to know where to position the camera) and also until the Main Building Data is processed, because this sets the relative RD Center
+    }
+
+    private IEnumerator SetCameraStartPositionWhenBuildingLoaded(PerceelDataEventArgs args)
+    {
+        yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed);
+
         var perceelCenter = CoordConvert.RDtoUnity(args.Center);
         SetCameraStartPosition(perceelCenter, args.Radius);
     }

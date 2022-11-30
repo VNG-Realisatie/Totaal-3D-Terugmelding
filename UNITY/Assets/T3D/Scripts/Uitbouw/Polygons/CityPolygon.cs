@@ -5,7 +5,7 @@ using SimpleJSON;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class CityPolygon
     {

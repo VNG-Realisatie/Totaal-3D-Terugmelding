@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw;
+using Netherlands3D.T3DPipeline;
 using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DisableMainBuildingToggle : UIToggle
 {
-    private Dictionary<CityJSONToCityObject, int> activeLods = new Dictionary<CityJSONToCityObject, int>();
+    private Dictionary<CityObject, int> activeLods = new Dictionary<CityObject, int>();
 
     private void Start()
     {
@@ -16,14 +16,14 @@ public class DisableMainBuildingToggle : UIToggle
 
     protected override void ToggleAction(bool active)
     {
-        var buildings = RestrictionChecker.ActiveBuilding.GetComponentsInChildren<CityJSONToCityObject>();
+        var buildings = RestrictionChecker.ActiveBuilding.GetComponent<CityJSON>().CityObjects;
         var uitbouw = RestrictionChecker.ActiveUitbouw as UploadedUitbouw;//.GetComponent<CityObject>();
         if (active)
         {
             foreach (var co in buildings)
             {
-                co.SetMeshActive(activeLods[co]);
-                CityJSONFormatter.AddCityObejct(co);
+                co.GetComponent<CityObjectVisualizer>().SetLODActive(activeLods[co]);
+                CityJSONFormatter.AddCityObject(co);
                 uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
             }
             var snapToWall = ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall;
@@ -33,13 +33,13 @@ public class DisableMainBuildingToggle : UIToggle
         else
         {
             //save data to set back when toggle is turned on again
-            activeLods = new Dictionary<CityJSONToCityObject, int>();
+            activeLods = new Dictionary<CityObject, int>();
             //uitbouwType = uitbouw.Type;
 
             foreach (var co in buildings)
             {
-                activeLods.Add(co, co.ActiveLod);
-                co.SetMeshActive(-1);
+                activeLods.Add(co, co.GetComponent<CityObjectVisualizer>().ActiveLod);
+                co.GetComponent<CityObjectVisualizer>().SetLODActive(-1);
                 CityJSONFormatter.RemoveCityObject(co);
             }
             RestrictionChecker.ActiveBuilding.SelectedWall.gameObject.SetActive(false);

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Netherlands3D.Cameras;
 using Netherlands3D.Interface;
-using Netherlands3D.T3D;
-using Netherlands3D.T3D.Uitbouw;
+using T3D;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.UI;
 

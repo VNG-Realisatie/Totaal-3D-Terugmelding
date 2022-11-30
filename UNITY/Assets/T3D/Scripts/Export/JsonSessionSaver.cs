@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Netherlands3D;
 using Netherlands3D.Interface;
+using Netherlands3D.T3DPipeline;
 using SimpleJSON;
 using UnityEditor;
 using UnityEngine;
@@ -54,7 +55,7 @@ public class JsonSessionSaver : MonoBehaviour, IUniqueService//, IDataSaver
 
     public void UploadCityJSONFileToEndpoint()
     {
-        string saveData = CityJSONFormatter.GetJSON();
+        string saveData = CityJSONFormatter.GetCityJSON();
         print(saveData);
         StartCoroutine(GetVersionAndUpload(saveData));        
     }

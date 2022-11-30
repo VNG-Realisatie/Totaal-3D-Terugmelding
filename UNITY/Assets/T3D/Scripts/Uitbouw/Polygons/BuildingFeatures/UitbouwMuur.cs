@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using T3D.Uitbouw.BoundaryFeatures;
 using UnityEngine;
-namespace Netherlands3D.T3D.Uitbouw
+
+namespace T3D.Uitbouw
 {
     public class UitbouwMuurSaveData : SaveDataContainer
     {
@@ -69,6 +71,7 @@ namespace Netherlands3D.T3D.Uitbouw
         //private Vector2 textureScale = new Vector2(0.3f, 0.3f);
         private UitbouwMuurSaveData saveData;
         public Vector2 TextureScale => saveData.TextureScale;
+        private ShapableUitbouwCityObject cityObject;
 
         protected override void Awake()
         {
@@ -86,6 +89,8 @@ namespace Netherlands3D.T3D.Uitbouw
             normalMaterial = meshRenderer.material;
 
             saveData = new UitbouwMuurSaveData(Side.ToString());
+
+            cityObject = GetComponentInParent<ShapableUitbouwCityObject>();
         }
 
         private void OnEnable()
@@ -105,6 +110,12 @@ namespace Netherlands3D.T3D.Uitbouw
         private void OnDisable()
         {
             MaterialLibrary.MaterialLibraryLoaded -= MaterialLibrary_MaterialLibraryLoaded;
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            cityObject.AddSurface(Surface);
         }
 
         public void RecalculateSides(Vector3 newPosition)
@@ -173,6 +184,18 @@ namespace Netherlands3D.T3D.Uitbouw
             saveData.MaterialIndex = MaterialLibrary.GetMaterialIndex(newMaterial);
             saveData.TextureScale = scale;
             RecalculateMaterialTiling();
+        }
+
+        public void AddBoundaryFeature(BoundaryFeature boundaryFeature)
+        {
+            Surface.TryAddHole(boundaryFeature.Surface.SolidSurfacePolygon); //add the hole to the new walli
+            cityObject.AddSurface(boundaryFeature.Surface);
+        }
+
+        public void RemoveBoundaryFeature(BoundaryFeature boundaryFeature)
+        {
+            Surface.TryRemoveHole(boundaryFeature.Surface.SolidSurfacePolygon);
+            cityObject.RemoveSurface(boundaryFeature.Surface);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Netherlands3D.Cameras;
-using Netherlands3D.T3D.Uitbouw;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using T3D.Uitbouw;
+using T3D.Uitbouw.BoundaryFeatures;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using UnityEngine.UI;
 /// - Do raycast to Uitbouw, when hit, place the component is real size on the selected Uitbouw wall
 /// </summary>
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class HandleDragContainer : MonoBehaviour
     {

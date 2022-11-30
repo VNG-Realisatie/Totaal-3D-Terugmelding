@@ -1,21 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using Netherlands3D.T3DPipeline;
 using T3D.Uitbouw;
+using T3D.Uitbouw.BoundaryFeatures;
 using UnityEngine;
 
 [RequireComponent(typeof(BoundaryFeature))]
 public class BoundaryFeatureCityObject : CityObject
 {
-    public override CitySurface[] GetSurfaces()
-    {
-        var bf = GetComponent<BoundaryFeature>();
+    //todo
+    //public override CitySurface[] GetSurfaces()
+    //{
+    //    var bf = GetComponent<BoundaryFeature>();
 
-        SetParents(new CityObject[] {
-            RestrictionChecker.ActiveUitbouw.GetComponent<CityObject>()
-            });
+    //    SetParents(new CityObject[] {
+    //        RestrictionChecker.ActiveUitbouw.GetComponent<CityObject>()
+    //        });
 
-        return new CitySurface[] { bf.Surface };
-    }
+    //    return new CitySurface[] { bf.Surface };
+    //}
 }

@@ -1,14 +1,6 @@
-﻿using ConvertCoordinates;
+﻿using System.Collections.Generic;
 using Netherlands3D.InputHandler;
-using Netherlands3D.Interface;
-using Netherlands3D.T3D.Uitbouw;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 

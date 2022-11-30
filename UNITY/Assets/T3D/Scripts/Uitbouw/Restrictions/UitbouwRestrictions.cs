@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using ConvertCoordinates;
-using Netherlands3D.T3D.Uitbouw;
+using Netherlands3D.Core;
+using T3D.Uitbouw;
 using Netherlands3D.Utilities;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public interface UitbouwRestriction
     {

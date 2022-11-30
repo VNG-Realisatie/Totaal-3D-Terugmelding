@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using T3D.Uitbouw.BoundaryFeatures;
 using UnityEngine;
 using UnityEngine.UI;
 

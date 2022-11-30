@@ -1,38 +1,71 @@
 using System.Collections;
 using System.Collections.Generic;
-using Netherlands3D.T3D.Uitbouw.BoundaryFeatures;
+using T3D.Uitbouw.BoundaryFeatures;
 using T3D.Uitbouw;
 using UnityEngine;
-namespace Netherlands3D.T3D.Uitbouw
+using Netherlands3D.T3DPipeline;
+using System;
+using UnityEngine.Assertions;
+using System.Linq;
+using Netherlands3D.Core;
+
+namespace T3D.Uitbouw
 {
     [RequireComponent(typeof(UitbouwBase))]
     public class ShapableUitbouwCityObject : CityObject
     {
-        protected override void Start()
+        CityMultiOrCompositeSurface multiSurface => Geometries[0].BoundaryObject as CityMultiOrCompositeSurface;
+
+        protected void Awake()
         {
-            base.Start();
             var building = GetComponent<UitbouwBase>().ActiveBuilding;
-            SetParents(new CityObject[] {
-                building.MainCityObject
-            });
+            Initialize(building.MainCityObject);
         }
 
-        public override CitySurface[] GetSurfaces()
+
+        public void Initialize(CityObject parent)
         {
-            List<CitySurface> citySurfaces = new List<CitySurface>();
-            var walls = GetComponentsInChildren<UitbouwMuur>();
-            foreach (var wall in walls)
-            {
-                citySurfaces.Add(wall.Surface);
-            }
+            Id = parent.Id + "-" + parent.CityChildren.Length;
+            Type = CityObjectType.BuildingPart;
+            CoordinateSystem = parent.CoordinateSystem;
+            Geometries = new List<CityGeometry>();
 
-            var boundaryFeatures = GetComponentsInChildren<BoundaryFeature>();
-            foreach (var bf in boundaryFeatures)
-            {
-                citySurfaces.Add(bf.Surface);
-            }
+            var geometry = new CityGeometry(GeometryType.MultiSurface, 3, true, false, false);
+            Assert.IsTrue(CityGeometry.IsValidType(Type, geometry.Type));
+            Geometries.Add(geometry);
 
-            return citySurfaces.ToArray();
+            multiSurface.Surfaces = new List<Netherlands3D.T3DPipeline.CitySurface>(); //remove default surface
+
+            SetParents(new CityObject[] { parent });
+        }
+
+        private void RecalculateExtents()
+        {
+            var verts = GetUncombinedGeometryVertices();
+            if (verts.Count > 0)
+            {
+                var minX = verts.Min(v => v.x);
+                var minY = verts.Min(v => v.y);
+                var minZ = verts.Min(v => v.z);
+                var maxX = verts.Max(v => v.x);
+                var maxY = verts.Max(v => v.y);
+                var maxZ = verts.Max(v => v.z);
+
+                MinExtent = new Vector3Double(minX, minY, minZ);
+                MaxExtent = new Vector3Double(maxX, maxY, maxZ);
+            }
+        }
+
+        public void AddSurface(Netherlands3D.T3DPipeline.CitySurface surface)
+        {
+            multiSurface.Surfaces.Add(surface);
+            RecalculateExtents();
+        }
+
+        public void RemoveSurface(Netherlands3D.T3DPipeline.CitySurface surface)
+        {
+            multiSurface.Surfaces.Remove(surface);
+            RecalculateExtents();
         }
     }
 }

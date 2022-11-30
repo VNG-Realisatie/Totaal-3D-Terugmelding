@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Netherlands3D.T3D.Uitbouw;
+using Netherlands3D.Events;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.UI;
+using WebGLFileUploaderExample;
 
 public class SelectOptionState : State
 {
@@ -18,10 +20,32 @@ public class SelectOptionState : State
     [SerializeField]
     private GameObject visibilityPanel;
 
+    [SerializeField]
+    private TriggerEvent onUploadedModelVisualized;
+    [SerializeField]
+    private StringEvent savedBimModelReceived;
+
+    private bool modelLoaded;
+
     protected override void Awake()
     {
         base.Awake();
         visualiser = ServiceLocator.GetService<UploadedUitbouwVisualiser>();
+    }
+
+    private void OnEnable()
+    {
+        onUploadedModelVisualized.started.AddListener(OnUploadedModelVisualized);
+    }
+
+    private void OnDisable()
+    {
+        onUploadedModelVisualized.started.RemoveListener(OnUploadedModelVisualized);
+    }
+
+    void OnUploadedModelVisualized()
+    {
+        modelLoaded = true;
     }
 
     private void Update()
@@ -32,7 +56,7 @@ public class SelectOptionState : State
         if (noModelToggle.isOn)
             nextButton.interactable = true;
         else if (uploadedModelToggle.isOn)
-            nextButton.interactable = !otherBuildingPartToggle.isOn && visualiser.HasLoaded;
+            nextButton.interactable = !otherBuildingPartToggle.isOn && modelLoaded && !GetComponentInChildren<UploadModel>().IsLoading;
         else
             nextButton.interactable = !otherBuildingPartToggle.isOn;
     }
@@ -64,6 +88,7 @@ public class SelectOptionState : State
         var savedState = stateSaver.GetState(stateSaver.ActiveStateIndex);
         if (ActiveState != savedState)
         {
+            //print("continue to next state");
             //if (uploadedModelToggle.isOn)
             //    LoadModel();
             //StartCoroutine(LoadModelAndGoToNextState());
@@ -97,19 +122,17 @@ public class SelectOptionState : State
             freePlaceToggle.isOn = true;
     }
 
-    ////called by button in inspector
-    //public void LoadModel()
-    //{
-    //    visualiser.VisualizeCityJson();
-    //}
-
     public void LoadModelAndGoToNextState()
     {
-        if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
+        //if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel && ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
+        if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
         {
             StartCoroutine(GetAndParseCityJson());
         }
-        //EndState();
+        else
+        {
+            EndState();
+        }
     }
 
     IEnumerator GetAndParseCityJson()
@@ -121,15 +144,14 @@ public class SelectOptionState : State
         //The CityJson has been downloaded, now lets visualize it
         if (success)
         {
-            Debug.Log("-------BimCityJsonReceived");
-            ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
-            //EndState();
+            //Debug.Log("-------BimCityJsonReceived");
+            savedBimModelReceived.Invoke(result);
+            EndState();
         }
         else
-        {         
+        {
             ErrorService.GoToErrorPage(result);
         }
-
     }
 
     public override void StateEnteredAction()

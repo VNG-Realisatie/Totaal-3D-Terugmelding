@@ -1,5 +1,8 @@
-﻿using Netherlands3D.Cameras;
+﻿using Netherlands3D;
+using Netherlands3D.Cameras;
+using Netherlands3D.Core.Colors;
 using Netherlands3D.ObjectInteraction;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,7 +13,7 @@ public enum InteractableState
     Active = 2,
 }
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public class DragableAxis : Interactable
     {
@@ -79,18 +82,18 @@ namespace Netherlands3D.T3D.Uitbouw
                     //start drag
                     TakeInteractionPriority();
                     IsDragging = true;
-                    SetHighlight(InteractableState.Active);
+                    //SetHighlight(InteractableState.Active);
                     RecalculateOffset();
                 }
                 else if (!Input.GetMouseButton(0))
                 {
-                    SetHighlight(InteractableState.Hover);
+                    //SetHighlight(InteractableState.Hover);
                 }
             }
             else if (!Input.GetMouseButton(0))
             {
                 //not dragging and not hovering
-                SetHighlight(InteractableState.Default);
+                //SetHighlight(InteractableState.Default);
             }
 
             if (Input.GetMouseButtonUp(0))
@@ -140,10 +143,10 @@ namespace Netherlands3D.T3D.Uitbouw
             heightOffset = Input.mousePosition.y;
         }
 
-        private void SetHighlight(InteractableState status) //0: normal, 1: hover, 2: selected
-        {
-            if (!interactionColors)
-                return;
+        //private void SetHighlight(InteractableState status) //0: normal, 1: hover, 2: selected
+        //{
+        //    if (!interactionColors)
+        //        return;
 
             //switch (status)
             //{
@@ -160,12 +163,12 @@ namespace Netherlands3D.T3D.Uitbouw
             //        break;
             //}
 
-            var renderers = GetComponentsInChildren<MeshRenderer>();
-            foreach (var renderer in renderers)
-            {
-                renderer.material.color = interactionColors[status.ToString()];
-            }
-        }
+            //var renderers = GetComponentsInChildren<MeshRenderer>();
+            //foreach (var renderer in renderers)
+            //{
+            //    renderer.material.color = interactionColors[status.ToString()];
+            //}
+        //}
 
         public Vector3 GetPointerPositionInWorld(Vector3 optionalPositionOverride = default)
         {

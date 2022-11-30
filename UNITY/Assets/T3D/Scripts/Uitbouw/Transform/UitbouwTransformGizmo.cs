@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Netherlands3D.Interface;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw
+namespace T3D.Uitbouw
 {
     public enum GizmoMode
     {

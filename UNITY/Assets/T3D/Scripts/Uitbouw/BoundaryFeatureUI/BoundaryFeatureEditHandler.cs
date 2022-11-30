@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class BoundaryFeatureEditHandler : MonoBehaviour
     {
@@ -66,8 +66,9 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
             LayerMask boundaryFeaturesMask = LayerMask.GetMask("BoundaryFeatures");
 
             //print(ObjectClickHandler.GetClickOnObject(boundaryFeaturesMask));
-            var click = ObjectClickHandler.GetClickOnObject(true, out var hit, boundaryFeaturesMask);
-            if (click && !EventSystem.current.IsPointerOverGameObject())
+            var click = ObjectClickHandler.GetClickOnObject(true, out var hit, boundaryFeaturesMask, true);
+            print("click "+  click);
+            if (click)
             {
                 BoundaryFeature clickedBoundaryFeature = null;
                 if (hit.collider != null)
@@ -83,8 +84,9 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
             }
         }
 
+        //todo: refactor this function
         private void ProcessDrag(BoundaryFeature feature)
-        {
+        { 
             Ray ray = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.ScreenPointToRay(Input.mousePosition);
             var mask = LayerMask.GetMask("Uitbouw");
             bool casted = Physics.Raycast(ray, out var hit, Mathf.Infinity, mask);
@@ -96,7 +98,7 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
             }
 
             ObjectClickHandler.GetDrag(out var wallCollider, mask);
-            if (ObjectClickHandler.GetDragOnObject(feature.GetComponentInChildren<Collider>(), true) && casted && feature.Wall.GetComponent<Collider>() == wallCollider)
+            if (!ObjectClickHandler.OverUI && ObjectClickHandler.GetDragOnObject(feature.Collider, true) && casted && feature.Wall.GetComponent<Collider>() == wallCollider)
             {
                 feature.transform.position = hit.point - featureDeltaPos;
             }

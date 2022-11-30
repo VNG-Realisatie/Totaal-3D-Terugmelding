@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Netherlands3D.Cameras;
 using Netherlands3D.Interface;
+using Netherlands3D.T3DPipeline;
 using UnityEngine;
 
-namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
+namespace T3D.Uitbouw.BoundaryFeatures
 {
     public class BoundaryFeatureSaveData : SaveDataContainer
     {
@@ -61,10 +62,13 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
         private string displayName;
         public string DisplayName => displayName;
 
+        public Collider Collider { get; private set; }
+
         protected override void Awake()
         {
             base.Awake();
 
+            Collider = meshTransform.GetComponent<Collider>();
             distanceMeasurements = GetComponents<DistanceMeasurement>();
             editUI = ServiceLocator.GetService<CoordinateNumbers>().CreateEditUI(this);
         }
@@ -106,13 +110,13 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
 
         public void SetWall(UitbouwMuur wall)
         {
-            Surface.SolidSurfacePolygon.UpdateVertices(GetVertices());
+            Surface.SolidSurfacePolygon.Vertices = GetVertices();
 
             //remove the hole from the current wall, if the current wall exists
             if (Wall != null)
             {
-                Surface.SetParent(null);
-                Wall.Surface.TryRemoveHole(Surface.SolidSurfacePolygon);
+                Surface.SemanticsObject.SetParent(null);
+                Wall.RemoveBoundaryFeature(this);
             }
             //set the new wall
             Wall = wall;
@@ -122,8 +126,8 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
             if (Wall != null)
             {
                 ClipSizeToWallSize();
-                Wall.Surface.TryAddHole(Surface.SolidSurfacePolygon); //add the hole to the new walli
-                Surface.SetParent(wall.Surface);
+                Wall.AddBoundaryFeature(this);
+                Surface.SemanticsObject.SetParent(wall.Surface.SemanticsObject);
             }
         }
 
@@ -227,10 +231,10 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
         {
             Destroy(editUI.gameObject);
 
-            Surface.SetParent(null);
+            Surface.SemanticsObject.SetParent(null);
 
             if (Wall)
-                Wall.Surface.TryRemoveHole(Surface.SolidSurfacePolygon);
+                Wall.RemoveBoundaryFeature(this);
 
             var state = State.ActiveState as PlaceBoundaryFeaturesState;
             if (state)
@@ -247,10 +251,10 @@ namespace Netherlands3D.T3D.Uitbouw.BoundaryFeatures
             if (editUI)
                 Destroy(editUI.gameObject);
 
-            Surface.SetParent(null);
+            Surface.SemanticsObject.SetParent(null);
 
             if (Wall)
-                Wall.Surface.TryRemoveHole(Surface.SolidSurfacePolygon);
+                Wall.RemoveBoundaryFeature(this);
 
             //remove the boundary feature from the list, extra measure to ensure list is reset when restarting the current session
             //replaced with a ne List<>() call in PlaceBoundaryFeatureState

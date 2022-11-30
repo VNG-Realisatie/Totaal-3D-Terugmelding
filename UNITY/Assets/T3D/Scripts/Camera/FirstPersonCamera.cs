@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using ConvertCoordinates;
+using Netherlands3D.Core;
 using Netherlands3D.Cameras;
 using Netherlands3D.InputHandler;
 using Netherlands3D.Interface;
-using Netherlands3D.T3D.Uitbouw;
+using T3D.Uitbouw;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -89,7 +89,8 @@ public class FirstPersonCamera : MonoBehaviour, ICameraControls
         if (ServiceLocator.GetService<T3DInit>().HTMLData.Add3DModel == false || ServiceLocator.GetService<T3DInit>().HTMLData.SnapToWall)
         {
             yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed && RestrictionChecker.ActivePerceel != null);
-            dir = RestrictionChecker.ActivePerceel.Center - RestrictionChecker.ActiveBuilding.BuildingCenter;
+            var localCenter = CoordConvert.RDtoUnity(RestrictionChecker.ActivePerceel.RDCenter);
+            dir = localCenter - RestrictionChecker.ActiveBuilding.BuildingCenter;
         }
         else
         {
