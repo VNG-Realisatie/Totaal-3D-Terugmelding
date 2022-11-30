@@ -36,6 +36,8 @@ namespace WebGLFileUploaderExample
         public bool IsLoading { get; private set; } = false;
 
         [SerializeField]
+        private string[] extensions = { "skp", "ifc", "json" };
+        [SerializeField]
         private StringEvent ModelCityJSONReceived;
 
         void Start()
@@ -64,7 +66,18 @@ namespace WebGLFileUploaderExample
             }
             WebGLFileUploadManager.SetImageEncodeSetting(true);
             //WebGLFileUploadManager.SetAllowedFileName("\\.(png|jpe?g|gif)$");
-            WebGLFileUploadManager.SetAllowedFileName("\\.(skp|ifc|json)$"); // todo: allow only 1 file
+
+            var extensionString = "\\.(";
+            for (int i = 0; i < extensions.Length; i++)
+            {
+                string ext = extensions[i];
+                extensionString += ext;
+                if (i < extensions.Length - 1)
+                    extensionString += "|";
+            }
+            extensionString += "$";
+
+            WebGLFileUploadManager.SetAllowedFileName(extensionString); // todo: allow only 1 file
             WebGLFileUploadManager.SetImageShrinkingSize(1280, 960);
             WebGLFileUploadManager.onFileUploaded += OnFileUploaded;
 
@@ -129,7 +142,16 @@ namespace WebGLFileUploaderExample
 #if UNITY_EDITOR
         public void UploadFromEditor()
         {
-            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc,skp,json");
+            var extensionString = string.Empty;
+            for (int i = 0; i < extensions.Length; i++)
+            {
+                string ext = extensions[i];
+                extensionString += ext;
+                if (i < extensions.Length - 1)
+                    extensionString += ",";
+            }
+            print(extensionString);
+            string path = EditorUtility.OpenFilePanel("Laad bestand", "", extensionString);
             FileInfo finfo = new FileInfo(path);
 
             if (path.Length != 0)
@@ -171,7 +193,7 @@ namespace WebGLFileUploaderExample
             var jsonResult = JSON.Parse(result);
 
             bool isIfc = false;
-            
+
             if (filePath.ToLower().EndsWith(".skp"))
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = null;

@@ -33663,6 +33663,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debugText: {fileID: 796275297}
   slider: {fileID: 941033652}
+  extensions:
+  - skp
+  - ifc
   ModelCityJSONReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
     type: 2}
 --- !u!1 &974795332
@@ -81454,7 +81457,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 38.72818, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
