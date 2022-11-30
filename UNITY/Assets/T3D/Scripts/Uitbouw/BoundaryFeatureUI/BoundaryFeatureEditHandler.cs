@@ -84,8 +84,9 @@ namespace T3D.Uitbouw.BoundaryFeatures
             }
         }
 
+        //todo: refactor this function
         private void ProcessDrag(BoundaryFeature feature)
-        {
+        { 
             Ray ray = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.ScreenPointToRay(Input.mousePosition);
             var mask = LayerMask.GetMask("Uitbouw");
             bool casted = Physics.Raycast(ray, out var hit, Mathf.Infinity, mask);
