@@ -26,19 +26,12 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     void OnEnable()
     {
-        ServiceLocator.GetService<Events>().BimCityJsonReceived += OnBimCityJsonReceived;
         onUploadedModelVisualized.started.AddListener(OnUploadedModelVisualized);
     }
 
     void OnDisable()
     {
-        ServiceLocator.GetService<Events>().BimCityJsonReceived -= OnBimCityJsonReceived;
         onUploadedModelVisualized.started.RemoveListener(OnUploadedModelVisualized);
-    }
-
-    private void OnBimCityJsonReceived(string cityJson)
-    {
-        onBimCityJsonReceived.Invoke(cityJson);
     }
 
     private void OnUploadedModelVisualized()

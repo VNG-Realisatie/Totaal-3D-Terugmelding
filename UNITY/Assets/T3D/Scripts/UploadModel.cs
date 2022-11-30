@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using SimpleJSON;
 using T3D.Uitbouw;
 using UnityEditor;
+using Netherlands3D.Events;
 
 #if UNITY_5_3 || UNITY_5_3_OR_NEWER
 using UnityEngine.SceneManagement;
@@ -33,6 +34,9 @@ namespace WebGLFileUploaderExample
         public Slider slider;
 
         public bool IsLoading { get; private set; } = false;
+
+        [SerializeField]
+        private StringEvent ModelCityJSONReceived;
 
         void Start()
         {
@@ -84,7 +88,7 @@ namespace WebGLFileUploaderExample
         private void OnEnable()
         {
             WebGLFileUploadManager.Show(false, true);
-            
+
             RecalculatePositionAndSize();
             WebGLFileUploadManager.UpdateButtonPosition(x, y, w, h);
         }
@@ -101,7 +105,7 @@ namespace WebGLFileUploaderExample
                 Debug.Log("File upload Error!");
                 debugText.text = "File upload Error!";
             }
-            else                        
+            else
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
 
@@ -117,7 +121,7 @@ namespace WebGLFileUploaderExample
                     var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(file.name)}";
 
                     StartCoroutine(UploadAndCheck(url, file.filePath));
-                 
+
                 }
             }
         }
@@ -125,14 +129,24 @@ namespace WebGLFileUploaderExample
 #if UNITY_EDITOR
         public void UploadFromEditor()
         {
-            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc,skp");
+            string path = EditorUtility.OpenFilePanel("Laad bestand", "", "ifc,skp,json");
             FileInfo finfo = new FileInfo(path);
 
             if (path.Length != 0)
             {
-                var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString( finfo.Name )}";
-                StartCoroutine(UploadAndCheck(url, path));
-                
+                if (path.ToLower().EndsWith(".json"))
+                {
+                    debugText.text = "Status: \"JSON geopend, CityJSON valideren\"";
+                    var json = finfo.OpenText().ReadToEnd();
+                    //todo: check if valid CityJSON
+                    debugText.text = "Status: \"CityJSON geopend\"";
+                    ModelCityJSONReceived.Invoke(json);
+                }
+                else
+                {
+                    var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(finfo.Name)}";
+                    StartCoroutine(UploadAndCheck(url, path));
+                }
             }
         }
 #endif
@@ -153,25 +167,25 @@ namespace WebGLFileUploaderExample
                 debugText.text = $"Status: \"Probleem met uploaden: {result}\"";
                 yield break;
             }
-            
+
             var jsonResult = JSON.Parse(result);
 
             bool isIfc = false;
-
+            
             if (filePath.ToLower().EndsWith(".skp"))
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = null;
                 ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
                 debugText.text = "Status: \"Sketchup bestand geconverteerd\"";
             }
-            else
-            {                
+            else if (filePath.ToLower().EndsWith(".ifc"))
+            {
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
                 ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = null;
                 debugText.text = "Status: \"IFC bestand geupload\"";
 
                 var urlIfc = Config.activeConfiguration.T3DAzureFunctionURL + $"api/getbimversionstatus/{ServiceLocator.GetService<T3DInit>().HTMLData.ModelId}";
-                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(debugText, urlIfc, result, success));                
+                yield return StartCoroutine(UploadBimUtility.CheckBimVersion(debugText, urlIfc, result, success));
             }
 
             //the file has been successfully converted to CityJson, now lets get the CityJson
@@ -183,7 +197,7 @@ namespace WebGLFileUploaderExample
                 if (success)
                 {
                     Debug.Log("-------BimCityJsonReceived");
-                    ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
+                    ModelCityJSONReceived.Invoke(result);
                 }
                 else
                 {
@@ -303,7 +317,7 @@ namespace WebGLFileUploaderExample
             }
         }
 
-        
+
 
     }
 }

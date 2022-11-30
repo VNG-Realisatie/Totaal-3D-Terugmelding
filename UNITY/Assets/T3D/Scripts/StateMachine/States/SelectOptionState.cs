@@ -22,6 +22,8 @@ public class SelectOptionState : State
 
     [SerializeField]
     private TriggerEvent onUploadedModelVisualized;
+    [SerializeField]
+    private StringEvent savedBimModelReceived;
 
     private bool modelLoaded;
 
@@ -143,7 +145,7 @@ public class SelectOptionState : State
         if (success)
         {
             //Debug.Log("-------BimCityJsonReceived");
-            ServiceLocator.GetService<Events>().RaiseBimCityJsonReceived(result);
+            savedBimModelReceived.Invoke(result);
             EndState();
         }
         else
