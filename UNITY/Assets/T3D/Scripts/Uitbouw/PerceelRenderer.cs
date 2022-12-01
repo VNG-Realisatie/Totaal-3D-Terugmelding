@@ -31,9 +31,6 @@ namespace T3D.Uitbouw
 
         private void Start()
         {
-            //perceelMeshGameObject = CreatePerceelGameObject();
-            //perceelOutlineGameObject = CreatePerceelGameObject();
-
             ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += Instance_PerceelDataLoaded;
             building.BuildingDataProcessed += BuildingMeshGenerator_BuildingDataProcessed;
         }
@@ -51,17 +48,25 @@ namespace T3D.Uitbouw
         private void Instance_PerceelDataLoaded(object source, PerceelDataEventArgs args)
         {
             Perceel = args.Perceel;
-            GenerateMeshFromPerceel(args.Perceel);
-            RenderPerceelOutline(args.Perceel);
+            Area = args.Area;
+            //var coord = CoordConvert.RDtoUnity(args.Center);
+            RDCenter = new Vector3RD(args.Center.x, args.Center.y, RDCenter.z);
+            Radius = args.Radius;
+
+            StartCoroutine(GeneratePerceelWhenBuildingLoaded());
+        }
+
+        private System.Collections.IEnumerator GeneratePerceelWhenBuildingLoaded()
+        {
+            yield return new WaitUntil(() => RestrictionChecker.ActiveBuilding.BuildingDataIsProcessed); //wait until building is loaded because this sets the relative RD center
+
+            GenerateMeshFromPerceel(Perceel);
+            RenderPerceelOutline(Perceel);
 
             SetPerceelActive(false);
             SetTerrainActive(true);
             SetPerceelOutlineActive(true);
 
-            Area = args.Area;
-            //var coord = CoordConvert.RDtoUnity(args.Center);
-            RDCenter = new Vector3RD(args.Center.x, args.Center.y, RDCenter.z);
-            Radius = args.Radius;
             IsLoaded = true;
         }
 
@@ -95,7 +100,6 @@ namespace T3D.Uitbouw
                 var perceelPartUnityCoordinates = from p in v3Points select new Vector2(p.x, p.z); //in a WebGL build, using perceelPart to triangulate causes problems, not 100% sure why but I suspect an overflow issue. This issue does not occur in the editor
 
                 var subTris = GeometryCalculator.Triangulate(perceelPartUnityCoordinates.ToArray());
-
                 vertices.AddRange(v3Points);
                 tris.Add(subTris);
             }
