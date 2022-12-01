@@ -7,7 +7,7 @@ public class JsonDownloader : MonoBehaviour
     public void DownloadCityJSON()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        string jsontext = CityJSONFormatter.GetJSON();
+        string jsontext = CityJSONFormatter.GetCityJSON();
         var bytes = System.Text.Encoding.UTF8.GetBytes(jsontext);
         JavascriptMethodCaller.DownloadByteArrayAsFile(bytes, bytes.Length, "gebouw_met_uitbouw.json");
 #else
