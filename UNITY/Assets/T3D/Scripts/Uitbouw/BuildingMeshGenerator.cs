@@ -111,7 +111,7 @@ namespace T3D.Uitbouw
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
-            RoofEdgePlanes = ProcessRoofEdges(mesh);
+            RoofEdgePlanes = ProcessRoofEdges(mesh, positionOffset.y);
 
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes
             BuildingDataIsProcessed = true;
@@ -128,7 +128,7 @@ namespace T3D.Uitbouw
             IsBeschermd = ServiceLocator.GetService<T3DInit>().HTMLData.IsBeschermd;
         }
 
-        private Plane[] ProcessRoofEdges(Mesh buildingMesh)
+        private Plane[] ProcessRoofEdges(Mesh buildingMesh, float yOffset)
         {
             var verts = buildingMesh.vertices;
             List<Plane> planes = new List<Plane>();
@@ -136,7 +136,7 @@ namespace T3D.Uitbouw
 
             foreach (var vert in verts)
             {
-                var y = vert.y;
+                var y = vert.y + yOffset;
                 if (!IsWithinAnyYToleranceRange(yValues, y, roofEdgeYTolerance))
                 {
                     yValues.Add(y);
