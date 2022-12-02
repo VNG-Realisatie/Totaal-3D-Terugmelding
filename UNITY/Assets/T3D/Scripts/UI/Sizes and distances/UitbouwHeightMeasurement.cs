@@ -33,6 +33,9 @@ namespace T3D.Uitbouw
 
         protected override void Measuring_DistanceInputOverride(BuildingMeasuring source, Vector3 direction, float delta)
         {
+            if (direction.y < 0)
+                delta *= -1;
+
             uitbouw.GetComponent<UitbouwMovement>().HeightOffset += delta;
         }
 
