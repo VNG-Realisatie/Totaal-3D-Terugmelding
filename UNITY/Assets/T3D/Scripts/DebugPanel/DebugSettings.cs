@@ -36,7 +36,7 @@ public class DebugSettings : MonoBehaviour
         bimModelVersionIdInputField.SetTextWithoutNotify(BimModelVersionId);
     }
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F3))
@@ -49,7 +49,7 @@ public class DebugSettings : MonoBehaviour
     {
         panel.SetActive(!panel.activeInHierarchy);
     }
-#endif
+//#endif
 
     //public void SetAddressToErrorBuilding()
     //{
