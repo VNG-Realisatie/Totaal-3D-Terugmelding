@@ -75,7 +75,7 @@ namespace WebGLFileUploaderExample
                 if (i < extensions.Length - 1)
                     extensionString += "|";
             }
-            extensionString += "$";
+            extensionString += ")$";
 
             WebGLFileUploadManager.SetAllowedFileName(extensionString); // todo: allow only 1 file
             WebGLFileUploadManager.SetImageShrinkingSize(1280, 960);
