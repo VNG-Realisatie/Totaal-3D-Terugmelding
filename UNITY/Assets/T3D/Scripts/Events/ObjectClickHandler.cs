@@ -23,6 +23,7 @@ namespace T3D
         private static Vector3 clickStartPosition;
         private static List<Collider> clickColliders = new List<Collider>();
         //private static bool clickStarted;
+        private static bool mouseDownOnUI = false;
 
         private static bool dragStarted = false;
         public static Collider ColliderOnStartDrag { get; private set; }
@@ -53,6 +54,7 @@ namespace T3D
             Ray ray = ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.ScreenPointToRay(Input.mousePosition);
             if (Input.GetMouseButtonDown(0))
             {
+                mouseDownOnUI = OverUI;
                 clickColliders.Clear();
                 //clickStarted = true;
                 clickStartPosition = Input.mousePosition;
@@ -66,6 +68,7 @@ namespace T3D
 
             if (Input.GetMouseButtonUp(0))
             {
+                mouseDownOnUI = false;
                 dragStarted = false;
                 ColliderOnStartDrag = null;
             }
@@ -82,7 +85,6 @@ namespace T3D
             //var containsUI = layerMask == (layerMask | (1 << LayerMask.NameToLayer("UI")));
             if (uiBlocks && OverUI) //compensate for UI not having physics colliders
             {
-                print("over ui");
                 return false;
             }
 
@@ -133,13 +135,12 @@ namespace T3D
         public static bool GetDrag(out Collider draggedCollider, int layerMask = Physics.DefaultRaycastLayers)
         {
             draggedCollider = null;
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && !mouseDownOnUI)
             {
                 var dist = Input.mousePosition - clickStartPosition;
                 if (dragStarted || dist.magnitude > maxDistanceTraveledWithMouse)
                 {
                     dragStarted = true;
-
                     draggedCollider = GetColliderUnderMouse(layerMask);
                     return true;
                 }
