@@ -46526,47 +46526,6 @@ MonoBehaviour:
   inProgressPanel: {fileID: 1084831383}
   successPanel: {fileID: 736833060}
   successText: {fileID: 234077504}
---- !u!1 &1422889710 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1604081640823115902, guid: 6a6d1cc11dd724a9daba7674f2329ad0,
-    type: 3}
-  m_PrefabInstance: {fileID: 263296654}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1422889711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1422889710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onCityJSONReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85, type: 2}
-  cityObjectPrefab: {fileID: 1807838613596807431, guid: c3a7de5e7c1f040a48aee1de7e8292d3,
-    type: 3}
-  useAsRelativeRDCenter: 0
-  onAllCityObjectsProcessed: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
-    type: 2}
---- !u!114 &1422889712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1422889710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8df54ac60f791489cba8c951d50b4cad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MeshMaterial: {fileID: 2100000, guid: dbcc42433f2f7d443a9a36b38393891f, type: 2}
-  onBimCityJsonReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
-    type: 2}
-  onUploadedModelVisualized: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
-    type: 2}
 --- !u!1 &1426233494
 GameObject:
   m_ObjectHideFlags: 0
@@ -81521,7 +81480,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 43.439766, y: 0}
+  m_AnchoredPosition: {x: 41.190254, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

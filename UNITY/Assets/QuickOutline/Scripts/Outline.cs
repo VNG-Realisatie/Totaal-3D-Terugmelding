@@ -95,8 +95,6 @@ public class Outline : MonoBehaviour
     void Awake()
     {
 
-        // Cache renderers
-        renderers = GetComponentsInChildren<Renderer>();
 
         // Instantiate outline materials
         outlineMaskMaterial = Instantiate(Resources.Load<Material>(@"Materials/OutlineMask"));
@@ -120,6 +118,8 @@ public class Outline : MonoBehaviour
 
     void OnEnable()
     {
+        // Cache renderers: moved from Awake to OnEnAble because the uitbouw meshes may change
+        renderers = GetComponentsInChildren<Renderer>();
         foreach (var renderer in renderers)
         {
 
