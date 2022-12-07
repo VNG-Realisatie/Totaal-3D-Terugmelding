@@ -10217,7 +10217,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 278948608}
-  - component: {fileID: 278948610}
   - component: {fileID: 278948609}
   m_Layer: 5
   m_Name: Step4_Positioning_Upload
@@ -10265,20 +10264,6 @@ MonoBehaviour:
   - {fileID: 2066891759}
   isFirstState: 0
   desiredNextStateIndex: 0
---- !u!114 &278948610
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 278948607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 720d924e703f44c73b26688b7f4dbe98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: {fileID: 7969206201886011379}
-  Volgende: {fileID: 185896260}
 --- !u!1 &284219691
 GameObject:
   m_ObjectHideFlags: 0
@@ -22083,7 +22068,7 @@ MonoBehaviour:
     type: 3}
   meshFilterOverride: {fileID: 1664265896}
   pointScale: 0.015
-  limitVerticesToGroundPlane: 0
+  limitVerticesToGroundPlane: 1
   vertexLimitTolerance: 0.1
 --- !u!33 &620146497
 MeshFilter:
@@ -81480,7 +81465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 41.190254, y: 0}
+  m_AnchoredPosition: {x: 43.882355, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121

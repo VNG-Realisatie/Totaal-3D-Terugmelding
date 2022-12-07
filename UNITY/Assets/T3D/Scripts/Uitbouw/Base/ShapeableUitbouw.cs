@@ -41,6 +41,7 @@ namespace T3D.Uitbouw
         public override void UpdateDimensions()
         {
             SetDimensions(left, right, bottom, top, front, back);
+            //UpdateFootprint();
         }
 
         private void SetDimensions(UitbouwMuur left, UitbouwMuur right, UitbouwMuur bottom, UitbouwMuur top, UitbouwMuur front, UitbouwMuur back)

@@ -21,7 +21,7 @@ public class SelectableMesh : MonoBehaviour
     public MeasurePoint ActivePoint { get; private set; }
     public bool VisualizeActivePoint { get; set; } = true;
 
-    private bool arePointsGenerated = false;
+    private bool arePointsGenerated => points.Length > 0 && points[0] != null;
 
     [SerializeField]
     private bool limitVerticesToGroundPlane;

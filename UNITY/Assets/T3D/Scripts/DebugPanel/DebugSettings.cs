@@ -45,7 +45,8 @@ public class DebugSettings : MonoBehaviour
         }
     }
 
-    void TogglePanel()
+    //also called in the inspector by the close button
+    public void TogglePanel()
     {
         panel.SetActive(!panel.activeInHierarchy);
     }

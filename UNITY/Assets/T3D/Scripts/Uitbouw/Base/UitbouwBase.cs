@@ -111,12 +111,21 @@ namespace T3D.Uitbouw
             }
         }
 
+        private Vector2[] footprint;
+        public Vector2[] Footprint => footprint;
+
         protected virtual void Awake()
         {
             saveData = new UitbouwBaseSaveDataContainer();
             //building = RestrictionChecker.ActiveBuilding;
             InitializeUserMovementAxes();
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    foreach (var f in Footprint)
+        //        Gizmos.DrawSphere(transform.rotation * new Vector3(f.x, 1f, f.y) + CenterPoint, 0.1f);
+        //}
 
         public abstract void UpdateDimensions();
 
@@ -190,13 +199,13 @@ namespace T3D.Uitbouw
             SetDimensions(size.x, size.z, size.y);
         }
 
-        public Vector2[] GetFootprint()
+        public void UpdateFootprint()
         {
             var meshFilters = GetComponentsInChildren<MeshFilter>();
-            return GenerateFootprint(meshFilters);//, transform.rotation, transform.lossyScale);
+            footprint = GenerateFootprint(meshFilters, CenterPoint);//, transform.rotation, transform.lossyScale);
         }
 
-        public static Vector2[] GenerateFootprint(MeshFilter[] meshFilters)//Mesh[] meshes, Quaternion rotation, Vector3 scale)
+        public static Vector2[] GenerateFootprint(MeshFilter[] meshFilters, Vector3 offset)//Mesh[] meshes, Quaternion rotation, Vector3 scale)
         {
             var footprint = new List<Vector2>();
             for (int i = 0; i < meshFilters.Length; i++)
@@ -206,8 +215,11 @@ namespace T3D.Uitbouw
                 for (int j = 0; j < verts.Length; j++)
                 {
                     var transformedVert = verts[j];
-                    transformedVert.Scale(meshFilters[i].transform.lossyScale);
-                    transformedVert = meshFilters[i].transform.rotation * transformedVert;
+                    //transformedVert.Scale(meshFilters[i].transform.lossyScale);
+                    transformedVert = meshFilters[i].transform.TransformPoint(transformedVert);
+                    transformedVert -= offset;
+
+                    //transformedVert = meshFilters[i].transform.rotation * transformedVert;
                     //var vert = Vector3.ProjectOnPlane(rotatedVert, Vector3.up);
                     var vert = new Vector2(transformedVert.x, transformedVert.z);
 

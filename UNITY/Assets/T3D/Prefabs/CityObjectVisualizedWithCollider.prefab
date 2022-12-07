@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1510941251509425647}
   - component: {fileID: 5302617482703819505}
   - component: {fileID: 6016695265935519022}
+  - component: {fileID: -1288167596871192429}
   m_Layer: 0
   m_Name: CityObjectVisualizedWithCollider
   m_TagString: Untagged
@@ -126,3 +127,21 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-1288167596871192429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 502690ba42a1c45e7ba9abf6475ac756, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vertexVisualizationPrefab: {fileID: 5969573748713340153, guid: a68368933e31644838fa22e3836c955e,
+    type: 3}
+  meshFilterOverride: {fileID: 0}
+  pointScale: 0.015
+  limitVerticesToGroundPlane: 1
+  vertexLimitTolerance: 0.1

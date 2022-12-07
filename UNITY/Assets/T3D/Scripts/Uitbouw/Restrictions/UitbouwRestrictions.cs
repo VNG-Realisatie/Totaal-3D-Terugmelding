@@ -70,7 +70,7 @@ namespace T3D.Uitbouw
     {
         public bool ConformsToRestriction(BuildingMeshGenerator building, PerceelRenderer perceel, UitbouwBase uitbouw)
         {
-            return IsInPerceel(uitbouw.GetFootprint(), perceel.Perceel, uitbouw.transform.position);
+            return IsInPerceel(uitbouw.Footprint, perceel.Perceel, uitbouw.CenterPoint);
         }
 
         public static bool IsInPerceel(Vector2[] uitbouwFootprint, List<Vector2[]> perceel, Vector3 uitbouwPositionOffset)

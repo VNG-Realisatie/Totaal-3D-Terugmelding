@@ -27,11 +27,6 @@ namespace T3D.Uitbouw
 
         public override Vector3 BackCenter => transform.position + transform.rotation * combinedMeshBounds.center + transform.forward * combinedMeshBounds.extents.z;
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawWireCube(combinedMeshBounds.center, combinedMeshBounds.size);
-        }
-
         public override void UpdateDimensions()
         {
             var w = Vector3.Distance(LeftCenter, RightCenter);

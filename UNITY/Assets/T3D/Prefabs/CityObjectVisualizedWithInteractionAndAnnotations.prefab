@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 6016695265935519022}
   - component: {fileID: -8079496101518315025}
   - component: {fileID: 4026898433190462745}
+  - component: {fileID: 927717966973530875}
   m_Layer: 0
   m_Name: CityObjectVisualizedWithInteractionAndAnnotations
   m_TagString: Untagged
@@ -176,3 +177,21 @@ MonoBehaviour:
   groundLevelOffsetTolerance: 0.05
   wallSelected: {fileID: 11400000, guid: c6f4d5466c2934585b98224e89ab2a09, type: 2}
   wallDeselected: {fileID: 11400000, guid: 07e6a9c42467e4bd2accd61e9f1e7a99, type: 2}
+--- !u!114 &927717966973530875
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807838613596807431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 502690ba42a1c45e7ba9abf6475ac756, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vertexVisualizationPrefab: {fileID: 5969573748713340153, guid: a68368933e31644838fa22e3836c955e,
+    type: 3}
+  meshFilterOverride: {fileID: 0}
+  pointScale: 0.015
+  limitVerticesToGroundPlane: 1
+  vertexLimitTolerance: 0.1
