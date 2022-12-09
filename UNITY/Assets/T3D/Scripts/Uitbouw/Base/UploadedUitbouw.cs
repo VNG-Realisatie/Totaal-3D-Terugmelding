@@ -64,7 +64,7 @@ namespace T3D.Uitbouw
         public void SetMeshOffset()
         {
             var offset = combinedMeshBounds.center;
-            offset.y -= combinedMeshBounds.extents.y;
+            offset.y += combinedMeshBounds.extents.y;
             offset += transform.forward * Depth / 2;
 
             var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
