@@ -54,6 +54,8 @@ public class VersionHelper : EditorWindow
         };
 
         Debug.Log("Building to: " + buildPlayerOptions.locationPathName);
+
+        PlayerSettings.WebGL.exceptionSupport = WebGLExceptionSupport.FullWithoutStacktrace;
         
         BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
         BuildSummary buildSummary = report.summary;
