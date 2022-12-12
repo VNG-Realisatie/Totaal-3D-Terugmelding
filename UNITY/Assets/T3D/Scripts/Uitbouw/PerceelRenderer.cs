@@ -29,10 +29,16 @@ namespace T3D.Uitbouw
         public bool IsLoaded { get; private set; } = false;
         public Plane PerceelPlane { get; private set; }
 
-        private void Start()
+        private void OnEnable()
         {
             ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded += Instance_PerceelDataLoaded;
             building.BuildingDataProcessed += BuildingMeshGenerator_BuildingDataProcessed;
+        }
+
+        private void OnDisable()
+        {
+            ServiceLocator.GetService<MetadataLoader>().PerceelDataLoaded -= Instance_PerceelDataLoaded;
+            building.BuildingDataProcessed -= BuildingMeshGenerator_BuildingDataProcessed;
         }
 
         private void BuildingMeshGenerator_BuildingDataProcessed(BuildingMeshGenerator building)
