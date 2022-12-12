@@ -10,6 +10,9 @@ namespace T3D.Uitbouw
 {
     public class UploadedUitbouw : UitbouwBase
     {
+        [SerializeField]
+        private CityJSON cityJSON;
+
         private Bounds combinedMeshBounds;
 
         public override Vector3 LeftCenter => transform.position + transform.rotation * combinedMeshBounds.center - transform.right * combinedMeshBounds.extents.x;
@@ -32,13 +35,15 @@ namespace T3D.Uitbouw
             SetDimensions(w, d, h);
         }
 
-        public void RecalculateBounds()
+        public void RecalculateBounds(CityObject[] cityObjects)
         {
-            var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
+            //var cityJson = GetComponentInParent<CityJSON>();
+            //var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
 
             List<Vector3> allTransformedExtents = new List<Vector3>();
-            foreach (var v in uploadedCityObjectVisualizers)
+            foreach (var co in cityObjects)
             {
+                var v = co.GetComponent<CityObjectVisualizer>();
                 allTransformedExtents.Add(v.transform.localPosition + v.ActiveMesh.bounds.min);
                 allTransformedExtents.Add(v.transform.localPosition + v.ActiveMesh.bounds.max);
             }
@@ -59,14 +64,16 @@ namespace T3D.Uitbouw
         public void SetMeshOffset()
         {
             var offset = combinedMeshBounds.center;
-            offset.y -= combinedMeshBounds.extents.y;
+            offset.y += combinedMeshBounds.extents.y;
             offset += transform.forward * Depth / 2;
 
             var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
             foreach (var m in uploadedCityObjectVisualizers)
-                m.transform.localPosition = -offset;
+            {
+                m.transform.localPosition += offset;
+            }
 
-            combinedMeshBounds.center -= offset;
+            combinedMeshBounds.center += offset;
         }
 
         public static Vector3 Multiply(Vector3 a, Vector3 b)
@@ -76,12 +83,11 @@ namespace T3D.Uitbouw
 
         public void UnparentFromMainBuilding()
         {
-            CityObject[] uitbouwCityObjects = GetComponentsInChildren<CityObject>();
+            var uitbouwCityObjects = cityJSON.CityObjects;
             //todo: now we take the first as the building, because there is currently no way to determine which of them is the Main building
             var mainBuilding = uitbouwCityObjects[0];
             mainBuilding.Type = CityObjectType.Building;
             var mainBuildingId = RestrictionChecker.ActiveBuilding.MainCityObject.Id;
-            print("mainb:" + mainBuildingId);
             mainBuilding.SetId(mainBuildingId);
 
             var existingChildren = mainBuilding.CityChildren.Length;
@@ -97,7 +103,7 @@ namespace T3D.Uitbouw
 
         public void ReparentToMainBuilding(CityObject mainBuilding)
         {
-            CityObject[] uitbouwCityObjects = GetComponentsInChildren<CityObject>();
+            var uitbouwCityObjects = cityJSON.CityObjects;
             var existingChildren = mainBuilding.CityChildren.Length;
             for (int i = 0; i < uitbouwCityObjects.Length; i++)
             {

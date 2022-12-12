@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6754303235095884790}
+  - component: {fileID: 4579923191939472308}
+  - component: {fileID: 5173454514778130610}
   m_Layer: 20
   m_Name: Uitbouw_Model
   m_TagString: Untagged
@@ -32,6 +34,41 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4579923191939472308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604081640823115902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36187846006a245e39b1c2c56fb7a686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onCityJSONReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85, type: 2}
+  cityObjectPrefab: {fileID: 1807838613596807431, guid: 8079a6434ea124d458bceb01cd6de3e0,
+    type: 3}
+  useAsRelativeRDCenter: 0
+  onAllCityObjectsProcessed: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
+    type: 2}
+--- !u!114 &5173454514778130610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1604081640823115902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8df54ac60f791489cba8c951d50b4cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MeshMaterial: {fileID: 2100000, guid: dbcc42433f2f7d443a9a36b38393891f, type: 2}
+  onBimCityJsonReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
+    type: 2}
+  onUploadedModelVisualized: {fileID: 11400000, guid: 56f83165ad28b46e099b741d1523d0b4,
+    type: 2}
 --- !u!1 &8007389617465903191
 GameObject:
   m_ObjectHideFlags: 0
@@ -84,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gizmoPrefab: {fileID: 4771809076852453154, guid: e6f5c545e2b8d4f3ca1541c163405f67,
     type: 3}
-  meshFilter: {fileID: 0}
+  cityJSON: {fileID: 4579923191939472308}
 --- !u!114 &4051661277681129896
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -148,9 +148,6 @@ namespace T3D.Uitbouw
 
         IEnumerator GetPerceelData(Vector3RD position)
         {
-            print(SessionSaver.HasLoaded);
-            yield return new WaitUntil(() => SessionSaver.HasLoaded);// wait until position has loaded
-
             var bbox = $"{ position.x - 0.5},{ position.y - 0.5},{ position.x + 0.5},{ position.y + 0.5}";
             var url = $"https://geodata.nationaalgeoregister.nl/kadastralekaart/wfs/v4_0?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=kadastralekaartv4:perceel&STARTINDEX=0&COUNT=1&SRSNAME=urn:ogc:def:crs:EPSG::28992&BBOX={bbox},urn:ogc:def:crs:EPSG::28992&outputFormat=json";
 
@@ -166,33 +163,6 @@ namespace T3D.Uitbouw
                 ProcessPerceelData(json);
             }
         }
-
-        //public IEnumerator GetCityJsonBag(string id)
-        //{
-        //    var url = $"https://tomcat.totaal3d.nl/happyflow-wfs/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=bldg:Building&RESOURCEID=NL.IMBAG.Pand.{id}&OUTPUTFORMAT=application%2Fjson";
-        //    var uwr = UnityWebRequest.Get(url);
-
-        //    using (uwr)
-        //    {
-        //        yield return uwr.SendWebRequest();
-        //        if (uwr.result == UnityWebRequest.Result.ConnectionError || uwr.result == UnityWebRequest.Result.ProtocolError)
-        //        {
-        //            Debug.LogError(uwr.error);
-        //        }
-        //        else
-        //        {
-        //            CityJsonBag = uwr.downloadHandler.text;
-        //            cityJsonBagReceived.started.Invoke(CityJsonBag);
-        //        }
-
-        //    }
-        //}
-
-        //public void LoadTestBuilding(string json)
-        //{
-        //    Debug.LogError("LOADING TEST BUILDING. Continuing is safe for test purposes only. Do not forget to disable the test building in T3DInit before making build.");
-        //    cityJsonBagReceived.started.Invoke(json);
-        //}
 
         void ProcessPerceelData(JSONNode jsonData)
         {
@@ -217,70 +187,27 @@ namespace T3D.Uitbouw
                 list.Add(polygonList.ToArray());
             }
 
-            //PerceelData = list;
             var perceelGrootte = float.Parse(jsonData["features"][0]["properties"]["kadastraleGrootteWaarde"]);
             PerceelDataLoaded?.Invoke(this, new PerceelDataEventArgs(true, list, perceelGrootte));
-
-            //PlaatsUitbouw();
         }
 
         public void PlaatsUitbouw(Vector3 spawnPosition)
         {
-            //var pos = CoordConvert.RDtoUnity(perceelnummerPlaatscoordinaat);
-            //if (!Uitbouw)
-            //{
-            //if (Uitbouw)
             EnableActiveuitbouw(false);
-
-            //if (Uitbouw)
-            //{
-            //    Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(false);
-            //    Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(false);
-            //    Uitbouw.GetComponent<UitbouwMeasurement>().enabled = false;
-
-            //    if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
-            //    {
-            //        var obj = ServiceLocator.GetService<CityJsonVisualiser>();
-            //        obj.EnableUploadedModel(false);
-            //    }
-            //    else
-            //    {
-
-            //        shapableUitbouw.SetActive(false);
-            //    }
-            //}
 
             if (ServiceLocator.GetService<T3DInit>().HTMLData.HasFile)
             {
                 var visualiser = ServiceLocator.GetService<UploadedUitbouwVisualiser>();
-                //obj.VisualizeCityJson();
-                //obj.EnableUploadedModel(true);
                 Uitbouw = visualiser.GetComponentInChildren<UitbouwBase>(true);
-                //Uitbouw.transform.position = spawnPosition;
             }
             else
             {
-                //shapableUitbouw.SetActive(true);
-                //shapableUitbouw.transform.position = spawnPosition;
-                //shapableUitbouw.transform.rotation = Quaternion.identity;
                 Uitbouw = shapableUitbouw.GetComponentInChildren<UitbouwBase>(true);
             }
             EnableActiveuitbouw(true);
 
             Uitbouw.GetComponent<UitbouwMovement>().SetPosition(spawnPosition);
-            //}
         }
-
-        //public void EnableUploadedUitbouw(bool active)
-        //{
-        //    var obj = ServiceLocator.GetService<CityJsonVisualiser>();
-        //    obj.EnableUploadedModel(active);
-        //}
-
-        //public void EnableShapeableUibouw(bool active)
-        //{
-        //    shapableUitbouw.SetActive(active);
-        //}
 
         public void EnableActiveuitbouw(bool active)
         {
@@ -291,7 +218,6 @@ namespace T3D.Uitbouw
             Uitbouw.GetComponent<UitbouwMovement>().SetAllowMovement(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.EnableGizmo(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
-            //DisableUitbouwToggle.Instance.SetIsOnWithoutNotify(true);
         }
     }
 }

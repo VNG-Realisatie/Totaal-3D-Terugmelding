@@ -40,15 +40,31 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
     [SerializeField]
     private MeasurePoint cursorPointPrefab;
 
-    protected override void Awake()
+    //protected override void Awake()
+    //{
+    //    numberOfLines = 0;
+    //    lines = new List<BuildingMeasuring>();
+    //    uitbouw = GetComponent<UitbouwBase>();
+    //}
+
+    //private void Start()
+    //{
+    //    otherSelectableMeshes = new SelectableMesh[2];
+    //    otherSelectableMeshes[0] = RestrictionChecker.ActivePerceel.GetComponentInChildren<SelectableMesh>();
+    //    otherSelectableMeshes[1] = RestrictionChecker.ActiveBuilding.GetComponentInChildren<SelectableMesh>();
+    //}
+
+    private void OnEnable()
+    {
+        ResetMeasurement();
+    }
+
+    public void ResetMeasurement()
     {
         numberOfLines = 0;
         lines = new List<BuildingMeasuring>();
         uitbouw = GetComponent<UitbouwBase>();
-    }
 
-    private void Start()
-    {
         otherSelectableMeshes = new SelectableMesh[2];
         otherSelectableMeshes[0] = RestrictionChecker.ActivePerceel.GetComponentInChildren<SelectableMesh>();
         otherSelectableMeshes[1] = RestrictionChecker.ActiveBuilding.GetComponentInChildren<SelectableMesh>();
@@ -238,6 +254,8 @@ public class UitbouwFreeMeasurement : DistanceMeasurement
 
         if (measureToolActive)
         {
+            uitbouw.UpdateFootprint();
+
             mySelectableMeshes = GetComponentsInChildren<SelectableMesh>();
             foreach (var mesh in otherSelectableMeshes)
             {

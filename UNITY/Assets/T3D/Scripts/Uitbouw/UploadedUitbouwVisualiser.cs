@@ -36,21 +36,17 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
 
     private void OnUploadedModelVisualized()
     {
-        Mesh combinedActiveMesh = new Mesh();
-        foreach (var obj in GetComponent<CityJSON>().CityObjects)
+        var cityJSON = GetComponent<CityJSON>();
+        foreach (var obj in cityJSON.CityObjects)
         {
-            obj.transform.SetParent(GetComponentInChildren<UploadedUitbouw>(true).transform);
-            var visualizer = obj.GetComponent<CityObjectVisualizer>();
-            var mesh = visualizer.ActiveMesh;
-            var meshList = new List<Mesh>();
-            meshList.Add(combinedActiveMesh);
-            meshList.Add(mesh);
-            combinedActiveMesh = CityObjectVisualizer.CombineMeshes(meshList, obj.transform.localToWorldMatrix);
+            obj.transform.SetParent(uitbouw.transform, false);
+            var absoluteCenter = cityJSON.AbsoluteCenter;
+            obj.transform.position -= new Vector3((float)absoluteCenter.x, (float)absoluteCenter.z, (float)absoluteCenter.y);
         }
 
         uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
 
-        uitbouw.RecalculateBounds();
+        uitbouw.RecalculateBounds(cityJSON.CityObjects);
         uitbouw.SetMeshOffset();
 
         uitbouw.InitializeUserMovementAxes();
