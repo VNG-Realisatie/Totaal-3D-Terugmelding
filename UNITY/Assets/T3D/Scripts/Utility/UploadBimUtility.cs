@@ -18,7 +18,7 @@ public class UploadBimUtility
         List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
 
         FileInfo finfo = new FileInfo(filePath);
-        string data = File.ReadAllText(filePath);
+        //string data = File.ReadAllText(filePath);
 
         var bytes = File.ReadAllBytes(filePath);
 
