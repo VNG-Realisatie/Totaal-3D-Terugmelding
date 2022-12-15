@@ -20,11 +20,11 @@ body {
   border: solid 1px #ccc !important;
 }
 
-input[type="file"]{  
+/* input[type="file"]{  
   opacity: 1 !important;
   border: dotted 3px #f00;
 
-}
+} */
 
 .noselect,.usabilla_live_button_container {
   -webkit-touch-callout: none; /* iOS Safari */
