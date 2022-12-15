@@ -62,6 +62,13 @@ namespace T3D.Uitbouw
         public void ProcessBuilding()
         {
             var cityObjects = GetComponent<CityJSON>().CityObjects;
+            if(cityObjects.Length == 0)
+            {
+                var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
+                ErrorService.GoToErrorPage($"Error processing building data: building data of BagID {bagId} does not contain any CityObjects") ;
+                return;
+            }
+
             MainCityObject = cityObjects.FirstOrDefault(co => co.Type == CityObjectType.Building);
             foreach (var co in cityObjects)
             {
