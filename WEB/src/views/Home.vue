@@ -6,8 +6,10 @@
     <h1 class="fronttext">Win 3D-modellen in om de digital twin accuraat te krijgen</h1>
 
     <p class="fronttext">
-    Team Amsterdam heeft een aantal toepassingen van het inwinnen van 3D modellen beproeft binnen het project T3D van de VNG. Deze projectpagina geeft toegang tot de drie verschillende proefopstellingen en linkt naar de website van de VNG waarop onderzoeksresultaten te vinden zijn.
-    </p>
+      Amsterdam heeft binnen het programma T3D (van VNG) in verschillende experimenten beproefd wat de randvoorwaarden en eisen van 3D data zijn om deze niet alleen te kunnen gebruiken in verschillende toepassingen maar ook te kunnen inwinnen en registreren. 
+Deze projectpagina geeft toegang naar de ontwikkelde proefopstellingen en de documentatie daarvan. 
+</p>
+    <div class="main-image-container"><img src="/images/header_uitbouw_groot_donker_3d_model.png" class="main-image"></div>
   </div>
 
   <b-row class="buttons">    
@@ -126,8 +128,8 @@ export default {
 <style scoped>
 
 h1{
-  margin-left: 100px;
-  margin-right: 100px;
+  margin-left: 50px;
+  margin-right: 50px;
   font-family: AvenirBold;
   font-size: 56px;
   
@@ -143,8 +145,8 @@ h2{
 }
 
 p{
-  margin-left: 100px;
-  margin-right: 100px;
+  margin-left: 50px;
+  margin-right: 50px;
   margin-top: 40px;
   margin-bottom: 40px;
 }
@@ -156,15 +158,26 @@ p{
 }
 
 .header{
-  background-image: url("/images/header_uitbouw_groot_donker_3d_model.png");
+  /* background-image: url("/images/header_uitbouw_groot_donker_3d_model.png"); */
   background-repeat:no-repeat;
   background-size:cover;
   padding-top: 40px;
   padding-bottom: 10px;
   margin-right: -15px;
   margin-left: -15px;
+  background-color: #00A03C;
 }
 
+.main-image-container{
+  margin-left: 50px;
+  margin-right: 50px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+.main-image{
+  max-width: 100%;
+  max-height: 100%;
+}
 
 .buttons{
  background-color: #ff9100;
