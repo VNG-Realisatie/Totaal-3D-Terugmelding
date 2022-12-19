@@ -28,5 +28,15 @@
         "name":"Wietse Balster",
         "title": "Business Owner",
         "image":"images/team/wietse.png"
+    },
+    {
+        "name":"Daan Bloembergen",
+        "title": "AI Researcher",
+        "image":"images/team/daan.png"
+    },
+    {
+        "name":"Falke Boskaljon",
+        "title": "AI Data Scientist",
+        "image":"images/team/falke.png"
     }
 ]
