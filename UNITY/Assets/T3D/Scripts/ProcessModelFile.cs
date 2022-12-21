@@ -16,7 +16,7 @@ namespace WebGLFileUploaderExample
     /// <summary>
     /// File Upload example.
     /// </summary>
-    public class UploadModel : MonoBehaviour
+    public class ProcessModelFile : MonoBehaviour
     {
         public Text debugText;
         public Slider slider;
@@ -25,20 +25,32 @@ namespace WebGLFileUploaderExample
 
         [SerializeField]
         private StringEvent ModelCityJSONReceived;
+        [SerializeField]
+        private BoolEvent isCityJsonFileEvent;
 
         /// <summary>
         /// Raises the file uploaded event.
         /// </summary>
         /// <param name="files">Uploaded file infos.</param>
-        public void OnFileUploaded(string file)
+        public void OnFilePreparedForUpload(string file)
         {            
             ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
 
             FileInfo finfo = new FileInfo(file);
 
-            
             Debug.Log("file: " + file);
             debugText.text = "file: " + file;
+
+            if (file.ToLower().EndsWith("json"))
+            {
+                //print("json uploaded");
+                isCityJsonFileEvent.started.AddListener(OnIsCityJSONFileSelected);
+                var reader = File.OpenText(file);
+                var jsonString = reader.ReadToEnd();
+                ModelCityJSONReceived.Invoke(jsonString);
+
+                return;
+            }
 
             var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(finfo.Name)}";
 
@@ -46,8 +58,7 @@ namespace WebGLFileUploaderExample
             StartCoroutine(UploadAndCheck(url, Path.Combine(Application.persistentDataPath,file)));
 #else
             StartCoroutine(UploadAndCheck(url, file));
-#endif
-            
+#endif            
         }
 
         IEnumerator UploadAndCheck(string url, string filePath)
@@ -67,19 +78,19 @@ namespace WebGLFileUploaderExample
                 yield break;
             }
 
-            var jsonResult = JSON.Parse(result);
+            var uploadStatusResult = JSON.Parse(result);
 
-            bool isIfc = false;
+            //bool isIfc = false;
 
             if (filePath.ToLower().EndsWith(".skp"))
             {
                 ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = null;
-                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = jsonResult["blobId"];
-                debugText.text = "Status: \"Sketchup bestand geconverteerd\"";
+                ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = uploadStatusResult["blobId"];
+                debugText.text = "Status: \"Sketchup bestand is geconverteerd\"";
             }
             else if (filePath.ToLower().EndsWith(".ifc"))
             {
-                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = jsonResult["modelId"];
+                ServiceLocator.GetService<T3DInit>().HTMLData.ModelId = uploadStatusResult["modelId"];
                 ServiceLocator.GetService<T3DInit>().HTMLData.BlobId = null;
                 debugText.text = "Status: \"IFC bestand geupload\"";
 
@@ -108,5 +119,15 @@ namespace WebGLFileUploaderExample
             IsLoading = false;
         }
 
+        private void OnIsCityJSONFileSelected(bool isCityJSON)
+        {
+            print("is cityjson: " + isCityJSON);
+            if (!isCityJSON)
+            {
+                debugText.text = "The selected file is not a valid CityJSON.";
+                var selectOptionState = GetComponentInParent<SelectOptionState>();
+                selectOptionState.OnInvalidCityJSONSelected();
+            }
+        }
     }
 }

@@ -3321,6 +3321,7 @@ MonoBehaviour:
   useAsRelativeRDCenter: 0
   onAllCityObjectsProcessed: {fileID: 11400000, guid: a862e095d4b234621af0223ed8c47a11,
     type: 2}
+  isCityJSONType: {fileID: 0}
 --- !u!1 &75784185
 GameObject:
   m_ObjectHideFlags: 0
@@ -4291,7 +4292,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Ja, ik wil een 3D bestand (ifc / sketchup) uploaden
+  m_Text: Ja, ik wil een 3D bestand uploaden
 --- !u!222 &108922098
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17001,6 +17002,7 @@ MonoBehaviour:
   useAsRelativeRDCenter: 1
   onAllCityObjectsProcessed: {fileID: 11400000, guid: b4811dccd3b4440719bb412845931f98,
     type: 2}
+  isCityJSONType: {fileID: 0}
 --- !u!114 &486380472
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24036,7 +24038,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Toegestaan: IFC en Sketchup'
+  m_Text: 'Toegestaan: IFC, Sketchup, CityJSON'
 --- !u!222 &688484617
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33697,9 +33699,9 @@ GameObject:
   - component: {fileID: 973864408}
   - component: {fileID: 973864407}
   - component: {fileID: 973864406}
-  - component: {fileID: 973864409}
   - component: {fileID: 973864411}
   - component: {fileID: 973864410}
+  - component: {fileID: 973864409}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -33826,6 +33828,8 @@ MonoBehaviour:
   slider: {fileID: 941033652}
   ModelCityJSONReceived: {fileID: 11400000, guid: c9c9c2f2b836b44b7bba4202a035cb85,
     type: 2}
+  isCityJsonFileEvent: {fileID: 11400000, guid: b581f16cb6f144074b2d830d692d4267,
+    type: 2}
 --- !u!114 &973864410
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33844,7 +33848,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 973864409}
         m_TargetAssemblyTypeName: WebGLFileUploaderExample.UploadModel, Assembly-CSharp
-        m_MethodName: OnFileUploaded
+        m_MethodName: OnFilePreparedForUpload
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -33867,7 +33871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileInputName: fileInput
-  fileExtentions: skp,ifc
+  fileExtentions: skp,ifc,json
   multiSelect: 0
   eventFileLoaderFileImported: {fileID: 11400000, guid: 177cf6ec2a06d0747908e2f98dc11c14,
     type: 2}
@@ -81835,7 +81839,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 40.59761, y: 0}
+  m_AnchoredPosition: {x: 43.041527, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
