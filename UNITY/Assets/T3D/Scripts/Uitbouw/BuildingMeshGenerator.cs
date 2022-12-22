@@ -33,7 +33,7 @@ namespace T3D.Uitbouw
         //private CityJsonModel cityJsonModel;
         public CityObject MainCityObject { get; private set; }
 
-        public int ActiveLod = 2;
+        //public int ActiveLod = 2;
         [SerializeField]
         private DoubleArrayEvent positionReceived;
 
@@ -62,10 +62,10 @@ namespace T3D.Uitbouw
         public void ProcessBuilding()
         {
             var cityObjects = GetComponent<CityJSON>().CityObjects;
-            if(cityObjects.Length == 0)
+            if (cityObjects.Length == 0)
             {
                 var bagId = ServiceLocator.GetService<T3DInit>().HTMLData.BagId;
-                ErrorService.GoToErrorPage($"Error processing building data: building data of BagID {bagId} does not contain any CityObjects") ;
+                ErrorService.GoToErrorPage($"Error processing building data: building data of BagID {bagId} does not contain any CityObjects");
                 return;
             }
 
@@ -82,27 +82,47 @@ namespace T3D.Uitbouw
         {
             //get all active lods.
             List<Mesh> activeMeshes = new List<Mesh>();
-            Vector3 positionOffset = Vector3.zero;
+            List<Matrix4x4> transformationMatrices = new List<Matrix4x4>();
+            //Vector3 positionOffset = Vector3.zero;
             foreach (var co in GetComponent<CityJSON>().CityObjects)
             {
+                var highestLod = co.Geometries.Max(g => g.Lod);
                 var visualizer = co.GetComponent<CityObjectVisualizer>();
-                var hasActiveMesh = visualizer.SetLODActive(ActiveLod);
+                var hasActiveMesh = visualizer.SetLODActive(highestLod);
 
                 if (hasActiveMesh)
                 {
                     var mesh = visualizer.GetComponent<MeshFilter>().mesh;
                     activeMeshes.Add(mesh);
-                    positionOffset += co.transform.position;
+                    transformationMatrices.Add(co.transform.localToWorldMatrix);
+                    //positionOffset += co.transform.position;
                 }
             }
 
-            positionOffset /= activeMeshes.Count;
-            var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
+            //positionOffset /= activeMeshes.Count;
+            //var activeCO = GetComponent<CityJSON>().CityObjects.FirstOrDefault(co => co.Geometries.FirstOrDefault(g => g.Lod == ActiveLod) != null);
 
-            var activeMesh = CityObjectVisualizer.CombineMeshes(activeMeshes, transform.localToWorldMatrix);
+            var activeMesh = CombineMeshes(activeMeshes, transformationMatrices);
 
             if (activeMesh)
-                ProcessMesh(activeMesh, positionOffset);
+                ProcessMesh(activeMesh);
+        }
+
+        public static Mesh CombineMeshes(List<Mesh> meshes, List<Matrix4x4> transformationMatrices)
+        {
+            CombineInstance[] combine = new CombineInstance[meshes.Count];
+
+            for (int i = 0; i < meshes.Count; i++)
+            {
+                combine[i].mesh = meshes[i];
+                combine[i].transform = transformationMatrices[i];
+            }
+
+            var mesh = new Mesh();
+            mesh.CombineMeshes(combine);
+            mesh.RecalculateBounds();
+            mesh.RecalculateNormals();
+            return mesh;
         }
 
         void GotoPosition(Vector3RD position)
@@ -112,17 +132,33 @@ namespace T3D.Uitbouw
             ServiceLocator.GetService<CameraModeChanger>().ActiveCamera.transform.LookAt(CoordConvert.RDtoUnity(position), Vector3.up);
         }
 
-        private void ProcessMesh(Mesh mesh, Vector3 positionOffset)
+        private void ProcessMesh(Mesh mesh)
         {
-            BuildingCenter = mesh.bounds.center + positionOffset;
+            //print(positionOffset);
+
+            //m = mesh;
+            //var go = new GameObject();
+            //go.transform.SetParent(transform);
+            //var mf = go.AddComponent<MeshFilter>();
+            //mf.mesh = m;
+            //go.AddComponent<MeshRenderer>();
+
+            BuildingCenter = mesh.bounds.center + transform.position;
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
 
-            RoofEdgePlanes = ProcessRoofEdges(mesh, positionOffset.y);
+            RoofEdgePlanes = ProcessRoofEdges(mesh, transform.position.y);
 
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes
             BuildingDataIsProcessed = true;
         }
+
+        //Mesh m;
+        //private void OnDrawGizmos()
+        //{
+        //    if (m)
+        //        Gizmos.DrawWireCube(m.bounds.center, m.bounds.extents * 2);
+        //}
 
         public void ResetBuilding()
         {
