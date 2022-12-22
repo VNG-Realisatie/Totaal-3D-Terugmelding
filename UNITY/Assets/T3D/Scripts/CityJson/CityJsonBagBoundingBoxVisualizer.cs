@@ -71,8 +71,11 @@ public class CityJsonBagBoundingBoxVisualizer : MonoBehaviour
 
     public void DisableMainBuilding()
     {
-        var mainBuildingInBoundingBox = GetComponent<CityJSON>().CityObjects.First(co => co.Id.Contains(excludeBagID));
-        mainBuildingInBoundingBox.gameObject.SetActive(false);
+        var mainBuildingsInBoundingBox = GetComponent<CityJSON>().CityObjects.Where(co => co.Id.Contains(excludeBagID));
+        foreach (var mainBuilding in mainBuildingsInBoundingBox)
+        {
+            mainBuilding.gameObject.SetActive(false);
+        }
         onBoundingBoxCityJSONVisualized.started.RemoveAllListeners();
     }
 }

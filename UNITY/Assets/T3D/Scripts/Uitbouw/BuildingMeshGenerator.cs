@@ -86,8 +86,14 @@ namespace T3D.Uitbouw
             //Vector3 positionOffset = Vector3.zero;
             foreach (var co in GetComponent<CityJSON>().CityObjects)
             {
-                var highestLod = co.Geometries.Max(g => g.Lod);
                 var visualizer = co.GetComponent<CityObjectVisualizer>();
+                var highestLod = co.Geometries.Max(g => g.Lod);
+
+                if (highestLod == 0) //ignore LOD 0 since this is 2d data
+                {
+                    visualizer.SetLODActive(-1);
+                    continue;
+                }
                 var hasActiveMesh = visualizer.SetLODActive(highestLod);
 
                 if (hasActiveMesh)
@@ -134,15 +140,6 @@ namespace T3D.Uitbouw
 
         private void ProcessMesh(Mesh mesh)
         {
-            //print(positionOffset);
-
-            //m = mesh;
-            //var go = new GameObject();
-            //go.transform.SetParent(transform);
-            //var mf = go.AddComponent<MeshFilter>();
-            //mf.mesh = m;
-            //go.AddComponent<MeshRenderer>();
-
             BuildingCenter = mesh.bounds.center + transform.position;
             GroundLevel = BuildingCenter.y - mesh.bounds.extents.y; //hack: if the building geometry goes through the ground this will not work properly
             HeightLevel = BuildingCenter.y + mesh.bounds.extents.y;
@@ -152,13 +149,6 @@ namespace T3D.Uitbouw
             BuildingDataProcessed.Invoke(this); // it cannot be assumed if the perceel or building data loads + processes first due to the server requests, so this event is called to make sure the processed building information can be used by other classes
             BuildingDataIsProcessed = true;
         }
-
-        //Mesh m;
-        //private void OnDrawGizmos()
-        //{
-        //    if (m)
-        //        Gizmos.DrawWireCube(m.bounds.center, m.bounds.extents * 2);
-        //}
 
         public void ResetBuilding()
         {
