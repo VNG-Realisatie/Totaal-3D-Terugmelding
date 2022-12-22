@@ -7704,7 +7704,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 380, y: 220}
+  m_SizeDelta: {x: 450, y: 240}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &218337337
 Canvas:
@@ -17325,7 +17325,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea5a0792541f6439193b7e3ccd7378c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActiveLod: 2
   positionReceived: {fileID: 11400000, guid: 3ffc590d4c77447afa5274fdf17ea2fb, type: 2}
 --- !u!4 &486380469
 Transform:
@@ -25760,10 +25759,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9c9f036cba2524d20aef4f8da1c44ea0, type: 3}
-    m_FontSize: 22
+    m_FontSize: 20
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 2
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -25771,7 +25770,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Weet u zeker dat u een nieuwe sessie wilt beginnen?
+  m_Text: 'Weet u zeker dat u opnieuw wilt beginnen?
+
+    Alle gegevens worden verwijderd.
+
+    U
+    gaat terug naar het beginscherm.'
 --- !u!222 &731546197
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -82533,7 +82537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 42.70073, y: 0}
+  m_AnchoredPosition: {x: 42.63576, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3601299505740235121
