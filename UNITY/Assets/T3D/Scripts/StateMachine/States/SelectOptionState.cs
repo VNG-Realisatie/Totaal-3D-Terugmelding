@@ -48,6 +48,11 @@ public class SelectOptionState : State
         modelLoaded = true;
     }
 
+    public void OnInvalidCityJSONSelected() //when first selecting a valid file, and then an invalid cityjson, the user must be prevented from continuing.
+    {
+        modelLoaded = false;
+    }
+
     private void Update()
     {
         modelSettingsPanel.SetActive(!noModelToggle.isOn);
@@ -56,7 +61,7 @@ public class SelectOptionState : State
         if (noModelToggle.isOn)
             nextButton.interactable = true;
         else if (uploadedModelToggle.isOn)
-            nextButton.interactable = !otherBuildingPartToggle.isOn && modelLoaded && !GetComponentInChildren<UploadModel>().IsLoading;
+            nextButton.interactable = !otherBuildingPartToggle.isOn && modelLoaded && !GetComponentInChildren<ProcessModelFile>().IsLoading;
         else
             nextButton.interactable = !otherBuildingPartToggle.isOn;
     }
