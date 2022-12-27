@@ -6,14 +6,14 @@
     <h1 class="fronttext">Win 3D-modellen in om de digital twin accuraat te krijgen</h1>
 
     <p class="fronttext">
-      Amsterdam heeft binnen het programma T3D (van VNG) in verschillende experimenten beproefd wat de randvoorwaarden en eisen van 3D data zijn om deze niet alleen te kunnen gebruiken in verschillende toepassingen maar ook te kunnen inwinnen en registreren. 
+      Amsterdam heeft binnen het programma T3D (van VNG) in een aantal experimenten beproefd wat de randvoorwaarden en eisen van 3D data zijn om deze niet alleen te kunnen gebruiken in verschillende toepassingen maar ook te kunnen inwinnen en registreren. 
 Deze projectpagina geeft toegang naar de ontwikkelde proefopstellingen en de documentatie daarvan. 
 </p>
     <div class="main-image-container"><img src="/images/header_uitbouw_groot_donker_3d_model.png" class="main-image"></div>
   </div>
 
   <b-row class="buttons">    
-      <b-col class="linkcard">
+      <b-col class="linkcard" style="max-width: 70%; width: 70%;">
         <h2>Terugmeldtool</h2>
         <div>
           Deze technische demo is een beproeving van een keten van verschillende features ontwikkeld in Unity, welke mogelijk ingezet kunnen worden voor een 3D-terugmeldtool. Het concept van de ontwikkelde features is m.b.v. een prototype gevalideerd met ambtenaren van Gemeente Amsterdam wie betrokken zijn bij 2D terugmeldingen en basisregistraties.
