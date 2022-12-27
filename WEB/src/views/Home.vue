@@ -13,7 +13,7 @@ Deze projectpagina geeft toegang naar de ontwikkelde proefopstellingen en de doc
   </div>
 
   <b-row class="buttons">    
-      <b-col class="linkcard">
+      <b-col class="linkcard" style="max-width: 70%; width: 70%;">
         <h2>Terugmeldtool</h2>
         <div>
           Deze technische demo is een beproeving van een keten van verschillende features ontwikkeld in Unity, welke mogelijk ingezet kunnen worden voor een 3D-terugmeldtool. Het concept van de ontwikkelde features is m.b.v. een prototype gevalideerd met ambtenaren van Gemeente Amsterdam wie betrokken zijn bij 2D terugmeldingen en basisregistraties.
