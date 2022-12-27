@@ -15,8 +15,6 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
     public bool HasLoaded { get; private set; }
 
     [SerializeField]
-    private StringEvent onBimCityJsonReceived;
-    [SerializeField]
     private TriggerEvent onUploadedModelVisualized;
 
     private void Awake()
@@ -41,7 +39,8 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         {
             obj.transform.SetParent(uitbouw.transform, false);
             var absoluteCenter = cityJSON.AbsoluteCenter;
-            obj.transform.position -= new Vector3((float)absoluteCenter.x, (float)absoluteCenter.z, (float)absoluteCenter.y);
+            var offset = GetRelativeCenter(absoluteCenter, cityJSON.CoordinateSystem);
+            obj.transform.position -= offset;
         }
 
         uitbouw.ReparentToMainBuilding(RestrictionChecker.ActiveBuilding.MainCityObject);
@@ -52,5 +51,19 @@ public class UploadedUitbouwVisualiser : MonoBehaviour, IUniqueService
         uitbouw.InitializeUserMovementAxes();
 
         HasLoaded = true;
+    }
+
+    private Vector3 GetRelativeCenter(Vector3Double center, CoordinateSystem coordinateSystem)
+    {
+        switch (coordinateSystem)
+        {
+            case CoordinateSystem.WGS84:
+                var wgs = new Vector3WGS(center.x, center.y, center.z);
+                return CoordConvert.WGS84toUnity(wgs);
+            case CoordinateSystem.RD:
+                var rd = new Vector3RD(center.x, center.y, center.z);
+                return CoordConvert.RDtoUnity(rd);
+        }
+        return new Vector3((float)center.x, (float)center.z, (float)center.y);
     }
 }
