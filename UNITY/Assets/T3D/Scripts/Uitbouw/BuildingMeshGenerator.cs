@@ -98,7 +98,7 @@ namespace T3D.Uitbouw
 
                 if (hasActiveMesh)
                 {
-                    var mesh = visualizer.GetComponent<MeshFilter>().mesh;
+                    var mesh = visualizer.ActiveMesh;
                     activeMeshes.Add(mesh);
                     transformationMatrices.Add(co.transform.localToWorldMatrix);
                     //positionOffset += co.transform.position;
@@ -120,12 +120,14 @@ namespace T3D.Uitbouw
 
             for (int i = 0; i < meshes.Count; i++)
             {
+                meshes[i].SetTriangles(meshes[i].triangles, 0); //combine all submeshes
+
                 combine[i].mesh = meshes[i];
                 combine[i].transform = transformationMatrices[i];
             }
 
             var mesh = new Mesh();
-            mesh.CombineMeshes(combine);
+            mesh.CombineMeshes(combine, true);
             mesh.RecalculateBounds();
             mesh.RecalculateNormals();
             return mesh;
