@@ -19,7 +19,6 @@ namespace WebGLFileUploaderExample
     public class ProcessModelFile : MonoBehaviour
     {
         public Text debugText;
-        public Slider slider;
 
         public bool IsLoading { get; private set; } = false;
 
@@ -33,13 +32,16 @@ namespace WebGLFileUploaderExample
         /// </summary>
         /// <param name="files">Uploaded file infos.</param>
         public void OnFilePreparedForUpload(string file)
-        {            
-            ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
-
-            FileInfo finfo = new FileInfo(file);
-
+        {
             Debug.Log("file: " + file);
             debugText.text = "file: " + file;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+                file = Path.Combine(Application.persistentDataPath,file);
+#endif
+
+            ServiceLocator.GetService<T3DInit>().HTMLData.HasFile = true;
+            FileInfo finfo = new FileInfo(file);
 
             if (file.ToLower().EndsWith("json"))
             {
@@ -53,12 +55,7 @@ namespace WebGLFileUploaderExample
             }
 
             var url = $"{Config.activeConfiguration.T3DAzureFunctionURL}api/uploadbim/{Uri.EscapeDataString(finfo.Name)}";
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-            StartCoroutine(UploadAndCheck(url, Path.Combine(Application.persistentDataPath,file)));
-#else
             StartCoroutine(UploadAndCheck(url, file));
-#endif            
         }
 
         IEnumerator UploadAndCheck(string url, string filePath)
@@ -70,7 +67,7 @@ namespace WebGLFileUploaderExample
 
             debugText.text = "Status: \"Uploaden bestand...\"";
 
-            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, slider, url, filePath));
+            yield return StartCoroutine(UploadBimUtility.UploadFile(result, success, url, filePath));
 
             if (success == false)
             {

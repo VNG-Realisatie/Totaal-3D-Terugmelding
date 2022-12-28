@@ -13,7 +13,7 @@ using UnityEngine.UI;
 public class UploadBimUtility 
 {
 
-    public static IEnumerator UploadFile(CoString result, CoBool status, Slider slider, string url, string filePath)
+    public static IEnumerator UploadFile(CoString result, CoBool status, string url, string filePath)
     {
         List<IMultipartFormSection> formData = new List<IMultipartFormSection>();
 
@@ -25,22 +25,14 @@ public class UploadBimUtility
         //formData.Add(new MultipartFormFileSection(data, finfo.Name));
         formData.Add(new MultipartFormFileSection(finfo.Name, bytes));
 
-
         UnityWebRequest req = UnityWebRequest.Post(url, formData);
 
         req.method = "PUT";
 
-        req.SendWebRequest();
-
-        while (!req.isDone)
-        {
-            slider.value = req.uploadProgress;        
-            yield return null;
-        }
+        yield return req.SendWebRequest();
 
         status.val = req.result == UnityWebRequest.Result.Success;
         result.val = status.val ? req.downloadHandler.text : req.error;
-
     }
 
     public static IEnumerator CheckBimVersion(Text debugText, string url, CoString result, CoBool success)
