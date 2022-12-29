@@ -37,9 +37,6 @@ namespace T3D.Uitbouw
 
         public void RecalculateBounds(CityObject[] cityObjects)
         {
-            //var cityJson = GetComponentInParent<CityJSON>();
-            //var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
-
             List<Vector3> allTransformedExtents = new List<Vector3>();
             foreach (var co in cityObjects)
             {
@@ -58,14 +55,15 @@ namespace T3D.Uitbouw
             var localCenterOfAllmeshes = new Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
             var size = Multiply(transform.lossyScale, new Vector3(maxX - minX, maxY - minY, maxZ - minZ));
             combinedMeshBounds = new Bounds(localCenterOfAllmeshes, size);
+
             UpdateDimensions();
         }
 
         public void SetMeshOffset()
         {
-            var offset = combinedMeshBounds.center;
+            var offset = -combinedMeshBounds.center;
             offset.y += combinedMeshBounds.extents.y;
-            offset += transform.forward * Depth / 2;
+            offset -= Vector3.forward * Depth / 2;
 
             var uploadedCityObjectVisualizers = GetComponentsInChildren<CityObjectVisualizer>();
             foreach (var m in uploadedCityObjectVisualizers)
