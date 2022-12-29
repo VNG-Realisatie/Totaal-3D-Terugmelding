@@ -219,6 +219,12 @@ namespace T3D.Uitbouw
             Uitbouw.GetComponent<UitbouwRotation>().SetAllowRotation(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
             Uitbouw.EnableGizmo(active && (State.ActiveState.GetType() == typeof(PlaceUitbouwState)));
         }
+
+        public void DisableAndDestroyUitbouw()
+        {
+            EnableActiveuitbouw(false);
+            Uitbouw = null;
+        }
     }
 }
 

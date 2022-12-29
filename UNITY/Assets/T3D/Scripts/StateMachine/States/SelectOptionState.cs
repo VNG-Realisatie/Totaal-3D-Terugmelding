@@ -163,7 +163,7 @@ public class SelectOptionState : State
     {
         base.StateEnteredAction();
         RestrictionChecker.ActiveBuilding.SelectedWall.gameObject.SetActive(false);
-        ServiceLocator.GetService<MetadataLoader>().EnableActiveuitbouw(false);
+        ServiceLocator.GetService<MetadataLoader>().DisableAndDestroyUitbouw();
 
         foreach (var uiToggle in visibilityPanel.GetComponentsInChildren<UIToggle>(true))
         {

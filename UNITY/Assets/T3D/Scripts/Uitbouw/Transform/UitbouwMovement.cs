@@ -43,7 +43,7 @@ namespace T3D.Uitbouw
             {
                 AllowDrag = true;
                 allowDragOnMouseUp = false;
-                print("setting allow drag to true");
+                //print("setting allow drag to true");
             }
         }
 
