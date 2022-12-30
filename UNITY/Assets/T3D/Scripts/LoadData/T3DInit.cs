@@ -42,11 +42,6 @@ public class T3DInit : MonoBehaviour, IUniqueService
 
     public Netherlands3D.Rendering.RenderSettings RenderSettings;
 
-    [SerializeField]
-    private bool useTestBuilding; //use when VCS server is down
-    [SerializeField]
-    private TextAsset testBuildingJson;
-
     private void Awake()
     {
         HTMLData = new HTMLInitSaveData();
@@ -55,26 +50,6 @@ public class T3DInit : MonoBehaviour, IUniqueService
     void Start()
     {
         ToggleQuality(true);
-    }
-
-    public void LoadBuilding()
-    {
-        //set relative center to cameraposition to avoid floating point precision issues
-        //Config.activeConfiguration.RelativeCenterRD = new Vector2RD(HTMLData.RDPosition.x, HTMLData.RDPosition.y);
-
-        //GotoPosition(HTMLData.RDPosition);
-
-        //if (!useTestBuilding)
-        //{
-            //StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBag(HTMLData.BagId));
-            //todo: StartCoroutine(ServiceLocator.GetService<MetadataLoader>().GetCityJsonBagBoundingBox(HTMLData.RDPosition.x, HTMLData.RDPosition.y, HTMLData.BagId));
-        //}
-        //else
-        //{
-        //    ServiceLocator.GetService<MetadataLoader>().LoadTestBuilding(testBuildingJson.text);
-        //}
-
-        //ServiceLocator.GetService<MetadataLoader>().RequestPerceelData(HTMLData.RDPosition, HTMLData.BagId);
     }
 
     private void ToggleQuality(bool ishigh)
