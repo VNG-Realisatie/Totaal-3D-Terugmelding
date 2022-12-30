@@ -97,14 +97,14 @@ Dit datamodel staat niet toe dat een interne toevoeging aan de geometrie van een
       <div><strong>Github</strong></div>
       <div><a href="https://github.com/VNG-Realisatie/Totaal-3D/tree/main/UNITY">Github Unity</a></div>      
       <div><a href="https://CloudCompetenceCenter@dev.azure.com/CloudCompetenceCenter/Totaal3Dimensionaal/_git/Totaal3Dimensionaal">Github Backend</a></div>
-      <div><a :href="download" >ifc_modellen.zip</a></div>
-
-
+      
+    <div class="spacer"></div>
+      <div><strong>Testmodellen</strong></div>
+      <div><a download :href="download('ifc_modellen.zip')" >ifc_modellen.zip</a></div>
+      <div><a download :href="download('Simpel.zip')" >Eenvoudig SketchUP model</a></div>
+      <div><a download :href="download('DenHaag_stadskwekerij.city.json.zip')" >Binnenkant Kwekerijweg 8 Den Haag</a></div>      
     </b-col>
   </b-row>
-
-
-
 
 </b-container>
 
@@ -126,9 +126,6 @@ export default {
 
   },
   computed:{
-    download(){
-      return `${shared.frontend_base}/bim_modellen/ifc_modellen.zip`;
-    }
   },
   watch: {
   },
@@ -136,7 +133,10 @@ export default {
   },
   mounted:function(){
   },
- methods: {   
+ methods: {  
+  download(file){
+      return `${shared.frontend_base}/bim_modellen/${file}`;
+  }, 
   OpenSession(){
       window.open(
         `${shared.frontend_base}/3d/`,
